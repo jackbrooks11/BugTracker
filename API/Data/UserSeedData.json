@@ -1,0 +1,75 @@
+[
+    {
+      "UserName": "Admin",
+      "Created": "2021-06-10",
+      "LastActive": "2021-06-16"
+    },
+    {
+      "UserName": "Valencia",
+      "Created": "2021-06-09",
+      "LastActive": "2021-06-12"
+    },
+    {
+      "UserName": "Mccoy",
+      "Created": "2021-05-30",
+      "LastActive": "2021-06-10"
+    },
+    {
+      "UserName": "Developer",
+      "Created": "2021-06-10",
+      "LastActive": "2021-06-12",
+      "Tickets": [
+        {
+            "Title": "ExampleTicket4",
+            "Description": "This is a fake ticket description for ticket # 4",
+            "SubmittedByUserName": "Admin",
+            "AssignedToUserName": "Developer",
+            "Priority": "Low",
+            "Type": "Feature Request",
+            "State": "New",
+            "Created": "2021-06-10",
+            "LastEdited": "2021-06-15"
+        }
+      ]
+    },
+    {
+      "UserName": "Project Manager",
+      "Created": "2021-05-30",
+      "LastActive": "2021-07-13",
+      "Tickets": [
+        {
+          "Title": "ExampleTicket1",
+          "Description": "This is a fake ticket description for ticket # 1",
+          "SubmittedByUserName": "Admin",
+          "AssignedToUserName": "Project Manager",
+          "Priority": "Low",
+          "Type": "Bug",
+          "State": "Closed",
+          "Created": "2021-05-28",
+          "LastEdited": "2021-06-12"
+        },
+        {
+          "Title": "ExampleTicket2",
+          "Description": "This is a fake ticket description for ticket # 2",
+          "SubmittedByUserName": "Admin",
+          "AssignedToUserName": "Project Manager",
+          "Priority": "Medium",
+          "Type": "Bug",
+          "State": "Closed",
+          "Created": "2021-05-28",
+          "LastEdited": "2021-06-05"
+        },
+        {
+          "Title": "ExampleTicket3",
+          "Description": "This is a fake ticket description for ticket # 3",
+          "SubmittedByUserName": "Admin",
+          "AssignedToUserName": "Project Manager",
+          "Priority": "Medium",
+          "Type": "Feature Request",
+          "State": "Resolved",
+          "Created": "2021-06-03",
+          "LastEdited": "2021-06-08"
+        }
+      ]
+    }
+  ]

@@ -1,0 +1,22 @@
+[
+    {
+      "Title": "ExampleTicket5",
+      "Description": "This is a fake ticket description for ticket # 5",
+      "SubmittedByUserName": "Admin",
+      "Priority": "Low",
+      "Type": "Bug",
+      "State": "Closed",
+      "Created": "2021-05-28",
+      "LastEdited": "2021-06-12"
+    },
+    {
+      "Title": "ExampleTicketUnassigned",
+      "Description": "This is a fake ticket description for an unassigned ticket",
+      "SubmittedByUserName": "Admin",
+      "Priority": "High",
+      "Type": "Feature Request",
+      "State": "Closed",
+      "Created": "2021-05-29",
+      "LastEdited": "2021-06-08"
+    }
+]

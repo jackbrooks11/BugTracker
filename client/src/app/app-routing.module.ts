@@ -6,6 +6,7 @@ import { TestErrorsComponent } from './errors/test-errors/test-errors.component'
 import { HomeComponent } from './home/home.component';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
+import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
 import { AuthGuard } from './_guards/auth.guard';
 
 const routes: Routes = [
@@ -16,7 +17,8 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {path: 'members', component: MemberListComponent, canActivate: [AuthGuard]},
-      {path: 'members/:id', component: MemberDetailComponent}
+      {path: 'members/:username', component: MemberDetailComponent},
+      {path: 'tickets', component: TicketListComponent}
     ]
   },
   {path: 'errors', component: TestErrorsComponent},

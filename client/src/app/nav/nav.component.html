@@ -5,7 +5,10 @@
       <ng-container *ngIf="(accountService.currentUser$ | async)">
         <li class="nav-item">
           <a class="nav-link" routerLink='/members' routerLinkActive='active' href="#">Members</a>
-        </li>      
+        </li> 
+        <li class="nav-item">
+          <a class="nav-link" routerLink='/tickets' routerLinkActive='active' href="#">Tickets</a>
+        </li>         
       </ng-container>
       <li class="nav-item">
         <a class="nav-link" routerLink='/errors' routerLinkActive='active' href="#">Errors</a>
