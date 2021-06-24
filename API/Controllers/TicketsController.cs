@@ -17,7 +17,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicket()
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
         {
             return Ok(await _ticketRepository.GetTicketsAsync());
         }

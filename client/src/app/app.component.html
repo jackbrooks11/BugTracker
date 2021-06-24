@@ -1,4 +1,12 @@
 <app-nav></app-nav>
-<div class="container" style="margin-top: 100px">
-    <router-outlet></router-outlet>
+<div class="container-fluid">
+  <div class="row logged-out">
+    <app-sidebar></app-sidebar>
+    <main role="main" [ngClass]="{
+      'col-md-9 ml-sm-auto col-lg-10 pt-3 px-4':(accountService.currentUser$ | async),
+      'logged-out': !(accountService.currentUser$ | async)
+    }">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>

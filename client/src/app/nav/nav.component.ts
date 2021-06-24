@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { Member } from '../_models/member';
+import { User } from '../_models/user';
 import { AccountService } from '../_services/account.service';
+import { MembersService } from '../_services/members.service';
 
 @Component({
   selector: 'app-nav',
@@ -18,8 +21,8 @@ export class NavComponent implements OnInit {
   }
 
   login() {
-    this.accountService.login(this.model).subscribe(response => {
-      this.router.navigateByUrl('/members')
+    this.accountService.login(this.model).subscribe(user => {
+      this.router.navigateByUrl('/members');
     })
   }
 

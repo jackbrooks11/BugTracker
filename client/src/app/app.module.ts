@@ -18,6 +18,10 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
+import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
+import { TicketCreateComponent } from './tickets/ticket-create/ticket-create.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 
 @NgModule({
   declarations: [
@@ -27,10 +31,14 @@ import { TicketListComponent } from './tickets/ticket-list/ticket-list.component
     RegisterComponent,
     MemberListComponent,
     MemberDetailComponent,
+    MemberEditComponent,
     TestErrorsComponent,
     NotFoundComponent,
     ServerErrorComponent,
     TicketListComponent,
+    TicketDetailComponent,
+    TicketCreateComponent,
+    SidebarComponent
   ],
   imports: [
     BrowserModule,

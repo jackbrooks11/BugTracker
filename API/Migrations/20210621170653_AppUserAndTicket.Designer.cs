@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210621132001_AppUserAndTicket")]
+    [Migration("20210621170653_AppUserAndTicket")]
     partial class AppUserAndTicket
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,7 +53,7 @@ namespace API.Migrations
                     b.Property<int?>("AppUserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AssignedToUserName")
+                    b.Property<string>("AssignedTo")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
@@ -68,10 +68,13 @@ namespace API.Migrations
                     b.Property<string>("Priority")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Project")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("State")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SubmittedByUserName")
+                    b.Property<string>("SubmittedBy")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

@@ -1,0 +1,189 @@
+<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 65%">
+  <div class="col">
+    <div class="row">
+      <div class="col mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="row">
+                <div class="col-12 col-sm-auto mb-3">
+                  <div class="mx-auto" style="width: 140px">
+                    <div
+                      class="
+                        d-flex
+                        justify-content-center
+                        align-items-center
+                        rounded
+                      "
+                      style="
+                        height: 140px;
+                        background-color: rgb(233, 236, 239);
+                      "
+                    >
+                      <span
+                        style="color: rgb(166, 168, 170); font: bold 8pt Arial"
+                        >140x140</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="
+                    col
+                    d-flex
+                    flex-column flex-sm-row
+                    justify-content-between
+                    mb-3
+                  "
+                >
+                  <div class="text-center text-sm-left mb-2 mb-sm-0">
+                    <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="member">
+                      {{ member.userName | titlecase }}
+                    </h4>
+                    <div class="text-muted">
+                      <small>Last seen 2 hours ago</small>
+                    </div>
+                  </div>
+                  <div class="text-center text-sm-right">
+                    <span class="badge badge-secondary">administrator</span>
+                    <div class="text-muted">
+                      <small *ngIf="member"
+                        >Joined {{ member.created | date }}</small
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-info" *ngIf="editForm.dirty">
+                  <strong>Information: </strong> You have made changes. Any unsaved changes will be lost.
+              </div>
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form
+                    #editForm="ngForm"
+                    (ngSubmit)="updateMember()"
+                    class="form"
+                    novalidate=""
+                  >
+                    <div class="row">
+                      <div class="col">
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Full Name</label>
+                              <input
+                                class="form-control"
+                                type="text"
+                                name="name"
+                                placeholder="John Smith"
+                                value="John Smith"
+                              />
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Username</label>
+                              <input
+                                class="form-control"
+                                [(ngModel)]="member.userName"
+                                type="text"
+                                name="userName"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Company</label>
+                              <input
+                                *ngIf="member"
+                                class="form-control"
+                                type="text"
+                                name="name"
+                                placeholder="Lakeside Software"
+                                value="Lakeside Software"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">About</label>
+                              <input
+                                *ngIf="member"
+                                class="form-control"
+                                type="text"
+                                name="name"
+                                placeholder="About"
+                                value="This is a mock user description"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 col-sm-6 mb-3">
+                            <div class="mb-2"><b>Change Password</b></div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>Current Password</label>
+                                  <input
+                                    class="form-control"
+                                    type="password"
+                                    placeholder="••••••"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label>New Password</label>
+                                  <input
+                                    class="form-control"
+                                    type="password"
+                                    placeholder="••••••"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <div class="form-group">
+                                  <label
+                                    >Confirm
+                                    <span class="d-none d-xl-inline"
+                                      >Password</span
+                                    ></label
+                                  >
+                                  <input
+                                    class="form-control"
+                                    type="password"
+                                    placeholder="••••••"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col d-flex justify-content-end">
+                              <button [disabled]="!editForm.dirty" class="btn btn-primary" type="submit">
+                                Save Changes
+                              </button>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

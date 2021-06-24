@@ -1,1 +1,129 @@
-<h1>{{member.userName}}</h1>
+<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 65%;">
+  <div class="col">
+    <div class="row">
+      <div class="col mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="row">
+                <div class="col-12 col-sm-auto mb-3">
+                  <div class="mx-auto" style="width: 140px">
+                    <div
+                      class="
+                        d-flex
+                        justify-content-center
+                        align-items-center
+                        rounded
+                      "
+                      style="
+                        height: 140px;
+                        background-color: rgb(233, 236, 239);
+                      "
+                    >
+                      <span
+                        style="color: rgb(166, 168, 170); font: bold 8pt Arial"
+                        >140x140</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="
+                    col
+                    d-flex
+                    flex-column flex-sm-row
+                    justify-content-between
+                    mb-3
+                  "
+                >
+                  <div class="text-center text-sm-left mb-2 mb-sm-0">
+                    <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="member">
+                      {{ member.userName | titlecase }}
+                    </h4>
+                    <div class="text-muted">
+                      <small>Last seen 2 hours ago</small>
+                    </div>
+                  </div>
+                  <div class="text-center text-sm-right">
+                    <span class="badge badge-secondary">administrator</span>
+                    <div class="text-muted">
+                      <small *ngIf="member">Joined {{member.created | date}}</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form class="form" novalidate="">
+                    <div class="row">
+                      <div class="col">
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Full Name</label>
+                              <p *ngIf="!editConfig[0]">John Smith
+                                <button *ngIf="member && (accountService.currentUser$| async).username == member.userName" 
+                                (click)="toggleInput(0)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                              </p>
+                              <div *ngIf="editConfig[0]">
+                                <input class="form-control" type="text" name="name" placeholder="John Smith" value="John Smith">
+                                <button (click)="toggleInput(0)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Username</label>
+                              <p *ngIf="member && !editConfig[1]"> {{ member.userName | titlecase}}
+                                <button *ngIf="(accountService.currentUser$| async).username == member.userName" 
+                                (click)="toggleInput(1)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                              </p>
+                              <div *ngIf="editConfig[1]">
+                                <input *ngIf="member" class="form-control" type="text" name="name" placeholder="{{member.userName | titlecase}}" value="{{member.userName | titlecase}}">
+                                <button (click)="toggleInput(1)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Company</label>
+                              <p *ngIf="member && !editConfig[2]"> Lakeside Software
+                                <button *ngIf="(accountService.currentUser$| async).username == member.userName" 
+                                (click)="toggleInput(2)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                              </p>
+                              <div *ngIf="editConfig[2]">
+                                <input *ngIf="member" class="form-control" type="text" name="name" placeholder="Lakeside Software" value="Lakeside Software">
+                                <button (click)="toggleInput(2)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">About</label>
+                              <p *ngIf="member && !editConfig[3]"> This is a mock user description
+                                <button *ngIf="(accountService.currentUser$| async).username == member.userName" (click)="toggleInput(3)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+                              </p>
+                              <div *ngIf="editConfig[3]">
+                                <input *ngIf="member" class="form-control" type="text" name="name" placeholder="About" value="This is a mock user description">
+                                <button (click)="toggleInput(3)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

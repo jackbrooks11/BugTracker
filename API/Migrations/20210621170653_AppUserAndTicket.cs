@@ -31,9 +31,10 @@ namespace API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: true),
+                    Project = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
-                    SubmittedByUserName = table.Column<string>(type: "TEXT", nullable: true),
-                    AssignedToUserName = table.Column<string>(type: "TEXT", nullable: true),
+                    SubmittedBy = table.Column<string>(type: "TEXT", nullable: true),
+                    AssignedTo = table.Column<string>(type: "TEXT", nullable: true),
                     Priority = table.Column<string>(type: "TEXT", nullable: true),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
                     State = table.Column<string>(type: "TEXT", nullable: true),

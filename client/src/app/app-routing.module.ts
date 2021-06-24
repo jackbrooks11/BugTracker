@@ -5,9 +5,13 @@ import { ServerErrorComponent } from './errors/server-error/server-error.compone
 import { TestErrorsComponent } from './errors/test-errors/test-errors.component';
 import { HomeComponent } from './home/home.component';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
+import { TicketCreateComponent } from './tickets/ticket-create/ticket-create.component';
+import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
 import { AuthGuard } from './_guards/auth.guard';
+import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 
 const routes: Routes = [
   {path: '', component: HomeComponent},
@@ -16,9 +20,12 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     children: [
-      {path: 'members', component: MemberListComponent, canActivate: [AuthGuard]},
+      {path: 'members', component: MemberListComponent},
       {path: 'members/:username', component: MemberDetailComponent},
-      {path: 'tickets', component: TicketListComponent}
+      {path: 'member/:edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
+      {path: 'tickets', component: TicketListComponent},
+      {path: 'tickets/:id', component: TicketDetailComponent},
+      {path: 'ticket/create', component: TicketCreateComponent}
     ]
   },
   {path: 'errors', component: TestErrorsComponent},

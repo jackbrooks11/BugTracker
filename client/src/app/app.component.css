@@ -1,1 +1,10 @@
+.logged-in {
+    
+}
 
+
+
+.logged-out {
+    display: flex;
+    justify-content: center;
+}

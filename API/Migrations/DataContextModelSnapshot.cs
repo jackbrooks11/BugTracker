@@ -51,7 +51,7 @@ namespace API.Migrations
                     b.Property<int?>("AppUserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AssignedToUserName")
+                    b.Property<string>("AssignedTo")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
@@ -66,10 +66,13 @@ namespace API.Migrations
                     b.Property<string>("Priority")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Project")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("State")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SubmittedByUserName")
+                    b.Property<string>("SubmittedBy")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

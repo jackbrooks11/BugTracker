@@ -1,9 +1,10 @@
 export interface Ticket {
     id: number;
     title: string;
+    project: string;
     description: string;
-    submittedByUserName: string;
-    assignedToUserName: string;
+    submittedBy: string;
+    assignedTo: string;
     priority: string;
     type: string;
     state: string;
