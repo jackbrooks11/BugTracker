@@ -1,12 +1,115 @@
-<h1 *ngIf="ticket">{{ticket.title}}</h1>
-<form>
+<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 70%">
+  <div class="col">
     <div class="row">
-      <div class="col" style="max-width:25%;">
-        <input type="text" class="form-control" placeholder="First name">
-      </div>
-      <div class="col" style="max-width: 25%;">
-        <input type="text" class="form-control" placeholder="Last name">
+      <div class="col mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form class="form" novalidate="">
+                    <div class="row">
+                      <div class="col">
+                        <div class="form-group">
+                          <h4 *ngIf="ticket">
+                            Details for {{ ticket.title | titlecase }}
+                          </h4>
+                        </div>
+                        <div class="p-3">
+                          <a href="#" style="padding-right: 50px;">Back to list</a>
+                          <a href="#" routerLink='/tickets/{{ticket.id}}/edit'
+                            >Edit Ticket</a
+                          >
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Title</label>
+                              <p *ngIf="ticket">{{ ticket.title }}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold"
+                                >Description</label
+                              >
+                              <p *ngIf="ticket">{{ ticket.description }}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold"
+                                >Assigned Developer</label
+                              >
+                              <p *ngIf="ticket">{{ ticket.assignedTo }}</p>
+                            </div>
+                          </div>
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Submitter</label>
+                              <p *ngIf="ticket">{{ ticket.submittedBy }}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Project</label>
+                              <p *ngIf="ticket">{{ ticket.project }}</p>
+                            </div>
+                          </div>
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Priority</label>
+                              <p *ngIf="ticket">{{ ticket.priority }}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Status</label>
+                              <p *ngIf="ticket">{{ ticket.state }}</p>
+                            </div>
+                          </div>
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Type</label>
+                              <p *ngIf="ticket">{{ ticket.type }}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Created</label>
+                              <p *ngIf="ticket">
+                                {{ ticket.created | date: "short" }}
+                              </p>
+                            </div>
+                          </div>
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Updated</label>
+                              <p *ngIf="ticket">
+                                {{ ticket.lastEdited | date: "short" }}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </form>
-<a href="#" routerLink='/tickets'>Back to tickets</a>
+  </div>
+</div>

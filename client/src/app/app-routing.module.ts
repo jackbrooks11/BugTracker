@@ -9,6 +9,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
 import { MemberListComponent } from './members/member-list/member-list.component';
 import { TicketCreateComponent } from './tickets/ticket-create/ticket-create.component';
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
+import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
@@ -22,9 +23,10 @@ const routes: Routes = [
     children: [
       {path: 'members', component: MemberListComponent},
       {path: 'members/:username', component: MemberDetailComponent},
-      {path: 'member/:edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
-      {path: 'tickets', component: TicketListComponent},
+      {path: 'member/edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
+      {path: 'tickets/:id/edit', component: TicketEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
       {path: 'tickets/:id', component: TicketDetailComponent},
+      {path: 'tickets', component: TicketListComponent},
       {path: 'ticket/create', component: TicketCreateComponent}
     ]
   },

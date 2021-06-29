@@ -55,7 +55,8 @@
                 </div>
               </div>
               <div class="alert alert-info" *ngIf="editForm.dirty">
-                  <strong>Information: </strong> You have made changes. Any unsaved changes will be lost.
+                <strong>Information: </strong> You have made changes. Any
+                unsaved changes will be lost.
               </div>
               <div class="tab-content pt-3">
                 <div class="tab-pane active">
@@ -73,36 +74,20 @@
                               <label class="font-weight-bold">Full Name</label>
                               <input
                                 class="form-control"
+                                [(ngModel)]="member.fullName"
                                 type="text"
-                                name="name"
-                                placeholder="John Smith"
-                                value="John Smith"
+                                name="fullName"
                               />
                             </div>
                           </div>
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold">Username</label>
-                              <input
-                                class="form-control"
-                                [(ngModel)]="member.userName"
-                                type="text"
-                                name="userName"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold">Company</label>
                               <input
-                                *ngIf="member"
                                 class="form-control"
+                                [(ngModel)]="member.company"
                                 type="text"
-                                name="name"
-                                placeholder="Lakeside Software"
-                                value="Lakeside Software"
+                                name="company"
                               />
                             </div>
                           </div>
@@ -111,14 +96,13 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">About</label>
-                              <input
+                              <textarea
                                 *ngIf="member"
                                 class="form-control"
+                                [(ngModel)]="member.about"
                                 type="text"
-                                name="name"
-                                placeholder="About"
-                                value="This is a mock user description"
-                              />
+                                name="about"
+                              ></textarea>
                             </div>
                           </div>
                         </div>
@@ -169,12 +153,16 @@
                           </div>
                         </div>
                         <div class="row">
-                            <div class="col d-flex justify-content-end">
-                              <button [disabled]="!editForm.dirty" class="btn btn-primary" type="submit">
-                                Save Changes
-                              </button>
-                            </div>
+                          <div class="col d-flex justify-content-end">
+                            <button
+                              [disabled]="!editForm.dirty"
+                              class="btn btn-primary"
+                              type="submit"
+                            >
+                              Save Changes
+                            </button>
                           </div>
+                        </div>
                       </div>
                     </div>
                   </form>

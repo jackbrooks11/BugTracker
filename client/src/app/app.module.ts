@@ -22,6 +22,9 @@ import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.com
 import { TicketCreateComponent } from './tickets/ticket-create/ticket-create.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
+import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +41,8 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
     TicketListComponent,
     TicketDetailComponent,
     TicketCreateComponent,
-    SidebarComponent
+    SidebarComponent,
+    TicketEditComponent
   ],
   imports: [
     BrowserModule,
@@ -46,11 +50,13 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    SharedModule
+    SharedModule,
+    NgxSpinnerModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })

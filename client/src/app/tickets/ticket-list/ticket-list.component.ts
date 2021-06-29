@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Ticket } from 'src/app/_models/ticket';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
@@ -8,17 +9,11 @@ import { TicketsService } from 'src/app/_services/tickets.service';
   styleUrls: ['./ticket-list.component.css']
 })
 export class TicketListComponent implements OnInit {
-  tickets: Ticket[];
+  tickets$: Observable<Ticket[]>;
 
   constructor(private ticketService: TicketsService) { }
 
   ngOnInit(): void {
-    this.loadTickets();
-  }
-
-  loadTickets() {
-    this.ticketService.getTickets().subscribe(tickets => {
-      this.tickets = tickets;
-    })
+    this.tickets$ = this.ticketService.getTickets();
   }
 }

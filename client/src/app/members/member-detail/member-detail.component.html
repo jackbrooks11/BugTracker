@@ -62,27 +62,13 @@
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold">Full Name</label>
-                              <p *ngIf="!editConfig[0]">John Smith
-                                <button *ngIf="member && (accountService.currentUser$| async).username == member.userName" 
-                                (click)="toggleInput(0)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-                              </p>
-                              <div *ngIf="editConfig[0]">
-                                <input class="form-control" type="text" name="name" placeholder="John Smith" value="John Smith">
-                                <button (click)="toggleInput(0)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
-                              </div>
+                              <p *ngIf="member">{{member.fullName}}</p>
                             </div>
                           </div>
                           <div class="col">
                             <div class="form-group">
-                              <label class="font-weight-bold">Username</label>
-                              <p *ngIf="member && !editConfig[1]"> {{ member.userName | titlecase}}
-                                <button *ngIf="(accountService.currentUser$| async).username == member.userName" 
-                                (click)="toggleInput(1)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-                              </p>
-                              <div *ngIf="editConfig[1]">
-                                <input *ngIf="member" class="form-control" type="text" name="name" placeholder="{{member.userName | titlecase}}" value="{{member.userName | titlecase}}">
-                                <button (click)="toggleInput(1)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
-                              </div>
+                              <label class="font-weight-bold">Company</label>
+                              <p *ngIf="member">{{member.company | titlecase}}</p>
                             </div>
                           </div>
                         </div>
@@ -90,14 +76,7 @@
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold">Company</label>
-                              <p *ngIf="member && !editConfig[2]"> Lakeside Software
-                                <button *ngIf="(accountService.currentUser$| async).username == member.userName" 
-                                (click)="toggleInput(2)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-                              </p>
-                              <div *ngIf="editConfig[2]">
-                                <input *ngIf="member" class="form-control" type="text" name="name" placeholder="Lakeside Software" value="Lakeside Software">
-                                <button (click)="toggleInput(2)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
-                              </div>
+                              <p *ngIf="member">{{member.company}}</p>
                             </div>
                           </div>
                         </div>
@@ -105,13 +84,7 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">About</label>
-                              <p *ngIf="member && !editConfig[3]"> This is a mock user description
-                                <button *ngIf="(accountService.currentUser$| async).username == member.userName" (click)="toggleInput(3)" class="edit-button"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-                              </p>
-                              <div *ngIf="editConfig[3]">
-                                <input *ngIf="member" class="form-control" type="text" name="name" placeholder="About" value="This is a mock user description">
-                                <button (click)="toggleInput(3)" class="btn btn-secondary btn-sm mt-2" style="float: right;">Cancel</button>
-                              </div>
+                              <p *ngIf="member">{{member.about}}</p>
                             </div>
                           </div>
                         </div>
