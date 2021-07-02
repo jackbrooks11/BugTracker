@@ -29,6 +29,6 @@ namespace API.Data
                 .WithOne(u => u.Role)
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
-        }
+        }   
     }
 }

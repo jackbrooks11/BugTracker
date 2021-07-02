@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace API.Entities
@@ -13,5 +14,6 @@ namespace API.Entities
         public DateTime LastActive { get; set; } = DateTime.Now;
         public ICollection<Ticket> Tickets { get; set; }
         public ICollection<AppUserRole> UserRoles { get; set; }
+
     }
 }

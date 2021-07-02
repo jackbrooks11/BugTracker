@@ -32,23 +32,24 @@ namespace API.Data
             foreach(var user in users)
             {
                 user.UserName = user.UserName.ToLower();
-                
                 await userManager.CreateAsync(user, "Pa$$w0rd");
                 await userManager.AddToRoleAsync(user, "Developer");
             } 
+            
             var admin = new AppUser 
             {
                 UserName = "admin"
             };
 
-            await userManager.CreateAsync(admin, "Pa$$w0rd");
+            var result = await userManager.CreateAsync(admin, "Pa$$w0rd");
             await userManager.AddToRolesAsync(admin, new[] {"Admin", "Project Manager"});
+            
         }
 
-/*
+
         public static async Task SeedTickets(DataContext context)
         {
-            if (await context.Tickets.AnyAsync()) return;
+            //if (await context.Tickets.AnyAsync()) return;
             var ticketData = await System.IO.File.ReadAllTextAsync("Data/TicketSeedData.json");
             var tickets = JsonSerializer.Deserialize<List<Ticket>>(ticketData);
             foreach(var ticket in tickets)
@@ -57,6 +58,5 @@ namespace API.Data
             }
             await context.SaveChangesAsync();
         }
-        */
     }
 }
