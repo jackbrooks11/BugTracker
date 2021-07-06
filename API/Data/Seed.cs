@@ -49,7 +49,7 @@ namespace API.Data
 
         public static async Task SeedTickets(DataContext context)
         {
-            //if (await context.Tickets.AnyAsync()) return;
+            if (await context.Tickets.AnyAsync()) return;
             var ticketData = await System.IO.File.ReadAllTextAsync("Data/TicketSeedData.json");
             var tickets = JsonSerializer.Deserialize<List<Ticket>>(ticketData);
             foreach(var ticket in tickets)

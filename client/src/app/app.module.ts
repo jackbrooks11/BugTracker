@@ -26,6 +26,10 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
 import { TextInputComponent } from './_forms/text-input/text-input.component';
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
+import { HasRoleDirective } from './_directives/has-role.directive';
+import { UserManagementComponent } from './admin/user-management/user-management.component';
+import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +48,11 @@ import { TextInputComponent } from './_forms/text-input/text-input.component';
     TicketCreateComponent,
     SidebarComponent,
     TicketEditComponent,
-    TextInputComponent
+    TextInputComponent,
+    AdminPanelComponent,
+    HasRoleDirective,
+    UserManagementComponent,
+    RolesModalComponent
   ],
   imports: [
     BrowserModule,

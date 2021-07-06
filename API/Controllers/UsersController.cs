@@ -23,16 +23,18 @@ namespace API.Controllers
             _userRepository = userRepository;
         }
 
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
             return Ok(await _userRepository.GetUsersAsync());
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<AppUser>> GetUser(string username)
         {
             return await _userRepository.GetUserByUsernameAsync(username);
+            
         }
 
         [HttpPut]

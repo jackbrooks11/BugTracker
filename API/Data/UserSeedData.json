@@ -29,7 +29,7 @@
       ]
     },
     {
-      "UserName": "Project Manager",
+      "UserName": "ProjectManager",
       "Created": "2021-05-30",
       "LastActive": "2021-07-13",
       "Tickets": [
@@ -38,7 +38,7 @@
           "Description": "This is a fake ticket description for ticket # 1",
           "Project": "Project 1",
           "SubmittedBy": "Admin",
-          "AssignedTo": "Project Manager",
+          "AssignedTo": "ProjectManager",
           "Priority": "Low",
           "Type": "Bug",
           "State": "Closed",
@@ -50,7 +50,7 @@
           "Description": "This is a fake ticket description for ticket # 2",
           "Project": "Project 1",
           "SubmittedBy": "Admin",
-          "AssignedTo": "Project Manager",
+          "AssignedTo": "ProjectManager",
           "Priority": "Medium",
           "Type": "Bug",
           "State": "Closed",
@@ -62,7 +62,7 @@
           "Description": "This is a fake ticket description for ticket # 3",
           "Project": "Project 1",
           "SubmittedBy": "Admin",
-          "AssignedTo": "Project Manager",
+          "AssignedTo": "ProjectManager",
           "Priority": "Medium",
           "Type": "Feature Request",
           "State": "Resolved",
