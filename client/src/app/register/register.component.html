@@ -1,19 +1,6 @@
 <form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off">
   <h2 class="text-center text-primary">Sign up</h2>
   <hr />
-  <div class="form-group" style="display: flex">
-    <label class="control-label" style="margin-right: 6px">Role: </label>
-    <label class="radio-inline" style="margin-right: 8px">
-      <input type="radio" value="admin" fromControlName="role" /> Admin
-    </label>
-    <label class="radio-inline" style="margin-right: 8px">
-      <input type="radio" value="projectmanager" fromControlName="role" />
-      Project Manager
-    </label>
-    <label class="radio-inline">
-      <input type="radio" value="developer" fromControlName="role" /> Developer
-    </label>
-  </div>
   <app-text-input
     [formControl]="registerForm.controls['username']"
     [label]="'Username'"

@@ -1,5 +1,4 @@
 import { Ticket } from "./ticket";
-
 export interface Member {
     id: number;
     userName: string;
@@ -9,4 +8,5 @@ export interface Member {
     created: Date;
     lastActive: Date;
     tickets: Ticket[];
+    roles: string[];
 }

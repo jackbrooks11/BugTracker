@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,10 +19,11 @@ namespace API.Data
         {
             return await _context.Tickets.FindAsync(id);
         }
-        public async Task<IEnumerable<Ticket>> GetTicketsAsync()
+        public async Task<PagedList<Ticket>> GetTicketsAsync(UserParams userParams)
         {
-            return await _context.Tickets
-            .ToListAsync();
+            var query = _context.Tickets
+            .AsNoTracking();
+            return await PagedList<Ticket>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<bool> SaveAllAsync()

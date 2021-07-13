@@ -1,6 +1,9 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Entities;
+using API.Extensions;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -22,10 +25,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets()
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets([FromQuery]UserParams userParams)
         {
-            return Ok(await _ticketRepository.GetTicketsAsync());
-        }
+            var tickets = await _ticketRepository.GetTicketsAsync(userParams);
+                       
+            Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
+
+            return Ok(tickets);
+        }     
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(int id)

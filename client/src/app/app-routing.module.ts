@@ -8,6 +8,7 @@ import { HomeComponent } from './home/home.component';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
+import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
 import { TicketCreateComponent } from './tickets/ticket-create/ticket-create.component';
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
@@ -26,6 +27,7 @@ const routes: Routes = [
       {path: 'members', component: MemberListComponent},
       {path: 'members/:username', component: MemberDetailComponent},
       {path: 'member/edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
+      {path: 'member/tickets', component: MemberTicketsComponent},
       {path: 'tickets/:id/edit', component: TicketEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
       {path: 'tickets/:id', component: TicketDetailComponent},
       {path: 'tickets', component: TicketListComponent},

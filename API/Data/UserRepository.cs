@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
@@ -26,11 +29,11 @@ namespace API.Data
             .SingleOrDefaultAsync(x => x.UserName == username);
         }
 
-        public async Task<IEnumerable<AppUser>> GetUsersAsync()
+        public async Task<PagedList<AppUser>> GetUsersAsync(UserParams userParams)
         {
-            return await _context.Users
-            .Include(t => t.Tickets)
-            .ToListAsync();
+            var query = _context.Users
+            .AsNoTracking();
+            return await PagedList<AppUser>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
         }
 
         public async Task<bool> SaveAllAsync()
@@ -42,5 +45,13 @@ namespace API.Data
         {
             _context.Entry(user).State = EntityState.Modified;
         }
+
+        public async Task<IEnumerable<Ticket>> GetTicketsForUserAsync(string username)
+        {
+            var tickets = await _context.Tickets
+            .Where(t => t.AssignedTo == username).ToListAsync();
+            return tickets;
+        }
+
     }
 }

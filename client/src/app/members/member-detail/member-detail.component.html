@@ -40,12 +40,12 @@
                     <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="member">
                       {{ member.userName | titlecase }}
                     </h4>
-                    <div class="text-muted">
-                      <small>Last seen 2 hours ago</small>
+                    <div class="text-muted" *ngIf="member">
+                      <small>Last seen {{member.lastActive | date}}</small>
                     </div>
                   </div>
-                  <div class="text-center text-sm-right">
-                    <span class="badge badge-secondary">administrator</span>
+                  <div class="text-center text-sm-right" *ngIf="user">
+                    <span class="badge badge-secondary">{{user.roles}}</span>
                     <div class="text-muted">
                       <small *ngIf="member">Joined {{member.created | date}}</small>
                     </div>
@@ -69,14 +69,6 @@
                             <div class="form-group">
                               <label class="font-weight-bold">Company</label>
                               <p *ngIf="member">{{member.company | titlecase}}</p>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold">Company</label>
-                              <p *ngIf="member">{{member.company}}</p>
                             </div>
                           </div>
                         </div>

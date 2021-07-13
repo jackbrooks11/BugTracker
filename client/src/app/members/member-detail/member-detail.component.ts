@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Member } from 'src/app/_models/member';
+import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
+import { AdminService } from 'src/app/_services/admin.service';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -11,6 +13,7 @@ import { MembersService } from 'src/app/_services/members.service';
 })
 export class MemberDetailComponent implements OnInit {
   member: Member;
+  user: Partial<User>;
   editConfig: boolean[] = [false, false, false, false];
 
   constructor(
@@ -21,6 +24,7 @@ export class MemberDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadMember();
+    this.getMemberWithRoles();
   }
 
   loadMember() {
@@ -29,6 +33,13 @@ export class MemberDetailComponent implements OnInit {
       .subscribe((member) => {
         this.member = member;
       });
+  }
+
+  getMemberWithRoles() {
+    this.memberService.getMemberRoles(this.route.snapshot.paramMap.get('username')).subscribe(user => {
+      console.log(user);
+      this.user = user;
+    })
   }
 
   toggleInput(index: number) {

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Entities;
+using API.Helpers;
 
 namespace API.Interfaces
 {
@@ -8,7 +9,7 @@ namespace API.Interfaces
     {
         void Update(Ticket user);
         Task<bool> SaveAllAsync();
-        Task<IEnumerable<Ticket>> GetTicketsAsync();
+        Task<PagedList<Ticket>> GetTicketsAsync(UserParams userParams);
         Task<Ticket> GetTicketByIdAsync(int id);   
     }
 }

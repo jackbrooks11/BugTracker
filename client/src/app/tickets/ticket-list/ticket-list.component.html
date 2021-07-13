@@ -7,7 +7,7 @@
 </button>
 
 <div class="table-responsive margin-bottom-2x">
-  <table class="table table-striped margin-bottom-none">
+  <table class="table margin-bottom-none">
     <thead>
       <tr>
         <th>Title</th>
@@ -20,15 +20,42 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let ticket of tickets$ | async">
-        <td><a href="#" routerLink='/tickets/{{ticket.id}}'>{{ticket.title}}</a></td>
-        <td>{{ticket.project}}</td>
-        <td>{{ticket.assignedTo}}</td>
-        <td class="text-warning">{{ticket.priority}}</td>
-        <td class="text-primary">{{ticket.state}}</td>
-        <td>{{ticket.type}}</td>
-        <td>{{ticket.created}}</td>
+      <tr *ngFor="let ticket of tickets">
+        <td>
+          <a href="#" routerLink="/tickets/{{ ticket.id }}">{{
+            ticket.title
+          }}</a>
+        </td>
+        <td>{{ ticket.project }}</td>
+        <td>{{ ticket.assignedTo }}</td>
+        <td
+          [ngClass]="{
+            'text-success': ticket.priority === 'Low',
+            'text-warning': ticket.priority === 'Medium',
+            'text-danger': ticket.priority === 'High'
+          }"
+        >
+          {{ ticket.priority }}
+        </td>
+        <td class="text-primary">{{ ticket.state }}</td>
+        <td>{{ ticket.type }}</td>
+        <td>{{ ticket.created }}</td>
       </tr>
     </tbody>
   </table>
+</div>
+
+<div class="d-flex justify-content-center" *ngIf="pagination">
+  <pagination
+    [boundaryLinks]="true"
+    [totalItems]="pagination.totalItems"
+    [itemsPerPage]="pagination.itemsPerPage"
+    [(ngModel)]="pagination.currentPage"
+    (pageChanged)="pageChanged($event)"
+    previousText="&lsaquo;"
+    nextText="&rsaquo;"
+    firstText="&laquo;"
+    lastText="&raquo;"
+  >
+  </pagination>
 </div>

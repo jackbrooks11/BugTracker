@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
-
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 @NgModule({
   declarations: [],
@@ -13,12 +13,14 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-right'
     }),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    PaginationModule.forRoot()
   ],
   exports: [
     BsDropdownModule,
     ToastrModule,
-    ModalModule
+    ModalModule,
+    PaginationModule
   ]
 })
 export class SharedModule { }

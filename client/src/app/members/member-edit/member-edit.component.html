@@ -1,4 +1,4 @@
-<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 65%">
+<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 75%" *ngIf="member">
   <div class="col">
     <div class="row">
       <div class="col mb-3">
@@ -40,12 +40,12 @@
                     <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="member">
                       {{ member.userName | titlecase }}
                     </h4>
-                    <div class="text-muted">
-                      <small>Last seen 2 hours ago</small>
+                    <div class="text-muted" *ngIf="member">
+                      <small>Last seen {{member.lastActive | date}}</small>
                     </div>
                   </div>
                   <div class="text-center text-sm-right">
-                    <span class="badge badge-secondary">administrator</span>
+                    <span class="badge badge-secondary">{{user.roles}}</span>
                     <div class="text-muted">
                       <small *ngIf="member"
                         >Joined {{ member.created | date }}</small
@@ -97,7 +97,7 @@
                             <div class="form-group">
                               <label class="font-weight-bold">About</label>
                               <textarea
-                                *ngIf="member"
+
                                 class="form-control"
                                 [(ngModel)]="member.about"
                                 type="text"
