@@ -5,18 +5,131 @@
 >
   New Ticket
 </button>
-
+<div>
+  <div style="float: left">
+    <label>Show</label>
+    <select
+      name="itemsPerPage"
+      [(ngModel)]="ticketParams.pageSize"
+      (change)="loadTickets()"
+    >
+      <option>5</option>
+      <option>10</option>
+      <option>25</option>
+      <option>50</option>
+    </select>
+    entries
+  </div>
+  <input
+    type="text"
+    name="search"
+    [(ngModel)]="ticketParams.searchMatch"
+    (input)="loadTickets()"
+    style="float: right"
+  />
+</div>
 <div class="table-responsive margin-bottom-2x">
   <table class="table margin-bottom-none">
     <thead>
       <tr>
-        <th>Title</th>
-        <th>Project Name</th>
-        <th>Developer Assigned</th>
-        <th>Priority</th>
-        <th>Status</th>
-        <th>Type</th>
-        <th>Created</th>
+        <th>
+          Title
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 0)"
+            btnRadio="title"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="icons[0] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="icons[0] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="icons[0] == 2"></i>
+          </button>
+        </th>
+        <th>
+          Project Name
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 1)"
+            btnRadio="project"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="icons[1] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="icons[1] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="icons[1] == 2"></i>
+          </button>
+        </th>
+        <th>
+          Developer Assigned
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 2)"
+            btnRadio="assignedTo"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="icons[2] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="icons[2] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="icons[2] == 2"></i>
+          </button>
+        </th>
+        <th>
+          Priority
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 3)"
+            btnRadio="priority"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="icons[3] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="icons[3] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="icons[3] == 2"></i>
+          </button>
+        </th>
+        <th>
+          Status
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 4)"
+            btnRadio="state"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="icons[4] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="icons[4] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="icons[4] == 2"></i>
+          </button>
+        </th>
+        <th>
+          Type
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 5)"
+            btnRadio="type"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="icons[5] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="icons[5] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="icons[5] == 2"></i>
+          </button>
+        </th>
+        <th>
+          Created
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 6)"
+            btnRadio="created"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="icons[6] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="icons[6] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="icons[6] == 2"></i>
+          </button>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -27,7 +140,14 @@
           }}</a>
         </td>
         <td>{{ ticket.project }}</td>
-        <td>{{ ticket.assignedTo }}</td>
+        <td>
+          <a
+            style="color: #777"
+            href="#"
+            routerLink="/members/{{ ticket.assignedTo }}"
+            >{{ ticket.assignedTo }}</a
+          >
+        </td>
         <td
           [ngClass]="{
             'text-success': ticket.priority === 'Low',
@@ -39,23 +159,43 @@
         </td>
         <td class="text-primary">{{ ticket.state }}</td>
         <td>{{ ticket.type }}</td>
-        <td>{{ ticket.created }}</td>
+        <td>{{ ticket.created | date: "medium" }}</td>
       </tr>
     </tbody>
   </table>
 </div>
-
-<div class="d-flex justify-content-center" *ngIf="pagination">
-  <pagination
-    [boundaryLinks]="true"
-    [totalItems]="pagination.totalItems"
-    [itemsPerPage]="pagination.itemsPerPage"
-    [(ngModel)]="pagination.currentPage"
-    (pageChanged)="pageChanged($event)"
-    previousText="&lsaquo;"
-    nextText="&rsaquo;"
-    firstText="&laquo;"
-    lastText="&raquo;"
+<div>
+  <span style="float: left">
+    Showing
+    {{
+      pagination.totalItems > 0
+        ? pagination.itemsPerPage * (pagination.currentPage - 1) + 1
+        : pagination.itemsPerPage * (pagination.currentPage - 1)
+    }}
+    to
+    {{
+      pagination.itemsPerPage * pagination.currentPage > pagination.totalItems
+        ? pagination.totalItems
+        : pagination.itemsPerPage * pagination.currentPage
+    }}
+    of {{ pagination.totalItems }} entries
+  </span>
+  <div
+    class="d-flex justify-content-center"
+    *ngIf="pagination"
+    style="float: right"
   >
-  </pagination>
+    <pagination
+      [boundaryLinks]="true"
+      [totalItems]="pagination.totalItems"
+      [itemsPerPage]="pagination.itemsPerPage"
+      [(ngModel)]="pagination.currentPage"
+      (pageChanged)="pageChanged($event)"
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
+  </div>
 </div>

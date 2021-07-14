@@ -25,9 +25,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets([FromQuery]UserParams userParams)
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets([FromQuery]TicketParams ticketParams)
         {
-            var tickets = await _ticketRepository.GetTicketsAsync(userParams);
+            var tickets = await _ticketRepository.GetTicketsAsync(ticketParams);
                        
             Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
 

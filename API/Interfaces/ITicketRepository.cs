@@ -9,7 +9,7 @@ namespace API.Interfaces
     {
         void Update(Ticket user);
         Task<bool> SaveAllAsync();
-        Task<PagedList<Ticket>> GetTicketsAsync(UserParams userParams);
+        Task<PagedList<Ticket>> GetTicketsAsync(TicketParams ticketParams);
         Task<Ticket> GetTicketByIdAsync(int id);   
     }
 }
