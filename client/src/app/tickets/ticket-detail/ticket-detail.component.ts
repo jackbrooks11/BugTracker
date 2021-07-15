@@ -21,7 +21,6 @@ export class TicketDetailComponent implements OnInit {
     this.ticketService.getTicket(Number(this.route.snapshot.paramMap.get('id'))).
     subscribe(ticket => {
       this.ticket = ticket;
-      console.log(ticket);
     })
   }
 }

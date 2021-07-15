@@ -15,7 +15,7 @@
                             Details for {{ ticket.title | titlecase }}
                           </h4>
                         </div>
-                        <div class="p-3">
+                        <div class="p-3" *ngIf="ticket">
                           <a href="#" routerLink='/tickets' style="padding-right: 50px;">Back to list</a>
                           <a href="#" routerLink='/tickets/{{ticket.id}}/edit'
                             >Edit Ticket</a
@@ -23,9 +23,9 @@
                         </div>
                         <div class="row">
                           <div class="col">
-                            <div class="form-group">
+                            <div class="form-group" *ngIf="ticket">
                               <label class="font-weight-bold">Title</label>
-                              <p *ngIf="ticket">{{ ticket.title }}</p>
+                              <p>{{ ticket.title }}</p>
                             </div>
                           </div>
                         </div>

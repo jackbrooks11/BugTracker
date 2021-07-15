@@ -1,11 +1,13 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of, pipe } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Ticket } from '../_models/ticket';
 import { TicketParams } from '../_models/ticketParams';
+import { User } from '../_models/user';
+import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,11 +16,19 @@ export class TicketsService {
   baseUrl = environment.apiUrl;
   tickets: Ticket[] = [];
   ticketsForUser: Ticket[] = [];
+  ticketCache = new Map();
+  ticketParams: TicketParams;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+      this.ticketParams = new TicketParams();
+  }
 
   getTickets(ticketParams: TicketParams) {
-    //if (this.tickets.length > 0) return of(this.tickets);
+    var response = this.ticketCache.get(Object.values(ticketParams).join('-'));
+    if (response) {
+      return of(response);
+    }
+
     let params = this.getPaginationHeaders(
       ticketParams.pageNumber,
       ticketParams.pageSize
@@ -27,7 +37,15 @@ export class TicketsService {
     params = params.append('orderBy', ticketParams.orderBy);
     params = params.append('ascending', ticketParams.ascending);
     params = params.append('searchMatch', ticketParams.searchMatch);
-    return this.getPaginatedResult<Ticket[]>(this.baseUrl + 'tickets', params);
+    return this.getPaginatedResult<Ticket[]>(
+      this.baseUrl + 'tickets',
+      params
+    ).pipe(
+      map((response) => {
+        this.ticketCache.set(Object.values(ticketParams).join('-'), response);
+        return response;
+      })
+    );
   }
 
   getTicketsForUser() {
@@ -41,8 +59,12 @@ export class TicketsService {
   }
 
   getTicket(id: number) {
-    const ticket = this.tickets.find((x) => x.id === id);
-    if (ticket !== undefined) return of(ticket);
+    const ticket = [...this.ticketCache.values()]
+      .reduce((arr, elem) => arr.concat(elem.result), [])
+      .find((ticket: Ticket) => ticket.id === id);
+    if (ticket) {
+      return of(ticket);
+    }
     return this.http.get<Ticket>(this.baseUrl + 'tickets/' + id);
   }
 
@@ -53,6 +75,14 @@ export class TicketsService {
         this.tickets[index] = ticket;
       })
     );
+  }
+
+  getTicketParams() {
+    return this.ticketParams;
+  }
+
+  setTicketParams(params: TicketParams) {
+    this.ticketParams = params;
   }
 
   private getPaginatedResult<T>(url, params) {

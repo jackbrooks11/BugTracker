@@ -12,4 +12,7 @@ export class TicketCreateComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  createTicket() {
+    
+  }
 }

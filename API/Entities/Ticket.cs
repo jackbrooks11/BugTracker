@@ -13,7 +13,7 @@ namespace API.Entities
         public string AssignedTo { get; set; }
         public string Priority { get; set; }
         public string Type { get; set; }
-        public string State { get; set; }
+        public string State { get; set; } = "New";
         public DateTime Created { get; set; } = DateTime.Now;
         public DateTime LastEdited { get; set; } = DateTime.Now;
     }

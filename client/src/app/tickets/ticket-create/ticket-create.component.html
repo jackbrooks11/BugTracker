@@ -1,1 +1,129 @@
-<p>ticket-create works!</p>
+<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 70%">
+    <div class="col">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form
+                      #editForm="ngForm"
+                      (ngSubmit)="createTicket()"
+                      class="form"
+                      novalidate=""
+                    >
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <h4>
+                              Create a new ticket
+                            </h4>
+                          </div>
+                          <div class="p-3">
+                            <a
+                              href="#"
+                              style="padding-right: 50px"
+                              routerLink="/tickets"
+                              >Back to ticket list</a
+                            >
+                          </div>
+                          <div class="alert alert-info" *ngIf="editForm.dirty">
+                            <strong>Information: </strong> You have made changes.
+                            Any unsaved changes will be lost.
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <label class="font-weight-bold">Title</label>
+                                <input
+                                  class="form-control"
+           
+                                  type="text"
+                                  name="title"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <label class="font-weight-bold"
+                                  >Description</label
+                                >
+                                <textarea
+                                  class="form-control"
+                                  type="text"
+                                  name="description"
+                                >
+                                </textarea>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col mb-3">
+                              <div class="form-group">
+                                <label class="font-weight-bold">Project</label>
+                                <input
+                                  class="form-control"
+                                  type="text"
+                                  name="project"
+                                />
+                              </div>
+                            </div>
+                            <div class="col mb-3">
+                              <div class="form-group">
+                                <label class="font-weight-bold">Assigned Developer</label>
+                                <input
+                                  class="form-control"
+                                  type="text"
+                                  name="assignedTo"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col mb-3">
+                              <div class="form-group">
+                                <label class="font-weight-bold">Priority</label>
+                                <input
+                                  class="form-control"
+                                  type="text"
+                                  name="priority"
+                                />
+                              </div>
+                            </div>
+                            <div class="col mb-3">
+                              <div class="form-group">
+                                <label class="font-weight-bold">Type</label>
+                                <input
+                                  class="form-control"
+                                  type="text"
+                                  name="type"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col d-flex justify-content-end">
+                              <button
+                                [disabled]="!editForm.dirty"
+                                class="btn btn-primary"
+                                type="submit"
+                              >
+                                Save Changes
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

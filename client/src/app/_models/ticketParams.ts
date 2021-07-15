@@ -1,7 +1,11 @@
+import { User } from "./user";
+
 export class TicketParams {
-    pageNumber = 1;
-    pageSize = 5;
-    orderBy = 'created';
-    ascending = false;
-    searchMatch = "";
+    pageNumber: number = 1;
+    pageSize: number = 5;
+    orderBy: string = 'created';
+    ascending: boolean = false;
+    searchMatch: string = "";
+    icons: number[] = [0, 0, 0, 0, 0, 0, 2];
+    index: number = 6;
 }

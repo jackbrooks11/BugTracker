@@ -31,6 +31,7 @@ import { HasRoleDirective } from './_directives/has-role.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
+import { TicketModalComponent } from './modals/ticket-modal/ticket-modal.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +55,8 @@ import { MemberTicketsComponent } from './members/member-tickets/member-tickets.
     HasRoleDirective,
     UserManagementComponent,
     RolesModalComponent,
-    MemberTicketsComponent
+    MemberTicketsComponent,
+    TicketModalComponent
   ],
   imports: [
     BrowserModule,

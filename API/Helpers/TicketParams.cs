@@ -15,5 +15,7 @@ namespace API.Helpers
         public string OrderBy { get; set; } = "created";
         public bool Ascending { get; set; } = false;
         public string SearchMatch { get; set; } = "";
+        public int[] Icons { get; set; } = {0, 0, 0, 0, 0, 0, 2};
+        public int Index { get; set; } = 6;
     }
 }
