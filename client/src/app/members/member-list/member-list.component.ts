@@ -22,10 +22,11 @@ export class MemberListComponent implements OnInit {
   }
 
   loadMembers() {
-    this.memberService.getMembers(this.pageNumber, this.pageSize).subscribe(response => {
+    /*this.memberService.getMembers(this.pageNumber, this.pageSize).subscribe(response => {
       this.members = response.result;
       this.pagination = response.pagination;
     })
+    */
   }
 
 }

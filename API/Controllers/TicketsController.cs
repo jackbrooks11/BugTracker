@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -25,14 +26,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets([FromQuery]TicketParams ticketParams)
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets([FromQuery] TicketParams ticketParams)
         {
             var tickets = await _ticketRepository.GetTicketsAsync(ticketParams);
-                       
+
             Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
 
             return Ok(tickets);
-        }     
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(int id)
@@ -46,6 +47,7 @@ namespace API.Controllers
             var id = ticketUpdated.Id;
             var ticket = await _ticketRepository.GetTicketByIdAsync(id);
             _mapper.Map(ticketUpdated, ticket);
+            ticket.LastEdited = DateTime.Now;
             _ticketRepository.Update(ticket);
 
 
@@ -54,6 +56,33 @@ namespace API.Controllers
             return BadRequest("Failed to update ticket");
         }
 
+        [HttpPost("create")]
+        public async Task<ActionResult> CreateTicket(Ticket ticket)
+        {
+            if (await _ticketRepository.TicketExists(ticket.Title))
+            {
+                return BadRequest("Ticket title taken");
+            }
+            if (ticket.AssignedTo.Length > 0) {
+                _userRepository.AddTicketForUserAsync(ticket);
+            }
+            _ticketRepository.Create(ticket);
+
+            if (await _ticketRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to create ticket");
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPost("delete")]
+        public async Task<ActionResult> DeleteTickets(int[] ticketIdsToDelete)
+        {
+            _ticketRepository.Delete(ticketIdsToDelete);
+            
+            if (await _ticketRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to delete tickets");
+        }
 
     }
 }

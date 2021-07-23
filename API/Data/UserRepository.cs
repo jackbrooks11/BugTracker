@@ -33,6 +33,10 @@ namespace API.Data
         {
             var query = _context.Users
             .AsNoTracking();
+            if (userParams.SearchMatch != null) {
+                query = query.Where(u => (u.UserName.ToLower().Contains(userParams.SearchMatch.ToLower())));
+            }
+            query = query.OrderBy(u => u.UserName);
             return await PagedList<AppUser>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
         }
 
@@ -46,11 +50,28 @@ namespace API.Data
             _context.Entry(user).State = EntityState.Modified;
         }
 
-        public async Task<IEnumerable<Ticket>> GetTicketsForUserAsync(string username)
+        public async Task<PagedList<Ticket>> GetTicketsForUserAsync(string username, TicketParams ticketParams)
         {
-            var tickets = await _context.Tickets
-            .Where(t => t.AssignedTo == username).ToListAsync();
-            return tickets;
+            var query = _context.Tickets
+            .AsNoTracking();
+            if (ticketParams.SearchMatch != null)
+            {
+                query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Project.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.AssignedTo.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Priority.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.State.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Type.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
+            }
+            query = query.Where(t => t.AssignedTo.ToLower() == username.ToLower());
+            return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
+        }
+
+        public async void AddTicketForUserAsync(Ticket ticket)
+        {
+            var user = await this.GetUserByUsernameAsync(ticket.AssignedTo);
+            user.Tickets.Add(ticket);
         }
 
     }

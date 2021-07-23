@@ -23,7 +23,8 @@ namespace API.Data
         {
             var query = _context.Tickets
             .AsNoTracking();
-            if (ticketParams.SearchMatch != null) {
+            if (ticketParams.SearchMatch != null)
+            {
                 query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
                 t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
                 t.Project.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
@@ -39,25 +40,30 @@ namespace API.Data
                     "title" => query.OrderByDescending(t => t.Title),
                     "project" => query.OrderByDescending(t => t.Project),
                     "assignedTo" => query.OrderByDescending(t => t.AssignedTo),
-                    "priority" => query.OrderByDescending(t => t.Priority),
+                    "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
                     "state" => query.OrderByDescending(t => t.State),
                     "type" => query.OrderByDescending(t => t.Type),
                     _ => query.OrderByDescending(t => t.Created)
 
                 };
             }
-            else {
+            else
+            {
                 query = ticketParams.OrderBy switch
                 {
                     "title" => query.OrderBy(t => t.Title),
                     "project" => query.OrderBy(t => t.Project),
                     "assignedTo" => query.OrderBy(t => t.AssignedTo),
-                    "priority" => query.OrderBy(t => t.Priority),
+                    "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
                     "state" => query.OrderBy(t => t.State),
                     "type" => query.OrderBy(t => t.Type),
                     _ => query.OrderBy(t => t.Created)
 
-                }; 
+                };
             }
             return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
         }
@@ -70,6 +76,23 @@ namespace API.Data
         public void Update(Ticket ticket)
         {
             _context.Entry(ticket).State = EntityState.Modified;
+        }
+
+        public void Create(Ticket ticket)
+        {
+            _context.Tickets.Add(ticket);
+        }
+
+        public void Delete(int[] ticketIdsToDelete) {
+            var ticketsToDelete = _context.Tickets.Where(t => ticketIdsToDelete.Contains(t.Id));
+            foreach(var ticket in ticketsToDelete) {
+                _context.Remove(ticket);
+            }
+        }
+
+        public async Task<bool> TicketExists(string title)
+        {
+            return await _context.Tickets.AnyAsync(x => x.Title.ToLower() == title.ToLower());
         }
     }
 }

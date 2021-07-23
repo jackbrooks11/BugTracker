@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of, pipe } from 'rxjs';
 import { map, take } from 'rxjs/operators';
@@ -6,8 +6,6 @@ import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Ticket } from '../_models/ticket';
 import { TicketParams } from '../_models/ticketParams';
-import { User } from '../_models/user';
-import { AccountService } from './account.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,10 +15,13 @@ export class TicketsService {
   tickets: Ticket[] = [];
   ticketsForUser: Ticket[] = [];
   ticketCache = new Map();
+  ticketForUserCache = new Map();
   ticketParams: TicketParams;
-
+  ticketForUserParams: TicketParams;
+ 
   constructor(private http: HttpClient) {
       this.ticketParams = new TicketParams();
+      this.ticketForUserParams = new TicketParams();
   }
 
   getTickets(ticketParams: TicketParams) {
@@ -48,12 +49,28 @@ export class TicketsService {
     );
   }
 
-  getTicketsForUser() {
-    if (this.ticketsForUser.length > 0) return of(this.ticketsForUser);
-    return this.http.get<Ticket[]>(this.baseUrl + 'users/member/tickets').pipe(
-      map((tickets) => {
-        this.ticketsForUser = tickets;
-        return tickets;
+  getTicketsForUser(ticketParams: TicketParams) {
+    var response = this.ticketForUserCache.get(Object.values(ticketParams).join('-'));
+    if (response) {
+      return of(response);
+    }
+
+    let params = this.getPaginationHeaders(
+      ticketParams.pageNumber,
+      ticketParams.pageSize
+    );
+
+    params = params.append('orderBy', ticketParams.orderBy);
+    params = params.append('ascending', ticketParams.ascending);
+    params = params.append('searchMatch', ticketParams.searchMatch);
+
+    return this.getPaginatedResult<Ticket[]>(
+      this.baseUrl + 'users/member/tickets',
+      params
+    ).pipe(
+      map((response) => {
+        this.ticketForUserCache.set(Object.values(ticketParams).join('-'), response);
+        return response;
       })
     );
   }
@@ -77,12 +94,40 @@ export class TicketsService {
     );
   }
 
+  createTicket(model: any) {
+    return this.http.post(this.baseUrl + 'tickets/create', model).pipe(
+      map((ticket: Ticket) => {
+        const index = this.tickets.indexOf(ticket);
+        this.tickets[index] = ticket;
+        this.ticketCache.clear();
+      })
+    )
+  }
+
+  deleteTickets(ticketIdsToDelete: number[]) {
+    return this.http.post(this.baseUrl + 'tickets/delete', ticketIdsToDelete).pipe(
+      map((ticket: Ticket) => {
+        const index = this.tickets.indexOf(ticket);
+        this.tickets[index] = ticket;
+        this.ticketCache.clear();
+      })
+    )
+  }
+
   getTicketParams() {
     return this.ticketParams;
   }
 
   setTicketParams(params: TicketParams) {
     this.ticketParams = params;
+  }
+
+  getTicketForUserParams() {
+    return this.ticketForUserParams;
+  }
+
+  setTicketForUserParams(params: TicketParams) {
+    this.ticketForUserParams = params;
   }
 
   private getPaginatedResult<T>(url, params) {
@@ -95,7 +140,6 @@ export class TicketsService {
             response.headers.get('Pagination')
           );
         }
-
         return paginatedResult;
       })
     );

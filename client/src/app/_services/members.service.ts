@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
 import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
+import { UserParams } from '../_models/userParams';
 
 
 @Injectable({
@@ -15,29 +16,31 @@ import { User } from '../_models/user';
 export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
+  memberCache = new Map();
+  userParams: UserParams;
   paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.userParams = new UserParams();
+   }
 
-  getMembers(page?: number, itemsPerPage?: number) {    
+  getMembers(userParams: UserParams) {  
+    var response = this.memberCache.get(Object.values(userParams).join('-'));
+    if (response) {
+      return of(response);
+    }  
+
     let params = new HttpParams();
 
-    if (page !== null && itemsPerPage !== null) {
-      params = params.append('pageNumber', page.toString());
-      params = params.append('pageSize', itemsPerPage.toString());
-    }
-
-    return this.http.get<Member[]>(this.baseUrl + 'users', {observe: 'response', params}).pipe(
-      map(response => {
-        this.paginatedResult.result = response.body;
-        if (response.headers.get('Pagination') !== null) {
-          this.paginatedResult.pagination = JSON.parse(response.headers.get('Pagination'));
-        }
-
-        return this.paginatedResult;
-      })
-      
-    )
+    params = params.append('searchMatch', userParams.searchMatch);
+    return this.getPaginatedResult<Member[]>(
+      this.baseUrl + 'users',
+      params
+    ).pipe(
+      map((response) => {
+        this.memberCache.set(Object.values(userParams).join('-'), response);
+        return response;
+      }))
   }
 
   getMember(username: string) {
@@ -54,7 +57,31 @@ export class MembersService {
     return this.http.put(this.baseUrl + 'users', member).pipe(map(() => {
       const index = this.members.indexOf(member);
       this.members[index] = member;
-    })
-  );
+      })
+    );
   }
+
+  getUserParams() {
+    return this.userParams;
+  }
+
+  setUserParams(params: UserParams) {
+    this.userParams = params;
+  }
+
+  private getPaginatedResult<T>(url, params) {
+    const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
+    return this.http.get<T>(url, { observe: 'response', params }).pipe(
+      map((response) => {
+        paginatedResult.result = response.body;
+        if (response.headers.get('Pagination') !== null) {
+          paginatedResult.pagination = JSON.parse(
+            response.headers.get('Pagination')
+          );
+        }
+        return paginatedResult;
+      })
+    );
+  }
+
 }

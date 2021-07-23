@@ -60,10 +60,15 @@ namespace API.Controllers
         }
 
         [HttpGet("member/tickets")]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForUser()
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForUser([FromQuery] TicketParams ticketParams)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return Ok(await _userRepository.GetTicketsForUserAsync(username));
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
+            
+            var tickets = await _userRepository.GetTicketsForUserAsync(username, ticketParams);
+
+            Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);   
+
+            return Ok(tickets); 
         }
 
         [HttpGet("{username}/roles")]

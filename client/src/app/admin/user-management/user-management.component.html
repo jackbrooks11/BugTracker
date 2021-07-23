@@ -1,18 +1,100 @@
-<div class="table-responsive margin-bottom-2x">
-    <table class="table table-striped margin-bottom-none">
-      <thead>
-        <tr>
-          <th style="width: 30%;">Username</th>
-          <th style="width: 40%;">Active Roles</th>
-          <th style="width: 30%;"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of users">
-            <td>{{user.username}}</td>
-            <td>{{user.roles}}</td>
-            <td><button (click)="openRolesModal(user)" class="btn btn-info">Edit Roles</button></td>
-        </tr>
-      </tbody>
-    </table>
+<div>
+  <div style="float: left">
+    <label>Show</label>
+    <select
+      name="itemsPerPage"
+      [(ngModel)]="userParams.pageSize"
+      (change)="loadUsers()"
+    >
+      <option>5</option>
+      <option>10</option>
+      <option>25</option>
+      <option>50</option>
+    </select>
+    entries
   </div>
+  <input
+    type="text"
+    name="search"
+    placeholder="Search"
+    [(ngModel)]="userParams.searchMatch"
+    (input)="loadUsers()"
+    style="float: right"
+  />
+</div>
+
+
+<div class="table margin-bottom-2x">
+  <table class="table margin-bottom-none">
+    <thead>
+      <tr>
+        <th style="width: 30%">
+          Username
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadUsers(true, 0)"
+            btnRadio="username"
+            [(ngModel)]="userParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="userParams.icons[0] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="userParams.icons[0] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="userParams.icons[0] == 2"></i>
+          </button>
+        </th>
+        <th style="width: 40%">Active Roles</th>
+        <th style="width: 30%"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.username }}</td>
+        <td>{{ user.roles}}</td>
+        <td>
+          <button
+            (click)="openRolesModal(user)"
+            class="btn btn-info"
+            style="float: right"
+          >
+            Edit Roles
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="pagination">
+  <span style="float: left">
+    Showing
+    {{
+      pagination.totalItems > 0
+        ? pagination.itemsPerPage * (pagination.currentPage - 1) + 1
+        : pagination.itemsPerPage * (pagination.currentPage - 1)
+    }}
+    to
+    {{
+      pagination.itemsPerPage * pagination.currentPage > pagination.totalItems
+        ? pagination.totalItems
+        : pagination.itemsPerPage * pagination.currentPage
+    }}
+    of {{ pagination.totalItems }} entries
+  </span>
+  <div
+    class="d-flex justify-content-center"
+    *ngIf="pagination"
+    style="float: right"
+  >
+    <pagination
+      [boundaryLinks]="true"
+      [totalItems]="pagination.totalItems"
+      [itemsPerPage]="pagination.itemsPerPage"
+      [(ngModel)]="pagination.currentPage"
+      (pageChanged)="pageChanged($event)"
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
+  </div>
+</div>

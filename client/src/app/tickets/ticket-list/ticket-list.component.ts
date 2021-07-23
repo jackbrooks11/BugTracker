@@ -1,50 +1,66 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { ChildActivationStart } from '@angular/router';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { TicketModalComponent } from 'src/app/modals/ticket-modal/ticket-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
 import { Ticket } from 'src/app/_models/ticket';
 import { TicketParams } from 'src/app/_models/ticketParams';
-import { AccountService } from 'src/app/_services/account.service';
+import { MembersService } from 'src/app/_services/members.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 @Component({
   selector: 'app-ticket-list',
   templateUrl: './ticket-list.component.html',
-  styleUrls: ['./ticket-list.component.css']
+  styleUrls: ['./ticket-list.component.css'],
 })
 export class TicketListComponent implements OnInit {
   tickets: Ticket[];
   pagination: Pagination;
   ticketParams: TicketParams;
+  bsModalRef: BsModalRef;
+  checkAll: boolean = false;
+  ticketIdsToDelete: number[] = [];
 
-  constructor(private ticketService: TicketsService) {
+  constructor(
+    private ticketService: TicketsService,
+    private modalService: BsModalService
+  ) {
     this.ticketParams = this.ticketService.getTicketParams();
-   }
+  }
 
   ngOnInit(): void {
     this.loadTickets();
   }
 
-  loadTickets(toggle: boolean = false, index: number = this.ticketParams.index) {
+  updateTable(toggle: boolean, index: number) {
     if (toggle) {
       this.changeIcon(index);
       //New column has been clicked
       if (this.ticketParams.index != index) {
+        //Set old icon to double arrows
         this.ticketParams.icons[this.ticketParams.index] = 0;
+        //New index for column clicked
         this.ticketParams.index = index;
         this.ticketParams.ascending = true;
       }
+      //Still on same column
       else {
         this.toggleAscending();
       }
     }
-    console.log(this.ticketParams);
+    this.ticketParams.searchMatch = this.ticketParams.searchMatch.toLowerCase();
     this.ticketService.setTicketParams(this.ticketParams);
-    this.ticketService.getTickets(this.ticketParams).subscribe(response => {
+  }
+
+  loadTickets(
+    toggle: boolean = false,
+    index: number = this.ticketParams.index
+  ) {
+    this.updateTable(toggle, index);
+    this.ticketService.getTickets(this.ticketParams).subscribe((response) => {
       this.tickets = response.result;
       this.pagination = response.pagination;
-    })
+    });
   }
 
   pageChanged(event: any) {
@@ -59,10 +75,59 @@ export class TicketListComponent implements OnInit {
 
   changeIcon(index: number) {
     if (this.ticketParams.icons[index] == 2) {
-      -- this.ticketParams.icons[index];
-    }
-    else {
-      ++ this.ticketParams.icons[index];
+      --this.ticketParams.icons[index];
+    } else {
+      ++this.ticketParams.icons[index];
     }
   }
+
+  openRolesModal() {
+    const config = {
+      class: 'modal-dialog-centered',
+    };
+    this.bsModalRef = this.modalService.show(TicketModalComponent, config);
+    this.bsModalRef.content.submitted.subscribe((value) => {
+      const submitted = value;
+      if (submitted) {
+        this.createTicket();
+      }
+    });
+  }
+
+  createTicket() {
+    this.ticketService
+      .createTicket(this.bsModalRef.content.createTicketForm.value)
+      .subscribe((value) => {
+        this.loadTickets();
+      });
+  }
+
+  deleteTickets() {
+    if(confirm("Are you sure to delete the selected ticket(s)?")) {
+      this.ticketService
+      .deleteTickets(this.ticketIdsToDelete)
+      .subscribe((value) => {
+        this.ticketIdsToDelete = [];
+        this.loadTickets();
+      });
+    }
+  }
+
+  toggleCheckAll = (evt) => {
+    this.checkAll = !this.checkAll;
+    if (evt.target.checked == true) {
+      this.tickets.forEach((val) => this.ticketIdsToDelete.push(val.id));
+    } else {
+      this.ticketIdsToDelete.length = 0;
+    }
+  }
+
+  changed = (evt, id: number) => {
+    if (evt.target.checked == true) {
+      this.ticketIdsToDelete.push(id);
+    } else {
+      this.ticketIdsToDelete.splice(this.ticketIdsToDelete.indexOf(id), 1);
+    }
+  }
+
 }

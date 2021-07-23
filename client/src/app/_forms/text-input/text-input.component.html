@@ -1,11 +1,22 @@
 <div class="form-group">
   <input
+    *ngIf="label == 'title'"
     [class.is-invalid]="ngControl.touched && ngControl.invalid"
     type="{{ type }}"
     class="form-control"
     [formControl]="ngControl.control"
-    placeholder={{label}}
-  >
+    placeholder="{{
+      ['title', 'project', 'assignedTo', 'priority', 'type'].includes(label)
+        ? ''
+        : label
+    }}"
+  />
+  <textarea
+    *ngIf="label == 'description'"
+    [class.is-invalid]="ngControl.touched && ngControl.invalid"
+    class="form-control"
+    [formControl]="ngControl.control"
+  ></textarea>
   <div *ngIf="ngControl.control.errors?.required" class="invalid-feedback">
     Please enter a {{ label }}
   </div>

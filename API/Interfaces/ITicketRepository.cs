@@ -7,9 +7,13 @@ namespace API.Interfaces
 {
     public interface ITicketRepository
     {
-        void Update(Ticket user);
+        void Update(Ticket ticket);
         Task<bool> SaveAllAsync();
         Task<PagedList<Ticket>> GetTicketsAsync(TicketParams ticketParams);
         Task<Ticket> GetTicketByIdAsync(int id);   
+        void Create(Ticket ticket);
+        Task<bool> TicketExists(string title);
+
+        void Delete(int[] ticketIdsToDelete);
     }
 }

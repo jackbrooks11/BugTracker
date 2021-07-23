@@ -1,1 +1,167 @@
-<p>ticket-modal works!</p>
+<div class="row flex-lg-nowrap">
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form
+                    [formGroup]="createTicketForm"
+                    (ngSubmit)="createTicketForm.valid && createTicket()"
+                    class="form"
+                    novalidate=""
+                    autocomplete="off"
+                  >
+                    <div class="row">
+                      <div class="col">
+                        <div class="form-group">
+                          <h4>Create a new ticket</h4>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Title</label>
+                              <app-text-input
+                                [formControl]="
+                                  createTicketForm.controls['title']
+                                "
+                                [label]="'title'"
+                              ></app-text-input>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold"
+                                >Description</label
+                              >
+                              <app-text-input
+                                [formControl]="
+                                  createTicketForm.controls['description']
+                                "
+                                [label]="'description'"
+                              ></app-text-input>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Project</label>
+                              <app-text-input
+                                [formControl]="
+                                  createTicketForm.controls['project']
+                                "
+                                [label]="'project'"
+                              ></app-text-input>
+                            </div>
+                          </div>
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold"
+                                >Assigned Developer</label
+                              >
+
+                              <input
+                                [(ngModel)]="userParams.searchMatch"
+                                [ngModelOptions]="{standalone: true}" 
+                                name="assignedTo"
+                                id="assignedTo"
+                                (input)="getFilteredMembers()"
+                                list="memberList"
+                                type="search"
+                                class="form-control"
+                                placeholder="Search"
+                                aria-label="Search"
+                                aria-describedby="search-addon"
+                              />
+
+                              <div
+                                id="memberList"
+                                *ngIf="!hide"
+                                style="max-height: 200px; overflow: scroll; border: thin solid;"
+                              >
+                                <p
+                                  class="dropdown-item"
+                                  *ngFor="let filteredMember of filteredMembers"
+                                  (click)="
+                                    updateDeveloper(filteredMember.userName)
+                                  "
+                                  style="cursor: pointer"
+                                >
+                                  {{ filteredMember.userName }}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Priority</label>
+                              <select
+                                [formControl]="
+                                  createTicketForm.controls['priority']
+                                "
+                                name="priority"
+                                id="priority"
+                                class="form-control"
+                              >
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="col mb-3">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Type</label>
+                              <select
+                                [formControl]="
+                                  createTicketForm.controls['type']
+                                "
+                                name="type"
+                                id="type"
+                                class="form-control"
+                              >
+                                <option>Bug</option>
+                                <option>Feature Request</option>
+                                <option>Issue</option>
+                                <option>Requirement</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col d-flex justify-content-end">
+                            <button
+                              type="button"
+                              class="btn btn-default"
+                              (click)="bsModalRef.hide()"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              [disabled]="!createTicketForm.valid"
+                              type="submit"
+                              class="btn btn-default"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

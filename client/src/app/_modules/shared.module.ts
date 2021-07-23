@@ -5,6 +5,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TabsModule } from 'ngx-bootstrap/tabs';
 
 @NgModule({
   declarations: [],
@@ -16,14 +17,16 @@ import { ButtonsModule } from 'ngx-bootstrap/buttons';
     }),
     ModalModule.forRoot(),
     PaginationModule.forRoot(),
-    ButtonsModule.forRoot()
+    ButtonsModule.forRoot(),
+    TabsModule.forRoot()
   ],
   exports: [
     BsDropdownModule,
     ToastrModule,
     ModalModule,
     PaginationModule,
-    ButtonsModule
+    ButtonsModule,
+    TabsModule
   ]
 })
 export class SharedModule { }
