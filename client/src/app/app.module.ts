@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -9,7 +8,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
-import { MemberListComponent } from './members/member-list/member-list.component';
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { SharedModule } from './_modules/shared.module';
 import { TestErrorsComponent } from './errors/test-errors/test-errors.component';
@@ -32,6 +30,9 @@ import { UserManagementComponent } from './admin/user-management/user-management
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
 import { TicketModalComponent } from './modals/ticket-modal/ticket-modal.component';
+import { ProjectListComponent } from './projects/project-list/project-list.component';
+import { ProjectModalComponent } from './modals/project-modal/project-modal.component';
+import { MemberProjectsComponent } from './members/member-projects/member-projects.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,6 @@ import { TicketModalComponent } from './modals/ticket-modal/ticket-modal.compone
     NavComponent,
     HomeComponent,
     RegisterComponent,
-    MemberListComponent,
     MemberDetailComponent,
     MemberEditComponent,
     TestErrorsComponent,
@@ -56,7 +56,10 @@ import { TicketModalComponent } from './modals/ticket-modal/ticket-modal.compone
     UserManagementComponent,
     RolesModalComponent,
     MemberTicketsComponent,
-    TicketModalComponent
+    TicketModalComponent,
+    ProjectListComponent,
+    ProjectModalComponent,
+    MemberProjectsComponent
   ],
   imports: [
     BrowserModule,

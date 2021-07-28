@@ -16,5 +16,6 @@ namespace API.Interfaces
         Task<AppUser> GetUserByIdAsync(int id);
         Task<AppUser> GetUserByUsernameAsync(string username);
         Task<PagedList<Ticket>> GetTicketsForUserAsync(string username, TicketParams ticketParams);
+        Task<PagedList<Project>> GetProjectsForUserAsync(int id, ProjectParams projectParams);
     }
 }

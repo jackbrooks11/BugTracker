@@ -1,0 +1,79 @@
+<div class="row flex-lg-nowrap">
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form
+                    [formGroup]="createProjectForm"
+                    (ngSubmit)="createProjectForm.valid && createProject()"
+                    class="form"
+                    novalidate=""
+                    autocomplete="off"
+                  >
+                    <div class="row">
+                      <div class="col">
+                        <div class="form-group">
+                          <h4>Create a new project</h4>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold">Title</label>
+                              <app-text-input
+                                [formControl]="
+                                  createProjectForm.controls['title']
+                                "
+                                [label]="'title'"
+                              ></app-text-input>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold"
+                                >Description</label
+                              >
+                              <app-text-input
+                                [formControl]="
+                                  createProjectForm.controls['description']
+                                "
+                                [label]="'description'"
+                              ></app-text-input>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col d-flex justify-content-end">
+                            <button
+                              type="button"
+                              class="btn btn-default"
+                              (click)="bsModalRef.hide()"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              [disabled]="!createProjectForm.valid"
+                              type="submit"
+                              class="btn btn-default"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

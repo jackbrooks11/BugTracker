@@ -63,8 +63,13 @@ namespace API.Controllers
             {
                 return BadRequest("Ticket title taken");
             }
-            if (ticket.AssignedTo.Length > 0) {
+            if (ticket.AssignedTo.Length > 0)
+            {
                 _userRepository.AddTicketForUserAsync(ticket);
+                if (await _userRepository.GetUserByUsernameAsync(ticket.AssignedTo) == null)
+                {
+                    return BadRequest("Can't assign ticket to user that doesn't exist");
+                }
             }
             _ticketRepository.Create(ticket);
 

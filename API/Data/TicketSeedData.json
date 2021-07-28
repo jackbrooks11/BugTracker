@@ -3,33 +3,27 @@
       "Title": "ExampleTicket5",
       "Description": "This is a fake ticket description for ticket # 5",
       "Project": "Project 1",
-      "SubmittedBy": "Admin",
+      "SubmittedBy": "admin",
       "Priority": "Low",
       "Type": "Bug",
-      "State": "Closed",
-      "Created": "2021-05-28",
-      "LastEdited": "2021-06-12"
+      "State": "Closed"
     },
     {
       "Title": "ExampleTicketUnassigned",
       "Description": "This is a fake ticket description for an unassigned ticket",
       "Project": "Project 1",
-      "SubmittedBy": "Admin",
+      "SubmittedBy": "admin",
       "Priority": "High",
       "Type": "Feature Request",
-      "State": "Closed",
-      "Created": "2021-05-29",
-      "LastEdited": "2021-06-08"
+      "State": "Closed"
     },
     {
       "Title": "ExampleTicket6",
       "Description": "This is a fake ticket description for ticket #6",
       "Project": "Project 1",
-      "SubmittedBy": "Admin",
+      "SubmittedBy": "admin",
       "Priority": "Medium",
       "Type": "Bug",
-      "State": "Open",
-      "Created": "2021-06-18",
-      "LastEdited": "2021-06-20"
+      "State": "Open"
     }
 ]

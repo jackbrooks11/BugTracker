@@ -33,7 +33,8 @@ namespace API.Data
         {
             var query = _context.Users
             .AsNoTracking();
-            if (userParams.SearchMatch != null) {
+            if (userParams.SearchMatch != null)
+            {
                 query = query.Where(u => (u.UserName.ToLower().Contains(userParams.SearchMatch.ToLower())));
             }
             query = query.OrderBy(u => u.UserName);
@@ -64,10 +65,72 @@ namespace API.Data
                 t.State.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
                 t.Type.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
             }
+             if (!ticketParams.Ascending)
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderByDescending(t => t.Title),
+                    "project" => query.OrderByDescending(t => t.Project),
+                    "assignedTo" => query.OrderByDescending(t => t.AssignedTo),
+                    "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderByDescending(t => t.State),
+                    "type" => query.OrderByDescending(t => t.Type),
+                    _ => query.OrderByDescending(t => t.Created)
+
+                };
+            }
+            else
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderBy(t => t.Title),
+                    "project" => query.OrderBy(t => t.Project),
+                    "assignedTo" => query.OrderBy(t => t.AssignedTo),
+                    "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderBy(t => t.State),
+                    "type" => query.OrderBy(t => t.Type),
+                    _ => query.OrderBy(t => t.Created)
+
+                };
+            }
             query = query.Where(t => t.AssignedTo.ToLower() == username.ToLower());
             return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
         }
 
+        public async Task<PagedList<Project>> GetProjectsForUserAsync(int id, ProjectParams projectParams)
+        {
+            var query = _context.Projects.Where(pu => pu.ProjectUsers.Any(p => p.UserId == id))
+            .AsNoTracking();
+            if (projectParams.SearchMatch != null)
+            {
+                query = query.Where(p => (p.Title.ToLower().Contains(projectParams.SearchMatch.ToLower()) ||
+                p.Description.ToLower().Contains(projectParams.SearchMatch.ToLower())));
+            }
+            if (!projectParams.Ascending)
+            {
+                query = projectParams.OrderBy switch
+                {
+                    "title" => query.OrderByDescending(p => p.Title),
+                    "description" => query.OrderByDescending(p => p.Description),
+                    _ => query.OrderByDescending(t => t.Created)
+                };
+            }
+            else
+            {
+                query = projectParams.OrderBy switch
+                {
+                    "title" => query.OrderBy(p => p.Title),
+                    "description" => query.OrderBy(p => p.Description),
+                    _ => query.OrderBy(t => t.Created)
+
+                };
+            }
+            return await PagedList<Project>.CreateAsync(query, projectParams.PageNumber, projectParams.PageSize);
+        }
         public async void AddTicketForUserAsync(Ticket ticket)
         {
             var user = await this.GetUserByUsernameAsync(ticket.AssignedTo);

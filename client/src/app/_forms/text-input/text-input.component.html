@@ -1,6 +1,6 @@
 <div class="form-group">
   <input
-    *ngIf="label == 'title'"
+  *ngIf="label != 'description'"
     [class.is-invalid]="ngControl.touched && ngControl.invalid"
     type="{{ type }}"
     class="form-control"

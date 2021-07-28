@@ -14,7 +14,9 @@ namespace API.Data
             if (await userManager.Users.AnyAsync()) return;
 
             var userData = await System.IO.File.ReadAllTextAsync("Data/UserSeedData.json");
+
             var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
+
             if (users == null) return;
 
             var roles = new List<AppRole>
@@ -40,7 +42,6 @@ namespace API.Data
             {
                 UserName = "admin"
             };
-
             var result = await userManager.CreateAsync(admin, "Pa$$w0rd");
             await userManager.AddToRolesAsync(admin, new[] {"Admin", "Project Manager"});
             
@@ -57,6 +58,12 @@ namespace API.Data
                 context.Tickets.Add(ticket);
             }
             await context.SaveChangesAsync();
+
         }
+       /* public static async Task SeedProjects(DataContext context)
+        {
+            if (await context.Projects.AnyAsync()) return;
+        }
+        */
     }
 }

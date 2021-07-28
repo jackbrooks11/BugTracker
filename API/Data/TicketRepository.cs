@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Entities;
@@ -86,8 +85,10 @@ namespace API.Data
         public void Delete(int[] ticketIdsToDelete) {
             var ticketsToDelete = _context.Tickets.Where(t => ticketIdsToDelete.Contains(t.Id));
             foreach(var ticket in ticketsToDelete) {
+                
                 _context.Remove(ticket);
             }
+
         }
 
         public async Task<bool> TicketExists(string title)

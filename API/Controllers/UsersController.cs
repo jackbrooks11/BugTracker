@@ -71,6 +71,16 @@ namespace API.Controllers
             return Ok(tickets); 
         }
 
+        [HttpGet("member/projects")]
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjectsForUser([FromQuery] ProjectParams projectParams)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var projects =  await _userRepository.GetProjectsForUserAsync(int.Parse(userId), projectParams);
+
+            return Ok(projects);
+        }
+
         [HttpGet("{username}/roles")]
         public async Task<ActionResult> GetUserWithRoles(string username)
         {

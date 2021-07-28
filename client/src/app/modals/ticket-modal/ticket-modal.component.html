@@ -67,7 +67,7 @@
 
                               <input
                                 [(ngModel)]="userParams.searchMatch"
-                                [ngModelOptions]="{standalone: true}" 
+                                [ngModelOptions]="{ standalone: true }"
                                 name="assignedTo"
                                 id="assignedTo"
                                 (input)="getFilteredMembers()"
@@ -82,7 +82,11 @@
                               <div
                                 id="memberList"
                                 *ngIf="!hide"
-                                style="max-height: 200px; overflow: scroll; border: thin solid;"
+                                style="
+                                  max-height: 200px;
+                                  overflow: scroll;
+                                  border: thin solid;
+                                "
                               >
                                 <p
                                   class="dropdown-item"
