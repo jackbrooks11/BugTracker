@@ -17,7 +17,6 @@ import { ServerErrorComponent } from './errors/server-error/server-error.compone
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
-import { TicketCreateComponent } from './tickets/ticket-create/ticket-create.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -47,7 +46,6 @@ import { MemberProjectsComponent } from './members/member-projects/member-projec
     ServerErrorComponent,
     TicketListComponent,
     TicketDetailComponent,
-    TicketCreateComponent,
     SidebarComponent,
     TicketEditComponent,
     TextInputComponent,

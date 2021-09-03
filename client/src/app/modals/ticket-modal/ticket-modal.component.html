@@ -55,8 +55,30 @@
                                 [formControl]="
                                   createTicketForm.controls['project']
                                 "
+                                list="projectList"
+                                (input)="getFilteredProjects()"
                                 [label]="'project'"
                               ></app-text-input>
+                              <div
+                              id="projectList"
+                              *ngIf="!hideProjects"
+                              style="
+                                max-height: 200px;
+                                overflow: scroll;
+                                border: thin solid;
+                              "
+                            >
+                              <div
+                                class="dropdown-item"
+                                *ngFor="let filteredProject of filteredProjects"
+                                (click)="
+                                  updateProject(filteredProject.title)
+                                "
+                                style="cursor: pointer"
+                              >
+                                {{ filteredProject.title }}
+                              </div>
+                            </div>
                             </div>
                           </div>
                           <div class="col mb-3">

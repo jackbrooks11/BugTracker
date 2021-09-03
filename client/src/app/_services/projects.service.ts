@@ -51,6 +51,10 @@ export class ProjectsService {
     );
   }
 
+  getProject(title: string) {
+    return this.http.get<Project>(this.baseUrl + 'projects/' + title);
+  }
+
   getProjectsForUser(projectParams: ProjectParams) {
     var response = this.projectForUserCache.get(Object.values(projectParams).join('-'));
     if (response) {
@@ -67,7 +71,7 @@ export class ProjectsService {
     params = params.append('searchMatch', projectParams.searchMatch);
 
     return this.getPaginatedResult<Project[]>(
-      this.baseUrl + 'users/member/projects',
+      this.baseUrl + 'projects/member/projects',
       params
     ).pipe(
       map((response) => {

@@ -9,16 +9,16 @@
                 <div class="tab-pane active">
                   <form
                     #editForm="ngForm"
+                    *ngIf="ticket"
                     (ngSubmit)="updateTicket()"
                     class="form"
                     novalidate=""
+                    autocomplete="off"
                   >
                     <div class="row">
                       <div class="col">
                         <div class="form-group">
-                          <h4 *ngIf="ticket">
-                            Details for {{ ticket.title | titlecase }}
-                          </h4>
+                          <h4>Details for {{ ticket.title | titlecase }}</h4>
                         </div>
                         <div class="p-3">
                           <a
@@ -64,24 +64,84 @@
                         <div class="row">
                           <div class="col mb-3">
                             <div class="form-group">
-                              <label class="font-weight-bold">Project</label>
+                              <label class="font-weight-bold"
+                                >Project</label
+                              >
+
                               <input
-                                class="form-control"
                                 [(ngModel)]="ticket.project"
-                                type="text"
                                 name="project"
+                                id="project"
+                                (input)="getFilteredProjects()"
+                                (click)="hideMemberList()"
+                                list="projectList"
+                                type="search"
+                                class="form-control"
+                                placeholder="Search"
+                                aria-label="Search"
+                                aria-describedby="search-addon"
                               />
+                              <div
+                                id="projectList"
+                                *ngIf="!hideProjects"
+                                style="
+                                  max-height: 200px;
+                                  overflow: scroll;
+                                  border: thin solid;
+                                "
+                              >
+                                <div
+                                  class="dropdown-item"
+                                  *ngFor="let filteredProject of filteredProjects"
+                                  (click)="
+                                    updateProject(filteredProject.title)
+                                  "
+                                  style="cursor: pointer"
+                                >
+                                  {{ filteredProject.title }}
+                                </div>
+                              </div>
                             </div>
                           </div>
                           <div class="col mb-3">
                             <div class="form-group">
-                              <label class="font-weight-bold">Assigned Developer</label>
+                              <label class="font-weight-bold"
+                                >Assigned Developer</label
+                              >
+
                               <input
-                                class="form-control"
                                 [(ngModel)]="ticket.assignedTo"
-                                type="text"
                                 name="assignedTo"
+                                id="assignedTo"
+                                (input)="getFilteredMembers()"
+                                [disabled]="disableMembers"
+                                list="memberList"
+                                type="search"
+                                class="form-control"
+                                placeholder="Search"
+                                aria-label="Search"
+                                aria-describedby="search-addon"
                               />
+                              <div
+                                id="memberList"
+                                *ngIf="!hideMembers"
+                                style="
+                                  max-height: 200px;
+                                  overflow: scroll;
+                                  border: thin solid;
+                                "
+                              >
+                                <div
+                                  class="dropdown-item"
+                                  *ngFor="let filteredMember of filteredMembers"
+                                  (click)="
+                                    updateDeveloper(filteredMember.userName)
+                                  "
+                                  style="cursor: pointer"
+                                >
+                                  {{ filteredMember.userName }}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -89,23 +149,32 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Priority</label>
-                              <input
+                              <select
+                                name="priority"
+                                id="priority"
                                 class="form-control"
                                 [(ngModel)]="ticket.priority"
-                                type="text"
-                                name="priority"
-                              />
+                              >
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                              </select>
                             </div>
                           </div>
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Status</label>
-                              <input
-                                class="form-control"
+                              <select
                                 [(ngModel)]="ticket.state"
-                                type="text"
                                 name="state"
-                              />
+                                id="state"
+                                class="form-control"
+                              >
+                                <option>New</option>
+                                <option>In Progress</option>
+                                <option>Resolved</option>
+                                <option>Closed</option>
+                              </select>
                             </div>
                           </div>
                         </div>
@@ -113,21 +182,25 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Type</label>
-                              <input
-                                class="form-control"
+                              <select
                                 [(ngModel)]="ticket.type"
-                                type="text"
                                 name="type"
-                              />
+                                id="type"
+                                class="form-control"
+                              >
+                                <option>Bug</option>
+                                <option>Feature Request</option>
+                                <option>Issue</option>
+                                <option>Requirement</option>
+                              </select>
                             </div>
                           </div>
-                          <div class="col mb-3">
-                          </div>
+                          <div class="col mb-3"></div>
                         </div>
                         <div class="row">
                           <div class="col d-flex justify-content-end">
                             <button
-                              [disabled]="!editForm.dirty"
+                              [disabled]="!editForm.dirty || disableMembers"
                               class="btn btn-primary"
                               type="submit"
                             >

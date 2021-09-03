@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class ProjectAdded : Migration
+    public partial class TicketAltered : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

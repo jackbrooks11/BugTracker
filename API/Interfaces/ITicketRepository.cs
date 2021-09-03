@@ -10,6 +10,9 @@ namespace API.Interfaces
         Task<bool> SaveAllAsync();
         Task<PagedList<Ticket>> GetTicketsAsync(TicketParams ticketParams);
         Task<Ticket> GetTicketByIdAsync(int id);   
+        Task<Ticket> GetTicketByTitleAsync(string title);   
+        Task<PagedList<Ticket>> GetTicketsForUserAsync(string username, TicketParams ticketParams);
+
         void Create(Ticket ticket);
         Task<bool> TicketExists(string title);
 

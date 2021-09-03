@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ChildActivationStart } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { TicketModalComponent } from 'src/app/modals/ticket-modal/ticket-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
 import { Ticket } from 'src/app/_models/ticket';
 import { TicketParams } from 'src/app/_models/ticketParams';
-import { MembersService } from 'src/app/_services/members.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 @Component({

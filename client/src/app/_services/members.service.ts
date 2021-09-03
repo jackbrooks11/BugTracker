@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
@@ -16,12 +16,16 @@ import { UserParams } from '../_models/userParams';
 export class MembersService {
   baseUrl = environment.apiUrl;
   members: Member[] = [];
+  membersForProject: Member[] = [];
   memberCache = new Map();
+  memberForProjectCache = new Map();
   userParams: UserParams;
+  userForProjectParams: UserParams;
   paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>();
 
   constructor(private http: HttpClient) {
     this.userParams = new UserParams();
+    this.userForProjectParams = new UserParams();
    }
 
   getMembers(userParams: UserParams) {  
@@ -39,6 +43,26 @@ export class MembersService {
     ).pipe(
       map((response) => {
         this.memberCache.set(Object.values(userParams).join('-'), response);
+        return response;
+      }))
+  }
+
+  getMembersForProject(projectTitle: string, userParams: UserParams) {
+    var response = this.memberForProjectCache.get(projectTitle);
+    if (response) {
+      return of(response);
+    }  
+
+    let params = new HttpParams();
+
+    params = params.append('searchMatch', userParams.searchMatch);
+
+    return this.getPaginatedResult<Member[]>(
+      this.baseUrl + 'users/' + projectTitle + '/users',
+      params
+    ).pipe(
+      map((response) => {
+        this.memberForProjectCache.set(projectTitle, response);
         return response;
       }))
   }

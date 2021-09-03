@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { of, pipe } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { map} from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Ticket } from '../_models/ticket';
@@ -65,7 +65,7 @@ export class TicketsService {
     params = params.append('searchMatch', ticketParams.searchMatch);
 
     return this.getPaginatedResult<Ticket[]>(
-      this.baseUrl + 'users/member/tickets',
+      this.baseUrl + 'tickets/member/tickets',
       params
     ).pipe(
       map((response) => {

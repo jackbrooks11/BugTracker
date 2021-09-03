@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Member } from 'src/app/_models/member';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
@@ -19,7 +19,8 @@ export class MemberDetailComponent implements OnInit {
   constructor(
     public accountService: AccountService,
     private memberService: MembersService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -30,16 +31,26 @@ export class MemberDetailComponent implements OnInit {
   loadMember() {
     this.memberService
       .getMember(this.route.snapshot.paramMap.get('username'))
-      .subscribe((member) => {
-        this.member = member;
-      });
+      .subscribe(
+        (member) => {
+          if (member == null) {
+            this.router.navigateByUrl('/not-found');
+          }
+          this.member = member;
+        },
+        (error) => {
+          this.router.navigateByUrl('/not-found');
+        }
+      );
   }
 
   getMemberWithRoles() {
-    this.memberService.getMemberRoles(this.route.snapshot.paramMap.get('username')).subscribe(user => {
-      console.log(user);
-      this.user = user;
-    })
+    this.memberService
+      .getMemberRoles(this.route.snapshot.paramMap.get('username'))
+      .subscribe((user) => {
+        console.log(user);
+        this.user = user;
+      });
   }
 
   toggleInput(index: number) {

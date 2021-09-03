@@ -19,6 +19,12 @@ namespace API.Data
         {
             _context.Projects.Add(project);
         }
+        public async Task<Project> GetProjectByTitleAsync(string title)
+        {
+            return await _context.Projects
+            .Include(t => t.Tickets)
+            .SingleOrDefaultAsync(x => x.Title == title);
+        }
 
         public async Task<PagedList<Project>> GetProjectsAsync(ProjectParams projectParams)
         {
@@ -51,6 +57,36 @@ namespace API.Data
             return await PagedList<Project>.CreateAsync(query, projectParams.PageNumber, projectParams.PageSize);
 
         }
+        public async Task<PagedList<Project>> GetProjectsForUserAsync(int id, ProjectParams projectParams)
+        {
+            var query = _context.Projects.Where(pu => pu.ProjectUsers.Any(p => p.UserId == id))
+            .AsNoTracking();
+            if (projectParams.SearchMatch != null)
+            {
+                query = query.Where(p => (p.Title.ToLower().Contains(projectParams.SearchMatch.ToLower()) ||
+                p.Description.ToLower().Contains(projectParams.SearchMatch.ToLower())));
+            }
+            if (!projectParams.Ascending)
+            {
+                query = projectParams.OrderBy switch
+                {
+                    "title" => query.OrderByDescending(p => p.Title),
+                    "description" => query.OrderByDescending(p => p.Description),
+                    _ => query.OrderByDescending(t => t.Created)
+                };
+            }
+            else
+            {
+                query = projectParams.OrderBy switch
+                {
+                    "title" => query.OrderBy(p => p.Title),
+                    "description" => query.OrderBy(p => p.Description),
+                    _ => query.OrderBy(t => t.Created)
+
+                };
+            }
+            return await PagedList<Project>.CreateAsync(query, projectParams.PageNumber, projectParams.PageSize);
+        }
 
         public void Delete(int[] projectIdsToDelete)
         {
@@ -58,13 +94,27 @@ namespace API.Data
 
             foreach (var project in projectsToDelete)
             {
+                if (project.Tickets.Count > 0) {
+                    foreach (var ticket in project.Tickets) {
+                        _context.Remove(ticket);
+                    }
+                }
                 _context.Remove(project);
             }
+        }
+        public async void AddTicketForProjectAsync(Ticket ticket)
+        {
+            var project = await this.GetProjectByTitleAsync(ticket.Project);
+            project.Tickets.Add(ticket);
         }
 
         public async Task<bool> ProjectExists(string title)
         {
             return await _context.Projects.AnyAsync(x => x.Title.ToLower() == title.ToLower());
+        }
+        public void Update(Project project)
+        {
+            _context.Entry(project).State = EntityState.Modified;
         }
 
         public async Task<bool> SaveAllAsync()

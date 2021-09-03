@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Ticket } from 'src/app/_models/ticket';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
@@ -11,7 +11,7 @@ import { TicketsService } from 'src/app/_services/tickets.service';
 export class TicketDetailComponent implements OnInit {
   ticket: Ticket;
 
-  constructor(private ticketService: TicketsService, private route: ActivatedRoute) { }
+  constructor(private ticketService: TicketsService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     this.loadTicket();
@@ -20,7 +20,12 @@ export class TicketDetailComponent implements OnInit {
   loadTicket() {
     this.ticketService.getTicket(Number(this.route.snapshot.paramMap.get('id'))).
     subscribe(ticket => {
+      if (ticket == null) {
+        this.router.navigateByUrl('/not-found')
+      }
       this.ticket = ticket;
+    }, error => {
+      this.router.navigateByUrl('/not-found');
     })
   }
 }

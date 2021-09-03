@@ -10,7 +10,6 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
 import { MemberProjectsComponent } from './members/member-projects/member-projects.component';
 import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
 import { ProjectListComponent } from './projects/project-list/project-list.component';
-import { TicketCreateComponent } from './tickets/ticket-create/ticket-create.component';
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
@@ -32,7 +31,6 @@ const routes: Routes = [
       {path: 'tickets/:id/edit', component: TicketEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
       {path: 'tickets/:id', component: TicketDetailComponent},
       {path: 'tickets', component: TicketListComponent},
-      {path: 'ticket/create', component: TicketCreateComponent},
       {path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard]},
       {path: 'projects', component: ProjectListComponent}
     ]

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Entities;
 using API.Extensions;
@@ -13,14 +14,13 @@ namespace API.Controllers
     public class ProjectsController : BaseApiController
     {
         private readonly IProjectRepository _projectRepository;
-        private readonly IUserRepository _userRepository;
         public ProjectsController(IProjectRepository projectRepository)
         {
             _projectRepository = projectRepository;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProject([FromQuery] ProjectParams projectParams)
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjects([FromQuery] ProjectParams projectParams)
         {
             var projects = await _projectRepository.GetProjectsAsync(projectParams);
 
@@ -28,6 +28,13 @@ namespace API.Controllers
 
             return Ok(projects);
         }
+
+        [HttpGet("{title}", Name = "GetProject")]
+        public async Task<ActionResult<Project>> GetProject(string title) {
+            var project = await _projectRepository.GetProjectByTitleAsync(title);
+            return Ok(project);
+        }
+
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("create")]
@@ -55,6 +62,16 @@ namespace API.Controllers
             if (await _projectRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to delete projects");
+        }
+
+        [HttpGet("member/projects")]
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjectsForUser([FromQuery] ProjectParams projectParams)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var projects =  await _projectRepository.GetProjectsForUserAsync(int.Parse(userId), projectParams);
+
+            return Ok(projects);
         }
         
     }

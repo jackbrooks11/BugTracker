@@ -19,13 +19,16 @@ namespace API.Controllers
     public class UsersController : BaseApiController
     {
         private readonly IUserRepository _userRepository;
+        private readonly IProjectRepository _projectRepository;
+
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> __userManager;
-        public UsersController(IUserRepository userRepository, UserManager<AppUser> _userManager, IMapper mapper)
+        public UsersController(IUserRepository userRepository, IProjectRepository projectRepository, UserManager<AppUser> _userManager, IMapper mapper)
         {
             __userManager = _userManager;
             _mapper = mapper;
             _userRepository = userRepository;
+            _projectRepository = projectRepository;
         }
 
 
@@ -59,30 +62,8 @@ namespace API.Controllers
             return BadRequest("Failed to update user");
         }
 
-        [HttpGet("member/tickets")]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForUser([FromQuery] TicketParams ticketParams)
-        {
-            var username = User.FindFirst(ClaimTypes.Name)?.Value;
-            
-            var tickets = await _userRepository.GetTicketsForUserAsync(username, ticketParams);
-
-            Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);   
-
-            return Ok(tickets); 
-        }
-
-        [HttpGet("member/projects")]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjectsForUser([FromQuery] ProjectParams projectParams)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            var projects =  await _userRepository.GetProjectsForUserAsync(int.Parse(userId), projectParams);
-
-            return Ok(projects);
-        }
-
         [HttpGet("{username}/roles")]
-        public async Task<ActionResult> GetUserWithRoles(string username)
+        public async Task<ActionResult> GetUserRoles(string username)
         {
             var roles = await __userManager.Users
                 .Where(u => u.UserName == username)
@@ -95,6 +76,18 @@ namespace API.Controllers
                 .ToListAsync();
 
             return Ok(roles[0]);
+        }
+
+        [HttpGet("{projectTitle}/users")]
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersForProject(string projectTitle, [FromQuery] UserParams userParams)
+        {
+            var project = await _projectRepository.GetProjectByTitleAsync(projectTitle);
+
+            var projectId = project.Id;
+
+            var users =  await _userRepository.GetUsersForProjectAsync(projectId, userParams);
+
+            return Ok(users);
         }
 
     }

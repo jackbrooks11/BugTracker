@@ -18,6 +18,11 @@ namespace API.Data
         {
             return await _context.Tickets.FindAsync(id);
         }
+        public async Task<Ticket> GetTicketByTitleAsync(string title)
+        {
+          return await _context.Tickets
+            .SingleOrDefaultAsync(x => x.Title == title);
+        }
         public async Task<PagedList<Ticket>> GetTicketsAsync(TicketParams ticketParams)
         {
             var query = _context.Tickets
@@ -64,6 +69,56 @@ namespace API.Data
 
                 };
             }
+            return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
+        }
+
+        public async Task<PagedList<Ticket>> GetTicketsForUserAsync(string username, TicketParams ticketParams)
+        {
+            var query = _context.Tickets
+            .AsNoTracking();
+            if (ticketParams.SearchMatch != null)
+            {
+                query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Project.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.AssignedTo.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Priority.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.State.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Type.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
+            }
+             if (!ticketParams.Ascending)
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderByDescending(t => t.Title),
+                    "project" => query.OrderByDescending(t => t.Project),
+                    "assignedTo" => query.OrderByDescending(t => t.AssignedTo),
+                    "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderByDescending(t => t.State),
+                    "type" => query.OrderByDescending(t => t.Type),
+                    _ => query.OrderByDescending(t => t.Created)
+
+                };
+            }
+            else
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderBy(t => t.Title),
+                    "project" => query.OrderBy(t => t.Project),
+                    "assignedTo" => query.OrderBy(t => t.AssignedTo),
+                    "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderBy(t => t.State),
+                    "type" => query.OrderBy(t => t.Type),
+                    _ => query.OrderBy(t => t.Created)
+
+                };
+            }
+            query = query.Where(t => t.AssignedTo.ToLower() == username.ToLower());
             return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
         }
 
