@@ -60,25 +60,25 @@
                                 [label]="'project'"
                               ></app-text-input>
                               <div
-                              id="projectList"
-                              *ngIf="!hideProjects"
-                              style="
-                                max-height: 200px;
-                                overflow: scroll;
-                                border: thin solid;
-                              "
-                            >
-                              <div
-                                class="dropdown-item"
-                                *ngFor="let filteredProject of filteredProjects"
-                                (click)="
-                                  updateProject(filteredProject.title)
+                                id="projectList"
+                                *ngIf="!hideProjects"
+                                style="
+                                  max-height: 200px;
+                                  overflow: scroll;
+                                  border: thin solid;
                                 "
-                                style="cursor: pointer"
                               >
-                                {{ filteredProject.title }}
+                                <p
+                                  class="dropdown-item"
+                                  *ngFor="
+                                    let filteredProject of filteredProjects
+                                  "
+                                  (click)="updateProject(filteredProject.title)"
+                                  style="cursor: pointer"
+                                >
+                                  {{ filteredProject.title }}
+                                </p>
                               </div>
-                            </div>
                             </div>
                           </div>
                           <div class="col mb-3">
@@ -92,17 +92,17 @@
                                 [ngModelOptions]="{ standalone: true }"
                                 name="assignedTo"
                                 id="assignedTo"
-                                (input)="getFilteredMembers()"
-                                list="memberList"
+                                [disabled]="disableUsers"
+                                (input)="getFilteredUsers()"
+                                list="userList"
                                 type="search"
                                 class="form-control"
                                 placeholder="Search"
                                 aria-label="Search"
                                 aria-describedby="search-addon"
                               />
-
                               <div
-                                id="memberList"
+                                id="userList"
                                 *ngIf="!hide"
                                 style="
                                   max-height: 200px;
@@ -112,13 +112,13 @@
                               >
                                 <p
                                   class="dropdown-item"
-                                  *ngFor="let filteredMember of filteredMembers"
+                                  *ngFor="let filteredUser of filteredUsers"
                                   (click)="
-                                    updateDeveloper(filteredMember.userName)
+                                    updateDeveloper(filteredUser.username)
                                   "
                                   style="cursor: pointer"
                                 >
-                                  {{ filteredMember.userName }}
+                                  {{ filteredUser.username }}
                                 </p>
                               </div>
                             </div>
@@ -171,7 +171,9 @@
                               Cancel
                             </button>
                             <button
-                              [disabled]="!createTicketForm.valid"
+                              [disabled]="
+                                !createTicketForm.valid || disableUsers
+                              "
                               type="submit"
                               class="btn btn-default"
                             >

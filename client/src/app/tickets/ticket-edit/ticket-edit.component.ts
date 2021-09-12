@@ -3,7 +3,6 @@ import { FormGroup, NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
-import { Member } from 'src/app/_models/member';
 import { Project } from 'src/app/_models/project';
 import { ProjectParams } from 'src/app/_models/projectParams';
 import { Ticket } from 'src/app/_models/ticket';
@@ -25,13 +24,13 @@ export class TicketEditComponent implements OnInit {
   user: User;
   userParams: UserParams = new UserParams();
   projectParams: ProjectParams = new ProjectParams();
-  members: Member[] = [];
-  filteredMembers: Member[] = [];
+  users: User[] = [];
+  filteredUsers: User[] = [];
   projects: Project[] = [];
   filteredProjects: Project[] = [];
-  hideMembers: boolean = true;
+  hideUsers: boolean = true;
   hideProjects: boolean = true;
-  disableMembers: boolean = false;
+  disableUsers: boolean = false;
   ticket: Ticket;
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
     $event: any
@@ -59,11 +58,11 @@ export class TicketEditComponent implements OnInit {
     this.loadTicket();
   }
 
-  loadMembers(projectTitle: string) {
+  loadUsers(projectTitle: string) {
     this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
     this.memberService.setUserParams(this.userParams);
     this.memberService.getMembersForProject(projectTitle, this.userParams).subscribe((response) => {
-      this.members = response.result;
+      this.users = response.result;
     });
   }
 
@@ -71,7 +70,7 @@ export class TicketEditComponent implements OnInit {
     this.projectParams.searchMatch =
       this.projectParams.searchMatch.toLowerCase();
     this.projectParams.ascending = true;
-    this.projectService.setProjectParams(this.projectParams);
+    this.projectService.setProjectForUserParams(this.projectParams);
     if (this.user.roles.includes('Admin')) {
       this.projectService
         .getProjects(this.projectParams)
@@ -93,7 +92,7 @@ export class TicketEditComponent implements OnInit {
       .subscribe((ticket) => {
         this.ticket = ticket;
         this.userParams.searchMatch = ticket.assignedTo;
-        this.loadMembers(this.ticket.project);
+        this.loadUsers(this.ticket.project);
       });
   }
 
@@ -104,30 +103,30 @@ export class TicketEditComponent implements OnInit {
     });
   }
 
-  getFilteredMembers() {
-    this.hideMembers = false;
+  getFilteredUsers() {
+    this.hideUsers = false;
     this.userParams.searchMatch = this.ticket.assignedTo;
     if (this.userParams.searchMatch == '') {
-      this.filteredMembers = this.members;
+      this.filteredUsers = this.users;
       return;
     }
-    this.filteredMembers = [];
-    for (let i = 0; i < this.members.length; ++i) {
-      if (this.members[i].userName.includes(this.userParams.searchMatch)) {
-        this.filteredMembers.push(this.members[i]);
+    this.filteredUsers = [];
+    for (let i = 0; i < this.users.length; ++i) {
+      if (this.users[i].username.includes(this.userParams.searchMatch)) {
+        this.filteredUsers.push(this.users[i]);
       }
     }
   }
 
   updateDeveloper(userName: string) {
-    this.hideMembers = true;
+    this.hideUsers = true;
     this.userParams.searchMatch = userName;
     this.editForm.controls['assignedTo'].setValue(userName);
   }
 
   getFilteredProjects() {
     this.hideProjects = false;
-    this.disableMembers = true;
+    this.disableUsers = true;
     this.projectParams.searchMatch = this.ticket.project;
     if (this.projectParams.searchMatch == '') {
       this.filteredProjects = this.projects;
@@ -145,17 +144,17 @@ export class TicketEditComponent implements OnInit {
   updateProject(title: string) {
     //Hide project list and allow user to assign member to ticket
     this.hideProjects = true;
-    this.disableMembers = false;
+    this.disableUsers = false;
 
     this.userParams.searchMatch = '';
     this.editForm.controls['assignedTo'].setValue('');
-    this.loadMembers(title);
+    this.loadUsers(title);
 
     this.projectParams.searchMatch = title;
     this.editForm.controls['project'].setValue(title);
   }
 
-  hideMemberList() {
-    this.hideMembers = true;
+  hideUserList() {
+    this.hideUsers = true;
   }
 }

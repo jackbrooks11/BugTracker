@@ -14,7 +14,7 @@ import { ProjectsService } from 'src/app/_services/projects.service';
 export class ProjectListComponent implements OnInit {
   projects: Project[];
   pagination: Pagination;
-  projectParams: ProjectParams;
+  projectParams: ProjectParams = new ProjectParams();
   bsModalRef: BsModalRef;
   checkAll: boolean = false;
   projectIdsToDelete: number[] = [];
@@ -60,6 +60,10 @@ export class ProjectListComponent implements OnInit {
       .subscribe((response) => {
         this.projects = response.result;
         this.pagination = response.pagination;
+        if (this.checkAll) {
+          this.projectIdsToDelete = [];
+          this.projects.forEach((val) => this.projectIdsToDelete.push(val.id));
+        }
       });
   }
 

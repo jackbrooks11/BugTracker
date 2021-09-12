@@ -21,6 +21,7 @@ export class AdminService {
   }
 
   getUsersWithRoles(userParams: UserParams) {
+
     var response = this.userCache.get(Object.values(userParams).join('-'));
     if (response) {
       return of(response);
@@ -44,7 +45,6 @@ export class AdminService {
           Object.values(userParams).join('-'),
           response
         );
-        console.log(this.userCache);
         return response;
       })
     );

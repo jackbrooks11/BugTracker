@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Data;
+using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
@@ -81,13 +82,44 @@ namespace API.Controllers
         [HttpGet("{projectTitle}/users")]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersForProject(string projectTitle, [FromQuery] UserParams userParams)
         {
-            var project = await _projectRepository.GetProjectByTitleAsync(projectTitle);
+            var users = __userManager.Users
+                .Where(pu => pu.ProjectUsers.Any(u => u.Project.Title == projectTitle))
+                .Include(r => r.UserRoles)
+                .ThenInclude(r => r.Role)
+                .AsNoTracking();
+            if (userParams.SearchMatch != null)
+            {
+                users = users.Where(u => u.UserRoles.Any(r => r.Role.Name.ToLower().Contains(userParams.SearchMatch))
+                || u.UserName.ToLower().Contains(userParams.SearchMatch));
+            }
+            var userLength = users.Count();
+            if (!userParams.Ascending)
+            {
+                users = users.OrderByDescending(u => u.UserName);
+            }
+            else
+            {
+                users = users.OrderBy(u => u.UserName);
+            }
+            users = users
+                .Skip((userParams.PageNumber - 1) * userParams.PageSize)
+                .Take(userParams.PageSize);
+            var userList = await users
+            .Select(u => new
+            {
+                u.Id,
+                Username = u.UserName,
+                Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
+            }).ToListAsync();
+            var usersReformatted = new List<PaginatedUserDto>();
+            foreach (var user in userList)
+            {
+                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles));
+            }
 
-            var projectId = project.Id;
-
-            var users =  await _userRepository.GetUsersForProjectAsync(projectId, userParams);
-
-            return Ok(users);
+            var usersPaginated = new PagedList<PaginatedUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
+            Response.AddPaginationHeader(usersPaginated.CurrentPage, usersPaginated.PageSize, usersPaginated.TotalCount, usersPaginated.TotalPages);
+            return Ok(usersPaginated);
         }
 
     }

@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { take } from 'rxjs/operators';
-import { Member } from 'src/app/_models/member';
 import { Project } from 'src/app/_models/project';
 import { ProjectParams } from 'src/app/_models/projectParams';
 import { User } from 'src/app/_models/user';
@@ -21,14 +20,14 @@ export class TicketModalComponent implements OnInit {
   validationErrors: string[] = [];
   userParams: UserParams = new UserParams();
   projectParams: ProjectParams = new ProjectParams();
-  members: Member[] = [];
+  users: User[] = [];
   user: User;
-  filteredMembers: Member[] = [];
+  filteredUsers: User[] = [];
   projects: Project[] = [];
   filteredProjects: Project[] = [];
   hideProjects: boolean = true;
-  disableMembers: boolean = false;
-  hideMembers: boolean = true;
+  disableUsers: boolean = true;
+  hideUsers: boolean = true;
 
   @Input() submitted = new EventEmitter();
   hide: boolean = true;
@@ -48,7 +47,6 @@ export class TicketModalComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
     this.loadProjects();
-    this.loadMembers();
   }
 
   initializeForm() {
@@ -67,7 +65,7 @@ export class TicketModalComponent implements OnInit {
     this.projectParams.searchMatch =
       this.projectParams.searchMatch.toLowerCase();
     this.projectParams.ascending = true;
-    this.projectService.setProjectParams(this.projectParams);
+    this.projectService.setProjectForUserParams(this.projectParams);
     if (this.user.roles.includes('Admin')) {
       this.projectService
         .getProjects(this.projectParams)
@@ -85,6 +83,7 @@ export class TicketModalComponent implements OnInit {
 
   getFilteredProjects() {
     this.hideProjects = false;
+    this.disableUsers = true;
     this.projectParams.searchMatch = this.createTicketForm.value.project;
     if (this.projectParams.searchMatch == '') {
       this.filteredProjects = this.projects;
@@ -98,12 +97,15 @@ export class TicketModalComponent implements OnInit {
     }
   }
 
-  loadMembers() {
+  loadUsers(projectTitle: string) {
     this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
     this.memberService.setUserParams(this.userParams);
-    this.memberService.getMembers(this.userParams).subscribe((response) => {
-      this.members = response.result;
-    });
+    this.memberService
+      .getMembersForProject(projectTitle, this.userParams)
+      .subscribe((response) => {
+        this.users = response.result;
+        
+      });
   }
 
   createTicket() {
@@ -111,17 +113,17 @@ export class TicketModalComponent implements OnInit {
     this.bsModalRef.hide();
   }
 
-  getFilteredMembers() {
+  getFilteredUsers() {
     this.hide = false;
     if (this.userParams.searchMatch == '') {
-      this.filteredMembers = this.members;
+      this.filteredUsers = this.users;
       return;
     }
-    this.filteredMembers = [];
-    console.log(this.userParams.searchMatch);
-    for (let i = 0; i < this.members.length; ++i) {
-      if (this.members[i].userName.includes(this.userParams.searchMatch)) {
-        this.filteredMembers.push(this.members[i]);
+    this.filteredUsers = [];
+
+    for (let i = 0; i < this.users.length; ++i) {
+      if (this.users[i].username.includes(this.userParams.searchMatch)) {
+        this.filteredUsers.push(this.users[i]);
       }
     }
   }
@@ -132,7 +134,20 @@ export class TicketModalComponent implements OnInit {
     this.createTicketForm.controls['assignedTo'].setValue(userName);
   }
 
-  hideMemberList() {
-    this.hideMembers = true;
+  /*Function called when project is clicked*/
+  updateProject(title: string) {
+    //Hide project list and allow user to assign user to ticket
+    this.hideProjects = true;
+    this.disableUsers = false;
+    this.userParams.searchMatch = '';
+    this.createTicketForm.controls['assignedTo'].setValue('');
+    this.loadUsers(title);
+    this.projectParams.searchMatch = title;
+
+    this.createTicketForm.controls['project'].setValue(title);
+  }
+
+  hideUserList() {
+    this.hideUsers = true;
   }
 }

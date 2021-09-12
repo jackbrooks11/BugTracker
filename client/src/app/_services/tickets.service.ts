@@ -1,10 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
-import { map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Ticket } from '../_models/ticket';
+import { TicketForProjectParams } from '../_models/ticketForProjectParams';
 import { TicketParams } from '../_models/ticketParams';
 
 @Injectable({
@@ -16,12 +17,15 @@ export class TicketsService {
   ticketsForUser: Ticket[] = [];
   ticketCache = new Map();
   ticketForUserCache = new Map();
+  ticketForProjectCache = new Map();
   ticketParams: TicketParams;
   ticketForUserParams: TicketParams;
- 
+  ticketForProjectParams: TicketForProjectParams;
+
   constructor(private http: HttpClient) {
-      this.ticketParams = new TicketParams();
-      this.ticketForUserParams = new TicketParams();
+    this.ticketParams = new TicketParams();
+    this.ticketForUserParams = new TicketParams();
+    this.ticketForProjectParams = new TicketParams();
   }
 
   getTickets(ticketParams: TicketParams) {
@@ -50,7 +54,9 @@ export class TicketsService {
   }
 
   getTicketsForUser(ticketParams: TicketParams) {
-    var response = this.ticketForUserCache.get(Object.values(ticketParams).join('-'));
+    var response = this.ticketForUserCache.get(
+      Object.values(ticketParams).join('-')
+    );
     if (response) {
       return of(response);
     }
@@ -69,7 +75,41 @@ export class TicketsService {
       params
     ).pipe(
       map((response) => {
-        this.ticketForUserCache.set(Object.values(ticketParams).join('-'), response);
+        this.ticketForUserCache.set(
+          Object.values(ticketParams).join('-'),
+          response
+        );
+        return response;
+      })
+    );
+  }
+
+  getTicketsForProject(projectTitle: string, ticketParams: TicketForProjectParams) {
+    var response = this.ticketForProjectCache.get(
+      Object.values(ticketParams).join('-') + '-' + projectTitle
+    );
+    if (response) {
+      return of(response);
+    }
+
+    let params = this.getPaginationHeaders(
+      ticketParams.pageNumber,
+      ticketParams.pageSize
+    );
+
+    params = params.append('orderBy', ticketParams.orderBy);
+    params = params.append('ascending', ticketParams.ascending);
+    params = params.append('searchMatch', ticketParams.searchMatch);
+
+    return this.getPaginatedResult<Ticket[]>(
+      this.baseUrl + 'tickets/' + projectTitle + '/tickets',
+      params
+    ).pipe(
+      map((response) => {
+        this.ticketForProjectCache.set(
+          Object.values(ticketParams).join('-') + '-' + projectTitle,
+          response
+        );
         return response;
       })
     );
@@ -101,17 +141,19 @@ export class TicketsService {
         this.tickets[index] = ticket;
         this.ticketCache.clear();
       })
-    )
+    );
   }
 
   deleteTickets(ticketIdsToDelete: number[]) {
-    return this.http.post(this.baseUrl + 'tickets/delete', ticketIdsToDelete).pipe(
-      map((ticket: Ticket) => {
-        const index = this.tickets.indexOf(ticket);
-        this.tickets[index] = ticket;
-        this.ticketCache.clear();
-      })
-    )
+    return this.http
+      .post(this.baseUrl + 'tickets/delete', ticketIdsToDelete)
+      .pipe(
+        map((ticket: Ticket) => {
+          const index = this.tickets.indexOf(ticket);
+          this.tickets[index] = ticket;
+          this.ticketCache.clear();
+        })
+      );
   }
 
   getTicketParams() {
@@ -128,6 +170,14 @@ export class TicketsService {
 
   setTicketForUserParams(params: TicketParams) {
     this.ticketForUserParams = params;
+  }
+
+  getTicketForProjectParams() {
+    return this.ticketForProjectParams;
+  }
+
+  setTicketForProjectParams(params: TicketParams) {
+    this.ticketForProjectParams = params;
   }
 
   private getPaginatedResult<T>(url, params) {

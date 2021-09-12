@@ -19,6 +19,12 @@ namespace API.Data
         {
             _context.Projects.Add(project);
         }
+        public async Task<Project> GetProjectByIdAsync(int id)
+        {
+            return await _context.Projects
+            .Include(t => t.Tickets)
+            .SingleOrDefaultAsync(x => x.Id == id);
+        } 
         public async Task<Project> GetProjectByTitleAsync(string title)
         {
             return await _context.Projects
@@ -29,6 +35,7 @@ namespace API.Data
         public async Task<PagedList<Project>> GetProjectsAsync(ProjectParams projectParams)
         {
             var query = _context.Projects
+                .Include(t => t.Tickets)
                 .AsNoTracking();
             if (projectParams.SearchMatch != null)
             {
@@ -90,7 +97,8 @@ namespace API.Data
 
         public void Delete(int[] projectIdsToDelete)
         {
-            var projectsToDelete = _context.Projects.Where(t => projectIdsToDelete.Contains(t.Id));
+            var projectsToDelete = _context.Projects.Where(p=> projectIdsToDelete.Contains(p.Id))
+            .Include(t => t.Tickets);
 
             foreach (var project in projectsToDelete)
             {

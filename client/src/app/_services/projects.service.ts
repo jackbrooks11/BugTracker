@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -7,7 +7,6 @@ import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Project } from '../_models/project';
 import { ProjectParams } from '../_models/projectParams';
-
 
 @Injectable({
   providedIn: 'root',
@@ -20,14 +19,18 @@ export class ProjectsService {
   projectForUserCache = new Map();
   projectParams: ProjectParams;
   projectForUserParams: ProjectParams;
- 
+
   constructor(private http: HttpClient) {
-      this.projectParams = new ProjectParams();
-      this.projectForUserParams = new ProjectParams();
+    this.projectParams = new ProjectParams();
+    this.projectForUserParams = new ProjectParams();
   }
 
   getProjects(projectParams: ProjectParams) {
-    var response = this.projectCache.get(Object.values(projectParams).join('-'));
+    console.log("For user");
+
+    var response = this.projectCache.get(
+      Object.values(projectParams).join('-')
+    );
     if (response) {
       return of(response);
     }
@@ -51,12 +54,21 @@ export class ProjectsService {
     );
   }
 
-  getProject(title: string) {
-    return this.http.get<Project>(this.baseUrl + 'projects/' + title);
+  getProjectById(id: number) {
+    const project = [...this.projectCache.values()]
+      .reduce((arr, elem) => arr.concat(elem.result), [])
+      .find((project: Project) => project.id === id);
+    if (project) {
+      return of(project);
+    }
+    return this.http.get<Project>(this.baseUrl + 'projects/' + id);
   }
 
   getProjectsForUser(projectParams: ProjectParams) {
-    var response = this.projectForUserCache.get(Object.values(projectParams).join('-'));
+    console.log("For user");
+    var response = this.projectForUserCache.get(
+      Object.values(projectParams).join('-')
+    );
     if (response) {
       return of(response);
     }
@@ -75,7 +87,10 @@ export class ProjectsService {
       params
     ).pipe(
       map((response) => {
-        this.projectForUserCache.set(Object.values(projectParams).join('-'), response);
+        this.projectForUserCache.set(
+          Object.values(projectParams).join('-'),
+          response
+        );
         return response;
       })
     );
@@ -104,17 +119,19 @@ export class ProjectsService {
         this.projects[index] = project;
         this.projectCache.clear();
       })
-    )
+    );
   }
 
   deleteProjects(projectIdsToDelete: number[]) {
-    return this.http.post(this.baseUrl + 'projects/delete', projectIdsToDelete).pipe(
-      map((project: Project) => {
-        const index = this.projects.indexOf(project);
-        this.projects[index] = project;
-        this.projectCache.clear();
-      })
-    )
+    return this.http
+      .post(this.baseUrl + 'projects/delete', projectIdsToDelete)
+      .pipe(
+        map((project: Project) => {
+          const index = this.projects.indexOf(project);
+          this.projects[index] = project;
+          this.projectCache.clear();
+        })
+      );
   }
 
   private getPaginatedResult<T>(url, params) {

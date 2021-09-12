@@ -58,6 +58,10 @@ export class TicketListComponent implements OnInit {
     this.ticketService.getTickets(this.ticketParams).subscribe((response) => {
       this.tickets = response.result;
       this.pagination = response.pagination;
+      if (this.checkAll) {
+        this.ticketIdsToDelete = [];
+        this.tickets.forEach((val) => this.ticketIdsToDelete.push(val.id));
+      }
     });
   }
 

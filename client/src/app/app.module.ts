@@ -32,6 +32,10 @@ import { TicketModalComponent } from './modals/ticket-modal/ticket-modal.compone
 import { ProjectListComponent } from './projects/project-list/project-list.component';
 import { ProjectModalComponent } from './modals/project-modal/project-modal.component';
 import { MemberProjectsComponent } from './members/member-projects/member-projects.component';
+import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
+import { ProjectPersonnelComponent } from './projects/project-personnel/project-personnel.component';
+import { ProjectTicketsComponent } from './projects/project-tickets/project-tickets.component';
+import { PersonnelModalComponent } from './modals/personnel-modal/personnel-modal.component';
 
 @NgModule({
   declarations: [
@@ -57,7 +61,11 @@ import { MemberProjectsComponent } from './members/member-projects/member-projec
     TicketModalComponent,
     ProjectListComponent,
     ProjectModalComponent,
-    MemberProjectsComponent
+    MemberProjectsComponent,
+    ProjectDetailComponent,
+    ProjectPersonnelComponent,
+    ProjectTicketsComponent,
+    PersonnelModalComponent
   ],
   imports: [
     BrowserModule,

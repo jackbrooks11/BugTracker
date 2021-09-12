@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    [Authorize(Policy = "RequireAdminRole")]
     public class AdminController : BaseApiController
     {
         private readonly UserManager<AppUser> __userManager;
@@ -63,6 +62,7 @@ namespace API.Controllers
             return Ok(usersPaginated);
         }
 
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("edit-roles/{username}")]
         public async Task<ActionResult> EditRoles(string username, [FromQuery] string roles)
         {

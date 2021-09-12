@@ -48,13 +48,18 @@ export class MembersService {
   }
 
   getMembersForProject(projectTitle: string, userParams: UserParams) {
-    var response = this.memberForProjectCache.get(projectTitle);
+    var response = this.memberForProjectCache.get(Object.values(userParams).join('-') + '-' + projectTitle);
     if (response) {
       return of(response);
     }  
 
-    let params = new HttpParams();
+    let params = this.getPaginationHeaders(
+      userParams.pageNumber,
+      userParams.pageSize
+    );
 
+    params = params.append('orderBy', userParams.orderBy);
+    params = params.append('ascending', userParams.ascending);
     params = params.append('searchMatch', userParams.searchMatch);
 
     return this.getPaginatedResult<Member[]>(
@@ -62,7 +67,10 @@ export class MembersService {
       params
     ).pipe(
       map((response) => {
-        this.memberForProjectCache.set(projectTitle, response);
+        this.memberForProjectCache.set(
+          Object.values(userParams).join('-') + '-' + projectTitle,
+          response
+        );
         return response;
       }))
   }
@@ -91,6 +99,14 @@ export class MembersService {
 
   setUserParams(params: UserParams) {
     this.userParams = params;
+  }
+
+  private getPaginationHeaders(pageNumber: number, pageSize: number) {
+    let params = new HttpParams();
+    params = params.append('pageNumber', pageNumber.toString());
+    params = params.append('pageSize', pageSize.toString());
+
+    return params;
   }
 
   private getPaginatedResult<T>(url, params) {

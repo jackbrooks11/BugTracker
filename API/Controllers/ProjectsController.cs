@@ -29,9 +29,9 @@ namespace API.Controllers
             return Ok(projects);
         }
 
-        [HttpGet("{title}", Name = "GetProject")]
-        public async Task<ActionResult<Project>> GetProject(string title) {
-            var project = await _projectRepository.GetProjectByTitleAsync(title);
+        [HttpGet("{id}", Name = "GetProject")]
+        public async Task<ActionResult<Project>> GetProject(int id) {
+            var project = await _projectRepository.GetProjectByIdAsync(id);
             return Ok(project);
         }
 

@@ -1,0 +1,117 @@
+<div>
+  <div style="float: left">
+    <label>Show</label>
+    <select
+      name="itemsPerPage"
+      [(ngModel)]="ticketParams.pageSize"
+      (change)="loadTickets()"
+    >
+      <option>5</option>
+      <option>10</option>
+      <option>25</option>
+      <option>50</option>
+    </select>
+    entries
+  </div>
+  <input
+    type="text"
+    name="search"
+    placeholder="Search"
+    [(ngModel)]="ticketParams.searchMatch"
+    (input)="loadTickets()"
+    style="float: right"
+  />
+</div>
+
+<div class="table margin-bottom-2x">
+  <table class="table margin-bottom-none">
+    <thead>
+      <tr>
+        <th style="width: 33%">
+          Title
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 0)"
+            btnRadio="title"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="ticketParams.icons[0] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="ticketParams.icons[0] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="ticketParams.icons[0] == 2"></i>
+          </button>
+        </th>
+        <th style="width: 33%">
+          Assigned Developer
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 1)"
+            btnRadio="assignedTo"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="ticketParams.icons[1] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="ticketParams.icons[1] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="ticketParams.icons[1] == 2"></i>
+          </button>
+        </th>
+        <th style="width: 33%">
+          Created
+          <button
+            type="button"
+            name="orderBy"
+            (click)="loadTickets(true, 2)"
+            btnRadio="created"
+            [(ngModel)]="ticketParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="ticketParams.icons[2] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="ticketParams.icons[2] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="ticketParams.icons[2] == 2"></i>
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ticket of tickets">
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.assignedTo }}</td>
+        <td>{{ ticket.created | date: "short"}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="pagination">
+  <span style="float: left">
+    Showing
+    {{
+      pagination.totalItems > 0
+        ? pagination.itemsPerPage * (pagination.currentPage - 1) + 1
+        : pagination.itemsPerPage * (pagination.currentPage - 1)
+    }}
+    to
+    {{
+      pagination.itemsPerPage * pagination.currentPage > pagination.totalItems
+        ? pagination.totalItems
+        : pagination.itemsPerPage * pagination.currentPage
+    }}
+    of {{ pagination.totalItems }} entries
+  </span>
+  <div
+    class="d-flex justify-content-center"
+    *ngIf="pagination"
+    style="float: right"
+  >
+    <pagination
+      [boundaryLinks]="true"
+      [totalItems]="pagination.totalItems"
+      [itemsPerPage]="pagination.itemsPerPage"
+      [(ngModel)]="pagination.currentPage"
+      (pageChanged)="pageChanged($event)"
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
+  </div>
+</div>

@@ -14,8 +14,8 @@ namespace API.Interfaces
         Task<bool> ProjectExists(string title);
         void Delete(int[] projectIdsToDelete);
         Task<PagedList<Project>> GetProjectsForUserAsync(int id, ProjectParams projectParams);
+        Task<Project> GetProjectByIdAsync(int id);
         Task<Project> GetProjectByTitleAsync(string title);
-
 
     }
 }

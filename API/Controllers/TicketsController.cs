@@ -68,18 +68,16 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> CreateTicket(Ticket ticket)
         {
-            if (await _ticketRepository.TicketExists(ticket.Title))
-            {
-                return BadRequest("Ticket title taken");
+            var project = _projectRepository.GetProjectByTitleAsync(ticket.Project).Result;
+            var errorMessage = await ValidateTicket(ticket, project);
+            if (errorMessage != "") {
+                return BadRequest(errorMessage);
             }
             if (ticket.AssignedTo.Length > 0)
             {
                 _userRepository.AddTicketForUserAsync(ticket);
-                if (await _userRepository.GetUserByUsernameAsync(ticket.AssignedTo) == null)
-                {
-                    return BadRequest("Can't assign ticket to user that doesn't exist");
-                }
             }
+            _projectRepository.AddTicketForProjectAsync(ticket);
             _ticketRepository.Create(ticket);
 
             if (await _ticketRepository.SaveAllAsync()) return NoContent();
@@ -104,6 +102,16 @@ namespace API.Controllers
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
 
             var tickets = await _ticketRepository.GetTicketsForUserAsync(username, ticketParams);
+
+            Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
+
+            return Ok(tickets);
+        }
+
+        [HttpGet("{projectTitle}/tickets")]
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForProject(string projectTitle, [FromQuery] TicketForProjectParams ticketParams)
+        {
+            var tickets = await _ticketRepository.GetTicketsForProjectAsync(projectTitle, ticketParams);
 
             Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
 
@@ -145,7 +153,7 @@ namespace API.Controllers
             && ticketWithNewTitle != null && ticketWithNewTitle.Id != ticket.Id)
             {
                 Response.StatusCode = 400;
-                return "Title for ticket already exists";
+                return "Ticket already exists";
             }
             return "";
         }

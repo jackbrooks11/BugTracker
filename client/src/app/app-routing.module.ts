@@ -9,6 +9,7 @@ import { MemberDetailComponent } from './members/member-detail/member-detail.com
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberProjectsComponent } from './members/member-projects/member-projects.component';
 import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
+import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
 import { ProjectListComponent } from './projects/project-list/project-list.component';
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
@@ -32,6 +33,7 @@ const routes: Routes = [
       {path: 'tickets/:id', component: TicketDetailComponent},
       {path: 'tickets', component: TicketListComponent},
       {path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard]},
+      {path: 'projects/:id', component: ProjectDetailComponent},
       {path: 'projects', component: ProjectListComponent}
     ]
   },

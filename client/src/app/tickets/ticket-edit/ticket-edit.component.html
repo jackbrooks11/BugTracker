@@ -64,16 +64,14 @@
                         <div class="row">
                           <div class="col mb-3">
                             <div class="form-group">
-                              <label class="font-weight-bold"
-                                >Project</label
-                              >
+                              <label class="font-weight-bold">Project</label>
 
                               <input
                                 [(ngModel)]="ticket.project"
                                 name="project"
                                 id="project"
                                 (input)="getFilteredProjects()"
-                                (click)="hideMemberList()"
+                                (click)="hideUserList()"
                                 list="projectList"
                                 type="search"
                                 class="form-control"
@@ -92,10 +90,10 @@
                               >
                                 <div
                                   class="dropdown-item"
-                                  *ngFor="let filteredProject of filteredProjects"
-                                  (click)="
-                                    updateProject(filteredProject.title)
+                                  *ngFor="
+                                    let filteredProject of filteredProjects
                                   "
+                                  (click)="updateProject(filteredProject.title)"
                                   style="cursor: pointer"
                                 >
                                   {{ filteredProject.title }}
@@ -113,9 +111,9 @@
                                 [(ngModel)]="ticket.assignedTo"
                                 name="assignedTo"
                                 id="assignedTo"
-                                (input)="getFilteredMembers()"
-                                [disabled]="disableMembers"
-                                list="memberList"
+                                (input)="getFilteredUsers()"
+                                [disabled]="disableUsers"
+                                list="userList"
                                 type="search"
                                 class="form-control"
                                 placeholder="Search"
@@ -123,24 +121,24 @@
                                 aria-describedby="search-addon"
                               />
                               <div
-                                id="memberList"
-                                *ngIf="!hideMembers"
+                                id="userList"
+                                *ngIf="!hideUsers"
                                 style="
                                   max-height: 200px;
                                   overflow: scroll;
                                   border: thin solid;
                                 "
                               >
-                                <div
+                                <p
                                   class="dropdown-item"
-                                  *ngFor="let filteredMember of filteredMembers"
+                                  *ngFor="let filteredUser of filteredUsers"
                                   (click)="
-                                    updateDeveloper(filteredMember.userName)
+                                    updateDeveloper(filteredUser.username)
                                   "
                                   style="cursor: pointer"
                                 >
-                                  {{ filteredMember.userName }}
-                                </div>
+                                  {{ filteredUser.username }}
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -200,7 +198,7 @@
                         <div class="row">
                           <div class="col d-flex justify-content-end">
                             <button
-                              [disabled]="!editForm.dirty || disableMembers"
+                              [disabled]="!editForm.dirty || disableUsers"
                               class="btn btn-primary"
                               type="submit"
                             >
