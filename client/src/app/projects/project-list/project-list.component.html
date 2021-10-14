@@ -5,7 +5,7 @@
     type="button"
     *appHasRole="['Admin']"
     (click)="openProjectModal()"
-    class="btn btn-md btn-primary mb-2"
+    class="btn btn-md btn-outline-primary mb-2"
     style="flex: left"
   >
     New Project
@@ -60,6 +60,7 @@
             Title
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadProjects(true, 0)"
               btnRadio="title"
@@ -77,6 +78,7 @@
             Description
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadProjects(true, 1)"
               btnRadio="description"
@@ -94,6 +96,7 @@
             Created
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadProjects(true, 2)"
               btnRadio="created"

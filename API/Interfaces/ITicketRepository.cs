@@ -15,6 +15,7 @@ namespace API.Interfaces
         Task<PagedList<Ticket>> GetTicketsForProjectAsync(string projectTitle, TicketForProjectParams ticketParams);
 
         void Create(Ticket ticket);
+        void AddCommentToTicket(Ticket ticket, TicketComment comment);
         Task<bool> TicketExists(string title);
 
         void Delete(int[] ticketIdsToDelete);

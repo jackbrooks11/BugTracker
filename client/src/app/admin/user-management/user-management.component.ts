@@ -55,7 +55,6 @@ export class UserManagementComponent implements OnInit {
 
   getUsersWithRoles() {
     this.adminService.getUsersWithRoles(this.userParams).subscribe((response) => {
-      console.log(response);
       this.users = response.result;
       this.pagination = response.pagination;
     });

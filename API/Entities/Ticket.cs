@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace API.Entities
 {
@@ -13,6 +14,7 @@ namespace API.Entities
         public string Priority { get; set; }
         public string Type { get; set; }
         public string State { get; set; } = "New";
+         public ICollection<TicketComment> Comments { get; set; }
         public DateTime Created { get; set; } = DateTime.Now;
         public DateTime LastEdited { get; set; } = DateTime.Now;
     }

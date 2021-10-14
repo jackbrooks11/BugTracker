@@ -2,7 +2,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
-
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Project } from '../_models/project';
@@ -19,6 +18,7 @@ export class ProjectsService {
   projectForUserCache = new Map();
   projectParams: ProjectParams;
   projectForUserParams: ProjectParams;
+  disableLoadMoreProjects: boolean = false;
 
   constructor(private http: HttpClient) {
     this.projectParams = new ProjectParams();
@@ -26,7 +26,6 @@ export class ProjectsService {
   }
 
   getProjects(projectParams: ProjectParams) {
-    console.log("For user");
 
     var response = this.projectCache.get(
       Object.values(projectParams).join('-')
@@ -61,11 +60,11 @@ export class ProjectsService {
     if (project) {
       return of(project);
     }
+    console.log("HI");
     return this.http.get<Project>(this.baseUrl + 'projects/' + id);
   }
 
   getProjectsForUser(projectParams: ProjectParams) {
-    console.log("For user");
     var response = this.projectForUserCache.get(
       Object.values(projectParams).join('-')
     );
@@ -83,7 +82,7 @@ export class ProjectsService {
     params = params.append('searchMatch', projectParams.searchMatch);
 
     return this.getPaginatedResult<Project[]>(
-      this.baseUrl + 'projects/member/projects',
+      this.baseUrl + 'projects',
       params
     ).pipe(
       map((response) => {
@@ -95,26 +94,20 @@ export class ProjectsService {
       })
     );
   }
-
-  getProjectParams() {
-    return this.projectParams;
-  }
-
-  setProjectParams(params: ProjectParams) {
-    this.projectParams = params;
-  }
-
-  getProjectForUserParams() {
-    return this.projectForUserParams;
-  }
-
-  setProjectForUserParams(params: ProjectParams) {
-    this.projectForUserParams = params;
-  }
-
+  
   createProject(model: any) {
     return this.http.post(this.baseUrl + 'projects/create', model).pipe(
       map((project: Project) => {
+        const index = this.projects.indexOf(project);
+        this.projects[index] = project;
+        this.projectCache.clear();
+      })
+    );
+  }
+
+  updateProject(project: Project) {
+    return this.http.put(this.baseUrl + 'projects', project).pipe(
+      map(() => {
         const index = this.projects.indexOf(project);
         this.projects[index] = project;
         this.projectCache.clear();
@@ -155,5 +148,21 @@ export class ProjectsService {
     params = params.append('pageSize', pageSize.toString());
 
     return params;
+  }
+
+  getProjectParams() {
+    return this.projectParams;
+  }
+
+  setProjectParams(params: ProjectParams) {
+    this.projectParams = params;
+  }
+
+  getProjectForUserParams() {
+    return this.projectForUserParams;
+  }
+
+  setProjectForUserParams(params: ProjectParams) {
+    this.projectForUserParams = params;
   }
 }

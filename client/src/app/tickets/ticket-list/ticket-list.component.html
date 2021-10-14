@@ -4,7 +4,7 @@
     <button
       type="button"
       (click)="openRolesModal()"
-      class="btn btn-md btn-primary mb-2"
+      class="btn btn-md btn-outline-primary mb-2"
       style="flex: left"
     >
       New Ticket
@@ -59,6 +59,7 @@
             Title
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 0)"
               btnRadio="title"
@@ -76,6 +77,7 @@
             Project Name
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 1)"
               btnRadio="project"
@@ -93,6 +95,7 @@
             Developer Assigned
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 2)"
               btnRadio="assignedTo"
@@ -110,6 +113,7 @@
             Priority
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 3)"
               btnRadio="priority"
@@ -127,6 +131,7 @@
             Status
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 4)"
               btnRadio="state"
@@ -144,6 +149,7 @@
             Type
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 5)"
               btnRadio="type"
@@ -161,6 +167,7 @@
             Created
             <button
               type="button"
+              class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 6)"
               btnRadio="created"
@@ -197,7 +204,7 @@
               style="color: #777"
               href="#"
               routerLink="/members/{{ ticket.assignedTo }}"
-              >{{ ticket.assignedTo }}</a
+              >{{ ticket.assignedTo | titlecase }}</a
             >
           </td>
           <td

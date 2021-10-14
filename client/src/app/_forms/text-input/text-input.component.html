@@ -1,6 +1,6 @@
 <div class="form-group">
   <input
-  *ngIf="label != 'description'"
+  *ngIf="label != 'description' && label != 'about'"
     [class.is-invalid]="ngControl.touched && ngControl.invalid"
     type="{{ type }}"
     class="form-control"
@@ -8,11 +8,13 @@
     placeholder="{{
       ['title', 'project', 'assignedTo', 'priority', 'type'].includes(label)
         ? ''
+        : ['Password', 'Confirm Password'].includes(label)
+        ? '••••••'
         : label
     }}"
   />
   <textarea
-    *ngIf="label == 'description'"
+    *ngIf="label == 'description' || label == 'about'"
     [class.is-invalid]="ngControl.touched && ngControl.invalid"
     class="form-control"
     [formControl]="ngControl.control"

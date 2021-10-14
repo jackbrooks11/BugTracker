@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Ticket } from '../_models/ticket';
+import { TicketComment } from '../_models/ticketComment';
 import { TicketForProjectParams } from '../_models/ticketForProjectParams';
 import { TicketParams } from '../_models/ticketParams';
 
@@ -128,18 +129,25 @@ export class TicketsService {
   updateTicket(ticket: Ticket) {
     return this.http.put(this.baseUrl + 'tickets', ticket).pipe(
       map(() => {
-        const index = this.tickets.indexOf(ticket);
-        this.tickets[index] = ticket;
+        this.ticketCache.clear();
+      })
+    );
+  }
+
+  addCommentToTicket(comment: TicketComment, id: number) {
+    console.log("HI");
+    return this.http.post(this.baseUrl + 'tickets/' + id + '/comments/create', comment).pipe(
+      map(() => {
+        this.ticketCache.clear();
       })
     );
   }
 
   createTicket(model: any) {
     return this.http.post(this.baseUrl + 'tickets/create', model).pipe(
-      map((ticket: Ticket) => {
-        const index = this.tickets.indexOf(ticket);
-        this.tickets[index] = ticket;
+      map(() => {
         this.ticketCache.clear();
+        this.ticketForUserCache.clear();
       })
     );
   }
@@ -148,12 +156,33 @@ export class TicketsService {
     return this.http
       .post(this.baseUrl + 'tickets/delete', ticketIdsToDelete)
       .pipe(
-        map((ticket: Ticket) => {
-          const index = this.tickets.indexOf(ticket);
-          this.tickets[index] = ticket;
+        map(() => {
           this.ticketCache.clear();
         })
       );
+  }
+
+  private getPaginatedResult<T>(url, params) {
+    const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
+    return this.http.get<T>(url, { observe: 'response', params }).pipe(
+      map((response) => {
+        paginatedResult.result = response.body;
+        if (response.headers.get('Pagination') !== null) {
+          paginatedResult.pagination = JSON.parse(
+            response.headers.get('Pagination')
+          );
+        }
+        return paginatedResult;
+      })
+    );
+  }
+
+  private getPaginationHeaders(pageNumber: number, pageSize: number) {
+    let params = new HttpParams();
+    params = params.append('pageNumber', pageNumber.toString());
+    params = params.append('pageSize', pageSize.toString());
+
+    return params;
   }
 
   getTicketParams() {
@@ -178,28 +207,5 @@ export class TicketsService {
 
   setTicketForProjectParams(params: TicketParams) {
     this.ticketForProjectParams = params;
-  }
-
-  private getPaginatedResult<T>(url, params) {
-    const paginatedResult: PaginatedResult<T> = new PaginatedResult<T>();
-    return this.http.get<T>(url, { observe: 'response', params }).pipe(
-      map((response) => {
-        paginatedResult.result = response.body;
-        if (response.headers.get('Pagination') !== null) {
-          paginatedResult.pagination = JSON.parse(
-            response.headers.get('Pagination')
-          );
-        }
-        return paginatedResult;
-      })
-    );
-  }
-
-  private getPaginationHeaders(pageNumber: number, pageSize: number) {
-    let params = new HttpParams();
-    params = params.append('pageNumber', pageNumber.toString());
-    params = params.append('pageSize', pageSize.toString());
-
-    return params;
   }
 }

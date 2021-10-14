@@ -1,16 +1,19 @@
 <div>
   <button
     type="button"
+    (click)="openRolesModal()"
     *appHasRole="['Admin']"
-    class="btn btn-md btn-primary mb-2"
+    class="btn btn-md btn-outline-primary mb-2"
     style="flex: left"
   >
     Assign User
   </button>
   <button
     type="button"
+    (click)="deleteUsers()"
     *appHasRole="['Admin']"
     class="btn btn-md btn-danger mb-2"
+    [disabled]="usernamesToDelete.length == 0"
     style="flex: right"
   >
     Delete
@@ -41,14 +44,22 @@
   />
 </div>
 
-<div class="table margin-bottom-2x">
+<div class="table-responsive margin-bottom-2x">
   <table class="table margin-bottom-none">
     <thead>
       <tr>
+        <th *appHasRole="['Admin']">
+          <input
+            type="checkbox"
+            id="deleteCheck"
+            (click)="toggleCheckAll($event)"
+          />
+        </th>
         <th style="width: 50%">
           Username
           <button
             type="button"
+            class="ordering"
             name="orderBy"
             (click)="loadUsers(true, 0)"
             btnRadio="username"
@@ -64,6 +75,14 @@
     </thead>
     <tbody>
       <tr *ngFor="let user of users">
+        <td *appHasRole="['Admin']">
+          <input
+            type="checkbox"
+            id="deleteCheck"
+            (change)="changed($event, user.username)"
+            [checked]="checkAll ? true : null"
+          />
+        </td>
         <td>{{ user.username }}</td>
         <td>{{ user.roles }}</td>
       </tr>

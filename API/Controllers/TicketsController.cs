@@ -49,14 +49,15 @@ namespace API.Controllers
         {
             var project = _projectRepository.GetProjectByTitleAsync(ticketUpdated.Project).Result;
             var errorMessage = await ValidateTicket(ticketUpdated, project);
-            if (errorMessage != "") {
+            if (errorMessage != "")
+            {
                 return BadRequest(errorMessage);
             }
             var id = ticketUpdated.Id;
             var ticket = await _ticketRepository.GetTicketByIdAsync(id);
             _mapper.Map(ticketUpdated, ticket);
             ticket.LastEdited = DateTime.Now;
-            _projectRepository.AddTicketForProjectAsync(ticket);
+            _projectRepository.AddTicketToProjectAsync(ticket);
             _projectRepository.Update(project);
             _ticketRepository.Update(ticket);
 
@@ -65,19 +66,30 @@ namespace API.Controllers
             return BadRequest("Failed to update ticket");
         }
 
+        [HttpPost("{id}/comments/create")]
+        public async Task<ActionResult> AddCommentToTicket(TicketComment comment)
+        {
+            var ticket = await _ticketRepository.GetTicketByIdAsync(comment.TicketId);
+            _ticketRepository.AddCommentToTicket(ticket, comment);
+            _ticketRepository.Update(ticket);
+            if (await _ticketRepository.SaveAllAsync()) return NoContent();
+            return BadRequest("Failed to create comment");
+        }
+
         [HttpPost("create")]
         public async Task<ActionResult> CreateTicket(Ticket ticket)
         {
             var project = _projectRepository.GetProjectByTitleAsync(ticket.Project).Result;
             var errorMessage = await ValidateTicket(ticket, project);
-            if (errorMessage != "") {
+            if (errorMessage != "")
+            {
                 return BadRequest(errorMessage);
             }
             if (ticket.AssignedTo.Length > 0)
             {
                 _userRepository.AddTicketForUserAsync(ticket);
             }
-            _projectRepository.AddTicketForProjectAsync(ticket);
+            _projectRepository.AddTicketToProjectAsync(ticket);
             _ticketRepository.Create(ticket);
 
             if (await _ticketRepository.SaveAllAsync()) return NoContent();
@@ -121,13 +133,13 @@ namespace API.Controllers
         private async Task<string> ValidateTicket(Ticket ticket, Project project)
         {
             var userParams = new UserParams();
-            if (ticket.Project== "")
+            if (ticket.Project == "")
             {
                 return "Project field can not be empty";
             }
             if (!await _projectRepository.ProjectExists(ticket.Project))
             {
-       
+
                 return "Project does not exist";
             }
             var usersForProject = await _userRepository.GetUsersForProjectAsync(project.Id, userParams);

@@ -1,68 +1,51 @@
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-  <div class="container">
-    <div class="sidebar-sticky">
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link active" routerLink="/">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              class="bi bi-person-lines-fill"
-              viewBox="0 0 16 16"
-              style="color: #3399f3"
-            >
-              <path
-                d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A4.979 4.979 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A4.985 4.985 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623zM4 7v4a4 4 0 0 0 3.5 3.97V7H4zm4.5 0v7.97A4 4 0 0 0 12 11V7H8.5zM12 6a3.989 3.989 0 0 0-1.334-2.982A3.983 3.983 0 0 0 8 2a3.983 3.983 0 0 0-2.667 1.018A3.989 3.989 0 0 0 4 6h8z"
-              />
-            </svg>
-            <div class="navbar-brand" style="padding-left: 10px">
-              BugTracker
-            </div>
-            <span class="sr-only">(current)</span>
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <div
-      class="dropdown"
-      *ngIf="accountService.currentUser$ | async as user"
-      dropdown
-    >
-      <a class="dropdown-toggle text-light" dropdownToggle
-        >Welcome {{ user.username | titlecase }}</a
-      >
-      <div class="dropdown-menu mt-3" *dropdownMenu>
-        <a class="dropdown-item" routerLink="/member/edit">Edit Profile</a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" (click)="logout()">Logout</a>
-      </div>
-    </div>
-
-    <form
-      *ngIf="(accountService.currentUser$ | async) === null"
-      #loginForm="ngForm"
-      class="d-flex ml-auto"
-      (ngSubmit)="login()"
-      autocomplete="off"
-    >
-      <input
-        name="username"
-        [(ngModel)]="model.username"
-        class="form-control me-2"
-        type="text"
-        placeholder="Username"
-      />
-      <input
-        name="password"
-        [(ngModel)]="model.password"
-        class="form-control me-2"
-        type="password"
-        placeholder="Password"
-      />
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
+  <div class="sidebar-sticky">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a routerLink="/" style="padding: 8px 30px 8px 25px;font-size: 25px;">
+          <i class="fa fa-bug" style="margin-right: 9px;"></i>
+          <span>BugTracker</span>
+        </a>
+      </li>
+    </ul>
   </div>
+
+  <div
+    class="dropdown"
+    *ngIf="accountService.currentUser$ | async as user"
+    dropdown
+  >
+    <a class="dropdown-toggle text-light" dropdownToggle
+      >Welcome {{ user.username | titlecase }}</a
+    >
+    <div class="dropdown-menu mt-3" *dropdownMenu>
+      <a class="dropdown-item" routerLink="/member/edit">Edit Profile</a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" (click)="logout()">Logout</a>
+    </div>
+  </div>
+
+  <form
+    *ngIf="(accountService.currentUser$ | async) === null"
+    #loginForm="ngForm"
+    class="d-flex ml-auto"
+    (ngSubmit)="login()"
+    autocomplete="off"
+  >
+    <input
+      name="username"
+      [(ngModel)]="model.username"
+      class="form-control me-2"
+      type="text"
+      placeholder="Username"
+    />
+    <input
+      name="password"
+      [(ngModel)]="model.password"
+      class="form-control me-2"
+      type="password"
+      placeholder="Password"
+    />
+    <button class="btn btn-outline-success" type="submit">Search</button>
+  </form>
 </nav>

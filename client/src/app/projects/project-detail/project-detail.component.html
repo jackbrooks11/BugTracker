@@ -11,9 +11,7 @@
                     <div class="row">
                       <div class="col">
                         <div class="form-group">
-                          <h4>
-                            Details for {{ project.title | titlecase }}
-                          </h4>
+                          <h4>Details for {{ project.title | titlecase }}</h4>
                         </div>
                         <div class="p-3">
                           <a
@@ -22,7 +20,9 @@
                             style="padding-right: 50px"
                             >Back to project list</a
                           >
-                          <a href="#" routerLink="/tickets/{{ project.id }}/edit"
+                          <a
+                            href="#"
+                            routerLink="/projects/{{ project.id }}/edit"
                             >Edit Project</a
                           >
                         </div>
@@ -56,8 +56,16 @@
     </div>
   </div>
 </div>
-<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 100%">
-  <div class="col" style="max-width: 50%;">
+<div
+  class="row flex-lg-nowrap"
+  style="
+    padding: 0 15px 0 15px;
+    max-width: 100%;
+    overflow-y: auto;
+    height: 400px;
+  "
+>
+  <div class="col" style="max-width: 100%;">
     <div class="row">
       <div class="col mb-3">
         <div class="card">
@@ -69,14 +77,11 @@
                     <div class="row">
                       <div class="col">
                         <div class="form-group">
-                          <h4>
-                            Project Personnel
-                          </h4>
+                          <h4>Project Personnel</h4>
                         </div>
                         <div class="p-3">
                           <app-project-personnel></app-project-personnel>
                         </div>
-  
                       </div>
                     </div>
                   </form>
@@ -100,14 +105,11 @@
                     <div class="row">
                       <div class="col">
                         <div class="form-group">
-                          <h4>
-                            Project Tickets
-                          </h4>
+                          <h4>Project Tickets</h4>
                         </div>
                         <div class="p-3">
                           <app-project-tickets></app-project-tickets>
                         </div>
-  
                       </div>
                     </div>
                   </form>

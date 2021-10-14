@@ -10,12 +10,15 @@ namespace API.Data
     {
         public DataContext(DbContextOptions options) : base(options)
         {
+            
         }
 
+        public DbSet<ProjectUser> ProjectUser { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Project> Projects { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            
             base.OnModelCreating(builder);
 
             builder.Entity<AppUser>()

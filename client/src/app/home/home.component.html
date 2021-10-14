@@ -1,43 +1,52 @@
-
 <div class="container mt-5">
-    <div *ngIf="!registerMode" style='text-align: center;'>
-        <h1>Track some bugs!</h1>
-        <div class="text-center">
-            <button (click)="registerToggle()" class="btn btn-primary btn-lg mr-2">Register</button>
-            <button class="btn btn-info btn-lg">Learn more</button>
-        </div>
+  <div *ngIf="!registerMode && !user" style="text-align: center">
+    <h1>Track some bugs!</h1>
+    <div class="text-center">
+      <button (click)="registerToggle()" class="btn btn-primary btn-lg mr-2">
+        Register
+      </button>
+      <button class="btn btn-info btn-lg">Learn more</button>
     </div>
+  </div>
 </div>
 
 <div class="container">
-    <div *ngIf="registerMode" class="row justify-content-center">
-        <div class="col-4">
-            <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
-        </div>
+  <div *ngIf="registerMode && !user" class="row justify-content-center">
+    <div class="col-4">
+      <app-register
+        (cancelRegister)="cancelRegisterMode($event)"
+      ></app-register>
     </div>
+  </div>
+  <div
+    *ngIf="user"
+    class="row flex-lg-nowrap"
+    style="padding: 0 15px 0 15px; max-width: 100%"
+  >
+    <div class="col">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form class="form" novalidate="">
+                      <div class="row">
+                        <div class="col">
+                          <div class="row">
+                            <app-bar-chart></app-bar-chart>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>

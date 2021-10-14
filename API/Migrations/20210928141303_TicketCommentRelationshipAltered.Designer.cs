@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210901130915_TicketAltered")]
-    partial class TicketAltered
+    [Migration("20210928141303_TicketCommentRelationshipAltered")]
+    partial class TicketCommentRelationshipAltered
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -229,6 +229,31 @@ namespace API.Migrations
                     b.ToTable("Tickets");
                 });
 
+            modelBuilder.Entity("API.Entities.TicketComment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SubmittedBy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketComment");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -362,6 +387,15 @@ namespace API.Migrations
                         .HasForeignKey("ProjectId");
                 });
 
+            modelBuilder.Entity("API.Entities.TicketComment", b =>
+                {
+                    b.HasOne("API.Entities.Ticket", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("API.Entities.AppRole", null)
@@ -417,6 +451,11 @@ namespace API.Migrations
                     b.Navigation("ProjectUsers");
 
                     b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("API.Entities.Ticket", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

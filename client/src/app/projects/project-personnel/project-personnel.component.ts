@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { PersonnelModalComponent } from 'src/app/modals/personnel-modal/personnel-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
 import { Project } from 'src/app/_models/project';
 import { User } from 'src/app/_models/user';
@@ -15,11 +17,16 @@ import { ProjectsService } from 'src/app/_services/projects.service';
 export class ProjectPersonnelComponent implements OnInit {
   users: User[];
   pagination: Pagination;
+  bsModalRef: BsModalRef;
   userParams: UserParams;
   project: Project;
+  checkAll: boolean = false;
+  usernamesToDelete: string[] = [];
+
   constructor(
     private memberService: MembersService,
     private projectService: ProjectsService,
+    private modalService: BsModalService,
     private route: ActivatedRoute
   ) {
     this.userParams = new UserParams();
@@ -80,6 +87,57 @@ export class ProjectPersonnelComponent implements OnInit {
       --this.userParams.icons[index];
     } else {
       ++this.userParams.icons[index];
+    }
+  }
+
+  addUserToProject() {
+    this.memberService.addUserToProject(this.project.id, this.bsModalRef.content.assignUserForm.value.username)
+      .subscribe(() => {
+        this.loadUsers();
+      });
+  }
+
+  deleteUsers() {
+    if(confirm("Are you sure to delete the selected user(s)?")) {
+      this.memberService
+      .deleteUsersFromProject(this.project, this.usernamesToDelete)
+      .subscribe((value) => {
+        this.usernamesToDelete = [];
+        this.loadUsers();
+      });
+    }
+  }
+
+  openRolesModal() {
+    const config = {
+      class: 'modal-dialog-centered',
+      initialState: {
+        project: this.project
+      }
+    };
+    this.bsModalRef = this.modalService.show(PersonnelModalComponent, config);
+    this.bsModalRef.content.submitted.subscribe((value) => {
+      const submitted = value;
+      if (submitted) {
+        this.addUserToProject();
+      }
+    });
+  }
+
+  toggleCheckAll = (evt) => {
+    this.checkAll = !this.checkAll;
+    if (evt.target.checked == true) {
+      this.users.forEach((val) => this.usernamesToDelete.push(val.username));
+    } else {
+      this.usernamesToDelete.length = 0;
+    }
+  }
+
+  changed = (evt, username: string) => {
+    if (evt.target.checked == true) {
+      this.usernamesToDelete.push(username);
+    } else {
+      this.usernamesToDelete.splice(this.usernamesToDelete.indexOf(username), 1);
     }
   }
 }

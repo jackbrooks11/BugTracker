@@ -84,7 +84,7 @@
       <tbody>
         <tr *ngFor="let project of projects">
           <td>
-            <a href="#">{{ project.title }}</a>
+            <a routerLink='../../projects/{{project.id}}'>{{ project.title }}</a>
           </td>
           <td>{{ project.description }}</td>
           <td>{{ project.created | date: "medium" }}</td>

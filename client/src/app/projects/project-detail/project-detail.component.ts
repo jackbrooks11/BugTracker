@@ -23,6 +23,7 @@ export class ProjectDetailComponent implements OnInit {
       }
       this.project = project;
     }, error => {
+      console.log(error);
       this.router.navigateByUrl('/not-found');
     })
   }

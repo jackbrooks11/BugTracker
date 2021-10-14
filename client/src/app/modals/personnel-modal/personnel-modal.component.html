@@ -1,1 +1,100 @@
-<p>personnel-modal works!</p>
+<div class="row flex-lg-nowrap">
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form
+                    [formGroup]="assignUserForm"
+                    (ngSubmit)="assignUserForm.valid && assignUserToProject()"
+                    class="form"
+                    novalidate=""
+                    autocomplete="off"
+                  >
+                    <div class="row">
+                      <div class="col">
+                        <div class="form-group">
+                          <h4>Assign user to project</h4>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <label class="font-weight-bold"
+                                >Assigned Developer</label
+                              >
+                              <input
+                                [(ngModel)]="userParams.searchMatch"
+                                [ngModelOptions]="{ standalone: true }"
+                                name="assignedTo"
+                                id="assignedTo"
+                                list="userList"
+                                class="form-control"
+                                (input)="getFilteredUsers()"
+                              />
+                              <div
+                                id="userList"
+                                *ngIf="!hide"
+                                style="
+                                  max-height: 200px;
+                                  overflow: scroll;
+                                  border: thin solid;
+                                "
+                              >
+                                <p
+                                  class="dropdown-item"
+                                  *ngFor="let filteredUser of filteredUsers"
+                                  (click)="
+                                    updateDeveloper(filteredUser.username)
+                                  "
+                                  style="cursor: pointer"
+                                >
+                                  {{ filteredUser.username }}
+                                </p>
+                                <p
+                                  class="dropdown-item"
+                                  [hidden]="disableLoadMoreUsers"
+                                >
+                                  <button
+                                    class="btn btn-sm btn-light"
+                                    (click)="loadMoreUsers()"
+                                  >
+                                    Load More Users
+                                  </button>
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col d-flex justify-content-end">
+                        <button
+                          type="button"
+                          class="btn btn-default"
+                          (click)="bsModalRef.hide()"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          [disabled]="!assignUserForm.valid || !hide"
+                          type="submit"
+                          class="btn btn-default"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

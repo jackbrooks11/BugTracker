@@ -10,6 +10,8 @@ namespace API.Helpers
             CreateMap<RegisterDto, AppUser>();
             CreateMap<AppUser, AppUser>();
             CreateMap<Ticket, Ticket>();
+            CreateMap<Project, Project>();
+            CreateMap<EditMemberDto, AppUser>();
         }
         
     }

@@ -16,7 +16,7 @@ namespace API.Data
         }
         public async Task<Ticket> GetTicketByIdAsync(int id)
         {
-            return await _context.Tickets.FindAsync(id);
+            return await _context.Tickets.Include(x => x.Comments).FirstOrDefaultAsync(y => y.Id == id);
         }
         public async Task<Ticket> GetTicketByTitleAsync(string title)
         {
@@ -26,6 +26,7 @@ namespace API.Data
         public async Task<PagedList<Ticket>> GetTicketsAsync(TicketParams ticketParams)
         {
             var query = _context.Tickets
+            .Include(t => t.Comments)
             .AsNoTracking();
             if (ticketParams.SearchMatch != null)
             {
@@ -168,6 +169,10 @@ namespace API.Data
         {
             _context.Tickets.Add(ticket);
         }
+        public void AddCommentToTicket(Ticket ticket, TicketComment comment)
+        {
+            ticket.Comments.Add(comment);
+        }
 
         public void Delete(int[] ticketIdsToDelete)
         {
@@ -177,7 +182,6 @@ namespace API.Data
 
                 _context.Remove(ticket);
             }
-
         }
 
         public async Task<bool> TicketExists(string title)

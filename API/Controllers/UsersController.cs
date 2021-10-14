@@ -51,14 +51,22 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateUser(AppUser appUser)
+        public async Task<ActionResult<AppUser>> UpdateUser(EditMemberDto partialUser)
         {
             var username = User.GetUsername();
             var user = await _userRepository.GetUserByUsernameAsync(username);
-            _mapper.Map(appUser, user);
+            _mapper.Map(partialUser, user);
+            if (partialUser.Password != "")
+            {
+                var token = await __userManager.GeneratePasswordResetTokenAsync(user);
+                var result = await __userManager.ResetPasswordAsync(user, token, partialUser.Password);
+                if (!result.Succeeded) {
+                    return BadRequest("Inadequate Password");
+                }
+            }
             _userRepository.Update(user);
 
-            if (await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _userRepository.SaveAllAsync()) return user;
 
             return BadRequest("Failed to update user");
         }
@@ -122,5 +130,70 @@ namespace API.Controllers
             return Ok(usersPaginated);
         }
 
+        [HttpGet("{projectTitle}/usersNotInProject")]
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersNotInProject(string projectTitle, [FromQuery] UserParams userParams)
+        {
+            var users = __userManager.Users
+                .Where((pu => !pu.ProjectUsers.Any(u => u.Project.Title == projectTitle)))
+                .Include(r => r.UserRoles)
+                .ThenInclude(r => r.Role)
+                .AsNoTracking();
+            if (userParams.SearchMatch != null)
+            {
+                users = users.Where(u => u.UserRoles.Any(r => r.Role.Name.ToLower().Contains(userParams.SearchMatch))
+                || u.UserName.ToLower().Contains(userParams.SearchMatch));
+            }
+            var userLength = users.Count();
+            if (!userParams.Ascending)
+            {
+                users = users.OrderByDescending(u => u.UserName);
+            }
+            else
+            {
+                users = users.OrderBy(u => u.UserName);
+            }
+            users = users
+                .Skip((userParams.PageNumber - 1) * userParams.PageSize)
+                .Take(userParams.PageSize);
+            var userList = await users
+            .Select(u => new
+            {
+                u.Id,
+                Username = u.UserName,
+                Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
+            }).ToListAsync();
+            var usersReformatted = new List<PaginatedUserDto>();
+            foreach (var user in userList)
+            {
+                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles));
+            }
+
+            var usersPaginated = new PagedList<PaginatedUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
+            Response.AddPaginationHeader(usersPaginated.CurrentPage, usersPaginated.PageSize, usersPaginated.TotalCount, usersPaginated.TotalPages);
+            return Ok(usersPaginated);
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPost("{projectId}/addUser")]
+        public async Task<ActionResult> AddUserToProject(ProjectUserDto projectUser)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(projectUser.Username);
+            _projectRepository.AddUserToProjectAsync(projectUser.ProjectId, user);
+
+            if (await _projectRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to add user to project");
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPost("{projectId}/deleteUsers")]
+        public async Task<ActionResult> DeleteUsersFromProject(DeleteUsersFromProjectDto usernamesToDelete)
+        {
+            _projectRepository.DeleteUsers(usernamesToDelete);
+
+            if (await _projectRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to delete user(s) from project");
+        }
     }
 }

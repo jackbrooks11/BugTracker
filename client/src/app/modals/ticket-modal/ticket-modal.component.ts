@@ -19,16 +19,18 @@ export class TicketModalComponent implements OnInit {
   createTicketForm: FormGroup;
   validationErrors: string[] = [];
   userParams: UserParams = new UserParams();
-  projectParams: ProjectParams = new ProjectParams();
+  projectForUserParams: ProjectParams = new ProjectParams();
   users: User[] = [];
-  user: User;
   filteredUsers: User[] = [];
+  user: User;
   projects: Project[] = [];
   filteredProjects: Project[] = [];
+  projectTitle: string;
   hideProjects: boolean = true;
   disableUsers: boolean = true;
   hideUsers: boolean = true;
-
+  disableLoadMoreProjects: boolean = false;
+  disableLoadMoreUsers: boolean = false;
   @Input() submitted = new EventEmitter();
   hide: boolean = true;
 
@@ -39,6 +41,8 @@ export class TicketModalComponent implements OnInit {
     private projectService: ProjectsService,
     private accountService: AccountService
   ) {
+    this.disableLoadMoreProjects = this.projectService.disableLoadMoreProjects;
+    this.disableLoadMoreUsers = this.memberService.disableLoadMoreUsers;
     this.accountService.currentUser$
       .pipe(take(1))
       .subscribe((user) => (this.user = user));
@@ -62,36 +66,48 @@ export class TicketModalComponent implements OnInit {
   }
 
   loadProjects() {
-    this.projectParams.searchMatch =
-      this.projectParams.searchMatch.toLowerCase();
-    this.projectParams.ascending = true;
-    this.projectService.setProjectForUserParams(this.projectParams);
-    if (this.user.roles.includes('Admin')) {
-      this.projectService
-        .getProjects(this.projectParams)
-        .subscribe((response) => {
-          this.projects = response.result;
-        });
-    } else {
-      this.projectService
-        .getProjectsForUser(this.projectParams)
-        .subscribe((response) => {
-          this.projects = response.result;
-        });
-    }
+    this.projectForUserParams.searchMatch =
+      this.projectForUserParams.searchMatch.toLowerCase();
+    this.projectForUserParams.ascending = true;
+    this.projectForUserParams.pageSize = 10;
+    this.projectService
+      .getProjectsForUser(this.projectForUserParams)
+      .subscribe((response) => {
+        this.projects = response.result;
+        if (response.result.length < this.projectForUserParams.pageSize) {
+          this.disableLoadMoreProjects = true;
+          this.projectService.disableLoadMoreProjects = true;
+        }
+      });
+  }
+
+  loadMoreProjects() {
+    this.projectForUserParams.pageNumber += 1;
+    this.projectService
+      .getProjectsForUser(this.projectForUserParams)
+      .subscribe((response) => {
+        response.result.forEach((element) => this.projects.push(element));
+        if (response.result.length < this.projectForUserParams.pageSize) {
+          this.disableLoadMoreProjects = true;
+          this.projectService.disableLoadMoreProjects = true;
+        }
+        this.getFilteredProjects();
+      });
   }
 
   getFilteredProjects() {
     this.hideProjects = false;
     this.disableUsers = true;
-    this.projectParams.searchMatch = this.createTicketForm.value.project;
-    if (this.projectParams.searchMatch == '') {
+    this.projectForUserParams.searchMatch = this.createTicketForm.value.project;
+    if (this.projectForUserParams.searchMatch == '') {
       this.filteredProjects = this.projects;
       return;
     }
     this.filteredProjects = [];
     for (let i = 0; i < this.projects.length; ++i) {
-      if (this.projects[i].title.includes(this.projectParams.searchMatch)) {
+      if (
+        this.projects[i].title.includes(this.projectForUserParams.searchMatch)
+      ) {
         this.filteredProjects.push(this.projects[i]);
       }
     }
@@ -99,18 +115,30 @@ export class TicketModalComponent implements OnInit {
 
   loadUsers(projectTitle: string) {
     this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
-    this.memberService.setUserParams(this.userParams);
+    this.userParams.pageSize = 10;
     this.memberService
       .getMembersForProject(projectTitle, this.userParams)
       .subscribe((response) => {
         this.users = response.result;
-        
+        if (response.result.length < this.userParams.pageSize) {
+          this.disableLoadMoreUsers = true;
+          this.memberService.disableLoadMoreUsers = true;
+        }
       });
   }
 
-  createTicket() {
-    this.submitted.emit(true);
-    this.bsModalRef.hide();
+  loadMoreUsers() {
+    this.userParams.pageNumber += 1;
+    this.memberService
+      .getMembersForProject(this.projectTitle, this.userParams)
+      .subscribe((response) => {
+        response.result.forEach((element) => this.users.push(element));
+        if (response.result.length < this.userParams.pageSize) {
+          this.disableLoadMoreUsers = true;
+          this.memberService.disableLoadMoreUsers = true;
+        }
+        this.getFilteredUsers();
+      });
   }
 
   getFilteredUsers() {
@@ -128,6 +156,13 @@ export class TicketModalComponent implements OnInit {
     }
   }
 
+  createTicket() {
+    this.submitted.emit(true);
+    this.bsModalRef.hide();
+  }
+
+
+
   updateDeveloper(userName: string) {
     this.hide = true;
     this.userParams.searchMatch = userName;
@@ -137,12 +172,13 @@ export class TicketModalComponent implements OnInit {
   /*Function called when project is clicked*/
   updateProject(title: string) {
     //Hide project list and allow user to assign user to ticket
+    this.projectTitle = title;
     this.hideProjects = true;
     this.disableUsers = false;
     this.userParams.searchMatch = '';
     this.createTicketForm.controls['assignedTo'].setValue('');
     this.loadUsers(title);
-    this.projectParams.searchMatch = title;
+    this.projectForUserParams.searchMatch = title;
 
     this.createTicketForm.controls['project'].setValue(title);
   }

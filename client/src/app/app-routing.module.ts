@@ -10,6 +10,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
 import { MemberProjectsComponent } from './members/member-projects/member-projects.component';
 import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
 import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
+import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
 import { ProjectListComponent } from './projects/project-list/project-list.component';
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
@@ -28,11 +29,13 @@ const routes: Routes = [
       {path: 'members/:username', component: MemberDetailComponent},
       {path: 'member/edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
       {path: 'member/tickets', component: MemberTicketsComponent},
+      {path: 'member/projects/:id', component: ProjectDetailComponent},
       {path: 'member/projects', component: MemberProjectsComponent},
       {path: 'tickets/:id/edit', component: TicketEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
       {path: 'tickets/:id', component: TicketDetailComponent},
       {path: 'tickets', component: TicketListComponent},
       {path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard]},
+      {path: 'projects/:id/edit', component: ProjectEditComponent},
       {path: 'projects/:id', component: ProjectDetailComponent},
       {path: 'projects', component: ProjectListComponent}
     ]

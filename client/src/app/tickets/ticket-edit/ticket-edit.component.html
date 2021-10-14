@@ -8,6 +8,7 @@
               <div class="tab-content pt-3">
                 <div class="tab-pane active">
                   <form
+                    name="ticketForm"
                     #editForm="ngForm"
                     *ngIf="ticket"
                     (ngSubmit)="updateTicket()"
@@ -65,7 +66,6 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Project</label>
-
                               <input
                                 [(ngModel)]="ticket.project"
                                 name="project"
@@ -98,6 +98,19 @@
                                 >
                                   {{ filteredProject.title }}
                                 </div>
+                                <div
+                                  class="dropdown-item"
+                                  [hidden]="disableLoadMoreProjects"
+                                >
+                                  <button
+                                    name="loadMoreProjects"
+                                    type="button"
+                                    class="btn btn-sm btn-light"
+                                    (click)="loadMoreProjects()"
+                                  >
+                                    Load More Projects
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -106,7 +119,6 @@
                               <label class="font-weight-bold"
                                 >Assigned Developer</label
                               >
-
                               <input
                                 [(ngModel)]="ticket.assignedTo"
                                 name="assignedTo"
@@ -129,7 +141,7 @@
                                   border: thin solid;
                                 "
                               >
-                                <p
+                                <div
                                   class="dropdown-item"
                                   *ngFor="let filteredUser of filteredUsers"
                                   (click)="
@@ -138,7 +150,20 @@
                                   style="cursor: pointer"
                                 >
                                   {{ filteredUser.username }}
-                                </p>
+                                </div>
+                                <div
+                                  class="dropdown-item"
+                                  [hidden]="disableLoadMoreUsers"
+                                >
+                                  <button
+                                    name="loadMoreUsers"
+                                    type="button"
+                                    class="btn btn-sm btn-light"
+                                    (click)="loadMoreUsers()"
+                                  >
+                                    Load More Users
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>

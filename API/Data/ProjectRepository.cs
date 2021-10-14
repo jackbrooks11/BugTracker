@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
@@ -23,6 +24,7 @@ namespace API.Data
         {
             return await _context.Projects
             .Include(t => t.Tickets)
+            .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
         } 
         public async Task<Project> GetProjectByTitleAsync(string title)
@@ -110,12 +112,30 @@ namespace API.Data
                 _context.Remove(project);
             }
         }
-        public async void AddTicketForProjectAsync(Ticket ticket)
+        public void DeleteUsers(DeleteUsersFromProjectDto usernamesToDelete)
+        {
+            var project = usernamesToDelete.Project;
+
+            var projectUsersToDelete = _context.ProjectUser.Where(pu => pu.ProjectId == project.Id && usernamesToDelete.UsernamesToDelete.Contains(pu.User.UserName));
+
+            foreach (var projectUser in projectUsersToDelete) {
+                _context.Remove(projectUser);
+            }
+        }
+        public async void AddTicketToProjectAsync(Ticket ticket)
         {
             var project = await this.GetProjectByTitleAsync(ticket.Project);
             project.Tickets.Add(ticket);
         }
 
+        public async void AddUserToProjectAsync(int projectId, AppUser user)
+        {
+            var project = await this.GetProjectByIdAsync(projectId);
+            var projectUser = new ProjectUser();
+            projectUser.ProjectId = project.Id;
+            projectUser.UserId = user.Id;
+            _context.ProjectUser.Add(projectUser);
+        }
         public async Task<bool> ProjectExists(string title)
         {
             return await _context.Projects.AnyAsync(x => x.Title.ToLower() == title.ToLower());

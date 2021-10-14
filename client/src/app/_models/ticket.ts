@@ -10,4 +10,5 @@ export interface Ticket {
     state: string;
     created: string;
     lastEdited: string;
+    comments: Comment;
 }

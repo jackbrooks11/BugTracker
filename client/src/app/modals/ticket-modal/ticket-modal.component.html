@@ -51,14 +51,16 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Project</label>
-                              <app-text-input
+                              <input
+                                name="assignedTo"
+                                id="assignedTo"
+                                class="form-control"
                                 [formControl]="
                                   createTicketForm.controls['project']
                                 "
                                 list="projectList"
                                 (input)="getFilteredProjects()"
-                                [label]="'project'"
-                              ></app-text-input>
+                              />
                               <div
                                 id="projectList"
                                 *ngIf="!hideProjects"
@@ -68,7 +70,7 @@
                                   border: thin solid;
                                 "
                               >
-                                <p
+                                <div
                                   class="dropdown-item"
                                   *ngFor="
                                     let filteredProject of filteredProjects
@@ -77,7 +79,18 @@
                                   style="cursor: pointer"
                                 >
                                   {{ filteredProject.title }}
-                                </p>
+                                </div>
+                                <div
+                                  class="dropdown-item"
+                                  [hidden]="disableLoadMoreProjects"
+                                >
+                                  <button
+                                    class="btn btn-sm btn-light"
+                                    (click)="loadMoreProjects()"
+                                  >
+                                    Load More Projects
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -110,7 +123,7 @@
                                   border: thin solid;
                                 "
                               >
-                                <p
+                                <div
                                   class="dropdown-item"
                                   *ngFor="let filteredUser of filteredUsers"
                                   (click)="
@@ -119,7 +132,18 @@
                                   style="cursor: pointer"
                                 >
                                   {{ filteredUser.username }}
-                                </p>
+                                </div>
+                                <div
+                                  class="dropdown-item"
+                                  [hidden]="disableLoadMoreUsers"
+                                >
+                                  <button
+                                    class="btn btn-sm btn-light"
+                                    (click)="loadMoreUsers()"
+                                  >
+                                    Load More Users
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>

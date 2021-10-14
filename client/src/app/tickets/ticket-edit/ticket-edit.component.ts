@@ -23,14 +23,17 @@ export class TicketEditComponent implements OnInit {
   @ViewChild('editForm') editForm: NgForm;
   user: User;
   userParams: UserParams = new UserParams();
-  projectParams: ProjectParams = new ProjectParams();
+  projectForUserParams: ProjectParams = new ProjectParams();
   users: User[] = [];
   filteredUsers: User[] = [];
   projects: Project[] = [];
   filteredProjects: Project[] = [];
+  projectTitle: string;
   hideUsers: boolean = true;
   hideProjects: boolean = true;
   disableUsers: boolean = false;
+  disableLoadMoreProjects: boolean = false;
+  disableLoadMoreUsers: boolean = false;
   ticket: Ticket;
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
     $event: any
@@ -48,6 +51,8 @@ export class TicketEditComponent implements OnInit {
     private route: ActivatedRoute,
     private toastr: ToastrService
   ) {
+    this.disableLoadMoreProjects = this.projectService.disableLoadMoreProjects;
+    this.disableLoadMoreUsers = this.memberService.disableLoadMoreUsers;
     this.accountService.currentUser$
       .pipe(take(1))
       .subscribe((user) => (this.user = user));
@@ -60,30 +65,59 @@ export class TicketEditComponent implements OnInit {
 
   loadUsers(projectTitle: string) {
     this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
-    this.memberService.setUserParams(this.userParams);
-    this.memberService.getMembersForProject(projectTitle, this.userParams).subscribe((response) => {
-      this.users = response.result;
-    });
+    this.userParams.pageSize = 10;
+    this.memberService
+      .getMembersForProject(projectTitle, this.userParams)
+      .subscribe((response) => {
+        this.users = response.result;
+        this.userParams.searchMatch = this.ticket.assignedTo;
+      });
+  }
+
+  loadMoreUsers() {
+    this.userParams.pageNumber += 1;
+    this.memberService
+      .getMembersForProject(this.projectTitle, this.userParams)
+      .subscribe((response) => {
+        response.result.forEach((element) => this.users.push(element));
+        console.log(this.projectTitle);
+        console.log(this.userParams);
+        if (response.result.length < this.userParams.pageSize) {
+          this.disableLoadMoreUsers = true;
+          this.memberService.disableLoadMoreUsers = true;
+        }
+        this.getFilteredUsers();
+      });
   }
 
   loadProjects() {
-    this.projectParams.searchMatch =
-      this.projectParams.searchMatch.toLowerCase();
-    this.projectParams.ascending = true;
-    this.projectService.setProjectForUserParams(this.projectParams);
-    if (this.user.roles.includes('Admin')) {
-      this.projectService
-        .getProjects(this.projectParams)
-        .subscribe((response) => {
-          this.projects = response.result;
-        });
-    } else {
-      this.projectService
-        .getProjectsForUser(this.projectParams)
-        .subscribe((response) => {
-          this.projects = response.result;
-        });
-    }
+    this.projectForUserParams.searchMatch =
+      this.projectForUserParams.searchMatch.toLowerCase();
+    this.projectForUserParams.ascending = true;
+    this.projectService.setProjectForUserParams(this.projectForUserParams);
+    this.projectService
+      .getProjectsForUser(this.projectForUserParams)
+      .subscribe((response) => {
+        this.projects = response.result;
+        if (response.result.length < this.projectForUserParams.pageSize) {
+          this.disableLoadMoreProjects = true;
+          this.projectService.disableLoadMoreProjects = true;
+        }
+      });
+  }
+
+  loadMoreProjects() {
+    this.projectForUserParams.pageNumber += 1;
+    this.projectService
+      .getProjectsForUser(this.projectForUserParams)
+      .subscribe((response) => {
+        response.result.forEach((element) => this.projects.push(element));
+        if (response.result.length < this.projectForUserParams.pageSize) {
+          this.disableLoadMoreProjects = true;
+          this.projectService.disableLoadMoreProjects = true;
+        }
+        this.getFilteredProjects();
+      });
   }
 
   loadTicket() {
@@ -91,7 +125,7 @@ export class TicketEditComponent implements OnInit {
       .getTicket(Number(this.route.snapshot.paramMap.get('id')))
       .subscribe((ticket) => {
         this.ticket = ticket;
-        this.userParams.searchMatch = ticket.assignedTo;
+        this.projectTitle = ticket.project;
         this.loadUsers(this.ticket.project);
       });
   }
@@ -127,14 +161,16 @@ export class TicketEditComponent implements OnInit {
   getFilteredProjects() {
     this.hideProjects = false;
     this.disableUsers = true;
-    this.projectParams.searchMatch = this.ticket.project;
-    if (this.projectParams.searchMatch == '') {
+    this.projectForUserParams.searchMatch = this.ticket.project;
+    if (this.projectForUserParams.searchMatch == '') {
       this.filteredProjects = this.projects;
       return;
     }
     this.filteredProjects = [];
     for (let i = 0; i < this.projects.length; ++i) {
-      if (this.projects[i].title.includes(this.projectParams.searchMatch)) {
+      if (
+        this.projects[i].title.includes(this.projectForUserParams.searchMatch)
+      ) {
         this.filteredProjects.push(this.projects[i]);
       }
     }
@@ -142,6 +178,7 @@ export class TicketEditComponent implements OnInit {
 
   /*Function called when project is clicked*/
   updateProject(title: string) {
+    this.projectTitle = title;
     //Hide project list and allow user to assign member to ticket
     this.hideProjects = true;
     this.disableUsers = false;
@@ -150,7 +187,7 @@ export class TicketEditComponent implements OnInit {
     this.editForm.controls['assignedTo'].setValue('');
     this.loadUsers(title);
 
-    this.projectParams.searchMatch = title;
+    this.projectForUserParams.searchMatch = title;
     this.editForm.controls['project'].setValue(title);
   }
 

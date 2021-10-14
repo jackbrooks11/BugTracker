@@ -1,4 +1,8 @@
-<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 75%" *ngIf="member">
+<div
+  class="row flex-lg-nowrap"
+  style="padding: 0 15px 0 15px; max-width: 75%"
+  *ngIf="editMember && editForm"
+>
   <div class="col">
     <div class="row">
       <div class="col mb-3">
@@ -41,11 +45,11 @@
                       {{ member.userName | titlecase }}
                     </h4>
                     <div class="text-muted" *ngIf="member">
-                      <small>Last seen {{member.lastActive | date}}</small>
+                      <small>Last seen {{ member.lastActive | date }}</small>
                     </div>
                   </div>
                   <div class="text-center text-sm-right">
-                    <span class="badge badge-secondary">{{user.roles}}</span>
+                    <span class="badge badge-secondary">{{ user.roles }}</span>
                     <div class="text-muted">
                       <small *ngIf="member"
                         >Joined {{ member.created | date }}</small
@@ -54,99 +58,95 @@
                   </div>
                 </div>
               </div>
+
               <div class="alert alert-info" *ngIf="editForm.dirty">
                 <strong>Information: </strong> You have made changes. Any
                 unsaved changes will be lost.
               </div>
+              <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    [ngClass]="{ active: settingsMode }"
+                    (click)="changeSettingsMode(true)"
+                  >
+                    Settings
+                  </button>
+                </li>
+                <li class="nav-item">
+                  <button
+                    class="nav-link"
+                    [ngClass]="{ active: !settingsMode }"
+                    (click)="changeSettingsMode(false)"
+                  >
+                    Change Password
+                  </button>
+                </li>
+              </ul>
               <div class="tab-content pt-3">
                 <div class="tab-pane active">
                   <form
-                    #editForm="ngForm"
+                    [formGroup]="editForm"
                     (ngSubmit)="updateMember()"
                     class="form"
                     novalidate=""
                   >
                     <div class="row">
                       <div class="col">
-                        <div class="row">
+                        <div class="row" *ngIf="settingsMode">
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold">Full Name</label>
-                              <input
-                                class="form-control"
-                                [(ngModel)]="member.fullName"
-                                type="text"
-                                name="fullName"
-                              />
+                              <app-text-input
+                                [formControl]="editForm.controls['fullName']"
+                              ></app-text-input>
                             </div>
                           </div>
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold">Company</label>
-                              <input
-                                class="form-control"
-                                [(ngModel)]="member.company"
-                                type="text"
-                                name="company"
-                              />
+                              <app-text-input
+                                [formControl]="editForm.controls['company']"
+                              ></app-text-input>
                             </div>
                           </div>
                         </div>
-                        <div class="row">
+                        <div class="row" *ngIf="settingsMode">
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">About</label>
-                              <textarea
-
-                                class="form-control"
-                                [(ngModel)]="member.about"
-                                type="text"
-                                name="about"
-                              ></textarea>
+                              <app-text-input
+                                [formControl]="editForm.controls['about']"
+                                [label]="'about'"
+                              ></app-text-input>
                             </div>
                           </div>
                         </div>
-                        <div class="row">
+                        <div class="row" *ngIf="!settingsMode">
                           <div class="col-12 col-sm-6 mb-3">
-                            <div class="mb-2"><b>Change Password</b></div>
-                            <div class="row">
-                              <div class="col">
-                                <div class="form-group">
-                                  <label>Current Password</label>
-                                  <input
-                                    class="form-control"
-                                    type="password"
-                                    placeholder="••••••"
-                                  />
-                                </div>
-                              </div>
-                            </div>
                             <div class="row">
                               <div class="col">
                                 <div class="form-group">
                                   <label>New Password</label>
-                                  <input
-                                    class="form-control"
-                                    type="password"
-                                    placeholder="••••••"
-                                  />
+                                  <app-text-input
+                                    [formControl]="
+                                      editForm.controls['password']
+                                    "
+                                    [label]="'Password'"
+                                  ></app-text-input>
                                 </div>
                               </div>
                             </div>
                             <div class="row">
                               <div class="col">
                                 <div class="form-group">
-                                  <label
-                                    >Confirm
-                                    <span class="d-none d-xl-inline"
-                                      >Password</span
-                                    ></label
-                                  >
-                                  <input
-                                    class="form-control"
-                                    type="password"
-                                    placeholder="••••••"
-                                  />
+                                  <label>Confirm Password</label>
+                                  <app-text-input
+                                    [formControl]="
+                                      editForm.controls['confirmPassword']
+                                    "
+                                    [label]="'Confirm Password'"
+                                  ></app-text-input>
                                 </div>
                               </div>
                             </div>
@@ -155,7 +155,7 @@
                         <div class="row">
                           <div class="col d-flex justify-content-end">
                             <button
-                              [disabled]="!editForm.dirty"
+                              [disabled]="!editForm.dirty || !editForm.valid"
                               class="btn btn-primary"
                               type="submit"
                             >

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
@@ -36,7 +36,10 @@ import { ProjectDetailComponent } from './projects/project-detail/project-detail
 import { ProjectPersonnelComponent } from './projects/project-personnel/project-personnel.component';
 import { ProjectTicketsComponent } from './projects/project-tickets/project-tickets.component';
 import { PersonnelModalComponent } from './modals/personnel-modal/personnel-modal.component';
-
+import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
+import { TicketCommentsComponent } from './tickets/ticket-comments/ticket-comments.component';
+import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
+import { ChartsModule } from 'ng2-charts';
 @NgModule({
   declarations: [
     AppComponent,
@@ -65,7 +68,10 @@ import { PersonnelModalComponent } from './modals/personnel-modal/personnel-moda
     ProjectDetailComponent,
     ProjectPersonnelComponent,
     ProjectTicketsComponent,
-    PersonnelModalComponent
+    PersonnelModalComponent,
+    ProjectEditComponent,
+    TicketCommentsComponent,
+    BarChartComponent
   ],
   imports: [
     BrowserModule,
@@ -75,13 +81,14 @@ import { PersonnelModalComponent } from './modals/personnel-modal/personnel-moda
     ReactiveFormsModule,
     BrowserAnimationsModule,
     SharedModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    ChartsModule
   ],
   providers: [
-    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -43,7 +43,6 @@ export class ProjectTicketsComponent implements OnInit {
   }
 
   getTicketsForProject() {
-    console.log(this.ticketParams);
     this.ticketService
       .getTicketsForProject(this.project.title, this.ticketParams)
       .subscribe((response) => {

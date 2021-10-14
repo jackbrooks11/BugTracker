@@ -1,0 +1,79 @@
+<div
+  class="row flex-lg-nowrap"
+  style="
+    padding: 0 15px 0 15px;
+    max-width: 100%;
+    overflow-y: auto;
+    height: 400px;
+  "
+>
+  <div class="col">
+    <div class="row">
+      <div class="col mb-3">
+        <div class="card">
+          <div class="card-body">
+            <form
+              class="form-block"
+              [formGroup]="commentForm"
+              (ngSubmit)="createComment()"
+            >
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="form-group">
+                    <textarea
+                      class="form-input"
+                      name="message"
+                      [formControl]="commentForm.controls['message']"
+                      required=""
+                      placeholder="Add a comment..."
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="padding-bottom: 20px;">
+                <div class="col d-flex justify-content-beginning">
+                  <button
+                    class="btn btn-primary"
+                    type="submit"
+                    [hidden]="commentForm.controls.message.value.length < 1"
+                  >
+                    Post
+                  </button>
+                </div>
+              </div>
+            </form>
+            <div class="be-comment-block" *ngIf="comments && comments.length > 0">
+              <h1 class="comments-title">Comments ({{comments.length}})</h1>
+              <div class="be-comment" *ngFor="let comment of comments.slice().reverse()">
+                <div class="be-img-comment">
+                  <a href="blog-detail-2.html">
+                    <img
+                      src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                      alt=""
+                      class="be-ava-comment"
+                    />
+                  </a>
+                </div>
+                <div class="be-comment-content">
+                  <span class="be-comment-name">
+                    <a href="blog-detail-2.html">{{
+                      comment.submittedBy | titlecase
+                    }}</a>
+                  </span>
+                  <span class="be-comment-time">
+                    <i class="fa fa-clock-o"></i>
+                    {{ comment.created | date: "short" }}
+                  </span>
+
+                  <p class="be-comment-text">
+                    {{ comment.message }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
