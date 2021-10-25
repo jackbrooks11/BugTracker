@@ -7,7 +7,7 @@
   <main
     role="main"
     [ngClass]="{
-      'col-md-9 ml-sm-auto col-lg-10 pt-3 px-4':
+      'ml-sm-auto col-lg-10 pt-3 px-4':
         (accountService.currentUser$ | async),
       'logged-out': !(accountService.currentUser$ | async)
     }"

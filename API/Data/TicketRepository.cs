@@ -116,13 +116,12 @@ namespace API.Data
                     "state" => query.OrderBy(t => t.State),
                     "type" => query.OrderBy(t => t.Type),
                     _ => query.OrderBy(t => t.Created)
-
                 };
             }
             query = query.Where(t => t.AssignedTo.ToLower() == username.ToLower());
             return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
         }
-        public async Task<PagedList<Ticket>> GetTicketsForProjectAsync(string projectTitle, TicketForProjectParams ticketParams)
+        public async Task<PagedList<Ticket>> GetTicketsForProjectAsync(string projectTitle, TicketParams ticketParams)
         {
             var query = _context.Tickets
             .AsNoTracking();
@@ -137,9 +136,14 @@ namespace API.Data
                 query = ticketParams.OrderBy switch
                 {
                     "title" => query.OrderByDescending(t => t.Title),
+                    "project" => query.OrderByDescending(t => t.Project),
                     "assignedTo" => query.OrderByDescending(t => t.AssignedTo),
+                    "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderByDescending(t => t.State),
+                    "type" => query.OrderByDescending(t => t.Type),
                     _ => query.OrderByDescending(t => t.Created)
-
                 };
             }
             else
@@ -147,9 +151,14 @@ namespace API.Data
                 query = ticketParams.OrderBy switch
                 {
                     "title" => query.OrderBy(t => t.Title),
+                    "project" => query.OrderBy(t => t.Project),
                     "assignedTo" => query.OrderBy(t => t.AssignedTo),
+                    "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderBy(t => t.State),
+                    "type" => query.OrderBy(t => t.Type),
                     _ => query.OrderBy(t => t.Created)
-
                 };
             }
             query = query.Where(t => t.Project.ToLower() == projectTitle.ToLower());
@@ -173,6 +182,15 @@ namespace API.Data
         {
             ticket.Comments.Add(comment);
         }
+        public void DeleteCommentsFromTicket(Ticket ticket, int[] commentIdsToDelete)
+        {
+            var commentsToDelete = ticket.Comments.Where(c => commentIdsToDelete.Contains(c.Id));
+            foreach (var comment in commentsToDelete)
+            {
+                _context.Remove(comment);
+            }
+        }
+
 
         public void Delete(int[] ticketIdsToDelete)
         {

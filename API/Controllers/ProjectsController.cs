@@ -93,6 +93,8 @@ namespace API.Controllers
 
             var projects = await _projectRepository.GetProjectsForUserAsync(int.Parse(userId), projectParams);
 
+            Response.AddPaginationHeader(projects.CurrentPage, projects.PageSize, projects.TotalCount, projects.TotalPages);
+
             return Ok(projects);
         }
 

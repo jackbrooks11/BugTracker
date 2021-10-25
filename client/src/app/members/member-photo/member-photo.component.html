@@ -1,0 +1,3 @@
+<i *ngIf="roles.includes('Admin')" class="fas fa-user-shield"></i>
+<i *ngIf="roles.includes('Project Manager') && !roles.includes('Admin')" class="fas fa-user-tie"></i>
+<i *ngIf="roles.includes('Developer') && !roles.includes('Project Manager') && !roles.includes('Admin')" class="fas fa-user"></i>

@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { Member } from 'src/app/_models/member';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
-import { AdminService } from 'src/app/_services/admin.service';
 import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
@@ -13,7 +13,8 @@ import { MembersService } from 'src/app/_services/members.service';
 })
 export class MemberDetailComponent implements OnInit {
   member: Member;
-  user: Partial<User>;
+  roles: Partial<User>;
+  user: User;
   editConfig: boolean[] = [false, false, false, false];
 
   constructor(
@@ -21,7 +22,11 @@ export class MemberDetailComponent implements OnInit {
     private memberService: MembersService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) {
+    this.accountService.currentUser$
+    .pipe(take(1))
+    .subscribe((user) => (this.user = user));
+  }
 
   ngOnInit(): void {
     this.loadMember();
@@ -36,6 +41,9 @@ export class MemberDetailComponent implements OnInit {
           if (member == null) {
             this.router.navigateByUrl('/not-found');
           }
+          if (member.userName == this.user.username) {
+            this.router.navigateByUrl('/member/edit');
+          }
           this.member = member;
         },
         (error) => {
@@ -47,15 +55,14 @@ export class MemberDetailComponent implements OnInit {
   getMemberWithRoles() {
     this.memberService
       .getMemberRoles(this.route.snapshot.paramMap.get('username'))
-      .subscribe((user) => {
-        console.log(user);
-        this.user = user;
+      .subscribe((roles) => {
+        this.roles = roles;
+        console.log(roles);
       });
   }
 
   toggleInput(index: number) {
     this.editConfig[index] = !this.editConfig[index];
-    console.log('HII');
     return 1;
   }
 }

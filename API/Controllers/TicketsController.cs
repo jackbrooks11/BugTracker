@@ -67,13 +67,23 @@ namespace API.Controllers
         }
 
         [HttpPost("{id}/comments/create")]
-        public async Task<ActionResult> AddCommentToTicket(TicketComment comment)
+        public async Task<ActionResult> AddCommentToTicket(int id, TicketComment comment)
         {
-            var ticket = await _ticketRepository.GetTicketByIdAsync(comment.TicketId);
+            var ticket = await _ticketRepository.GetTicketByIdAsync(id);
             _ticketRepository.AddCommentToTicket(ticket, comment);
             _ticketRepository.Update(ticket);
             if (await _ticketRepository.SaveAllAsync()) return NoContent();
             return BadRequest("Failed to create comment");
+        }
+
+        [HttpPost("{id}/comments/delete")]
+        public async Task<ActionResult> DeleteCommentsFromTicket(int id, int[] commentIdsToDelete)
+        {
+            var ticket = await _ticketRepository.GetTicketByIdAsync(id);
+            _ticketRepository.DeleteCommentsFromTicket(ticket, commentIdsToDelete);
+            _ticketRepository.Update(ticket);
+            if (await _ticketRepository.SaveAllAsync()) return NoContent();
+            return BadRequest("Failed to delete comment(s)");
         }
 
         [HttpPost("create")]
@@ -121,7 +131,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{projectTitle}/tickets")]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForProject(string projectTitle, [FromQuery] TicketForProjectParams ticketParams)
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForProject(string projectTitle, [FromQuery] TicketParams ticketParams)
         {
             var tickets = await _ticketRepository.GetTicketsForProjectAsync(projectTitle, ticketParams);
 

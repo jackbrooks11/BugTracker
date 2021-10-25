@@ -14,8 +14,10 @@ import { TicketsService } from 'src/app/_services/tickets.service';
 })
 export class TicketCommentsComponent implements OnInit {
   ticketId: number;
+  checkAll: boolean = false;
   commentForm: FormGroup;
   comments: TicketComment[];
+  commentIdsToDelete: number[] = [];
   message: string = '';
   user: User;
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
@@ -62,12 +64,46 @@ export class TicketCommentsComponent implements OnInit {
     comment.message = this.commentForm.controls.message.value;
     comment.ticketId = this.ticketId;
     comment.submittedBy = this.user.username;
-    console.log(comment);
+    comment.roles = this.user.roles.flat().toString();
     this.ticketService
       .addCommentToTicket(comment, this.ticketId)
       .subscribe(() => {
         this.loadTicket();
+        this.commentForm.reset();
         this.initializeForm();
       });
+  }
+
+  deleteComments() {
+    if(confirm("Are you sure to delete the selected comment(s)?")) {
+      this.ticketService
+      .deleteCommentFromTicket(this.commentIdsToDelete, this.ticketId)
+      .subscribe((value) => {
+        this.commentIdsToDelete = [];
+        this.loadTicket();
+      });
+    }
+  }
+
+
+  toggleCheckAll = (evt) => {
+    this.checkAll = !this.checkAll;
+    if (evt.target.checked == true) {
+      this.comments.forEach((val) => this.commentIdsToDelete.push(val.id));
+    } else {
+      this.commentIdsToDelete.length = 0;
+    }
+  }
+
+  deleteClicked = (evt, id: number) => {
+    this.commentIdsToDelete.push(id);
+  }
+
+  changed = (evt, id: number) => {
+    if (evt.target.checked == true) {
+      this.commentIdsToDelete.push(id);
+    } else {
+      this.commentIdsToDelete.splice(this.commentIdsToDelete.indexOf(id), 1);
+    }
   }
 }

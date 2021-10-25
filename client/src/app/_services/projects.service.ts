@@ -18,7 +18,7 @@ export class ProjectsService {
   projectForUserCache = new Map();
   projectParams: ProjectParams;
   projectForUserParams: ProjectParams;
-  disableLoadMoreProjects: boolean = false;
+  disableLoadMoreProjects: boolean = true;
 
   constructor(private http: HttpClient) {
     this.projectParams = new ProjectParams();
@@ -26,7 +26,6 @@ export class ProjectsService {
   }
 
   getProjects(projectParams: ProjectParams) {
-
     var response = this.projectCache.get(
       Object.values(projectParams).join('-')
     );
@@ -54,13 +53,18 @@ export class ProjectsService {
   }
 
   getProjectById(id: number) {
-    const project = [...this.projectCache.values()]
+    var project = [...this.projectCache.values()]
       .reduce((arr, elem) => arr.concat(elem.result), [])
       .find((project: Project) => project.id === id);
     if (project) {
       return of(project);
     }
-    console.log("HI");
+    project = [...this.projectForUserCache.values()]
+      .reduce((arr, elem) => arr.concat(elem.result), [])
+      .find((project: Project) => project.id === id);
+    if (project) {
+      return of(project);
+    }
     return this.http.get<Project>(this.baseUrl + 'projects/' + id);
   }
 
@@ -82,7 +86,7 @@ export class ProjectsService {
     params = params.append('searchMatch', projectParams.searchMatch);
 
     return this.getPaginatedResult<Project[]>(
-      this.baseUrl + 'projects',
+      this.baseUrl + 'projects/member/projects',
       params
     ).pipe(
       map((response) => {
@@ -94,7 +98,7 @@ export class ProjectsService {
       })
     );
   }
-  
+
   createProject(model: any) {
     return this.http.post(this.baseUrl + 'projects/create', model).pipe(
       map((project: Project) => {

@@ -25,6 +25,7 @@ import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component
 import { TextInputComponent } from './_forms/text-input/text-input.component';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { HasRoleDirective } from './_directives/has-role.directive';
+import { NotHaveRoleDirective } from './_directives/not-have-role.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
@@ -38,8 +39,11 @@ import { ProjectTicketsComponent } from './projects/project-tickets/project-tick
 import { PersonnelModalComponent } from './modals/personnel-modal/personnel-modal.component';
 import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
 import { TicketCommentsComponent } from './tickets/ticket-comments/ticket-comments.component';
-import { BarChartComponent } from './charts/bar-chart/bar-chart.component';
 import { ChartsModule } from 'ng2-charts';
+import { MemberPhotoComponent } from './members/member-photo/member-photo.component';
+import { TypeChartComponent } from './charts/type-chart/type-chart.component';
+import { StatusChartComponent } from './charts/status-chart/status-chart.component';
+import { PriorityChartComponent } from './charts/priority-chart/priority-chart.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -58,6 +62,7 @@ import { ChartsModule } from 'ng2-charts';
     TextInputComponent,
     AdminPanelComponent,
     HasRoleDirective,
+    NotHaveRoleDirective,
     UserManagementComponent,
     RolesModalComponent,
     MemberTicketsComponent,
@@ -71,7 +76,10 @@ import { ChartsModule } from 'ng2-charts';
     PersonnelModalComponent,
     ProjectEditComponent,
     TicketCommentsComponent,
-    BarChartComponent
+    MemberPhotoComponent,
+    TypeChartComponent,
+    StatusChartComponent,
+    PriorityChartComponent
   ],
   imports: [
     BrowserModule,

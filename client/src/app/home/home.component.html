@@ -23,30 +23,23 @@
     class="row flex-lg-nowrap"
     style="padding: 0 15px 0 15px; max-width: 100%"
   >
+    <div class="col" style="max-width: 33%">
+      <app-priority-chart></app-priority-chart>
+    </div>
+    <div class="col" style="max-width: 33%">
+      <app-status-chart></app-status-chart>
+    </div>
+    <div class="col" style="max-width: 34%">
+      <app-type-chart></app-type-chart>
+    </div>
+  </div>
+  <div
+    *ngIf="user"
+    class="row flex-lg-nowrap"
+    style="padding: 0 15px 0 15px; max-width: 100%"
+  >
     <div class="col">
-      <div class="row">
-        <div class="col mb-3">
-          <div class="card">
-            <div class="card-body">
-              <div class="e-profile">
-                <div class="tab-content pt-3">
-                  <div class="tab-pane active">
-                    <form class="form" novalidate="">
-                      <div class="row">
-                        <div class="col">
-                          <div class="row">
-                            <app-bar-chart></app-bar-chart>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <app-type-chart></app-type-chart>
     </div>
   </div>
 </div>

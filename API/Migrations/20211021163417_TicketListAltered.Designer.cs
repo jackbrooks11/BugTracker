@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20210928141303_TicketCommentRelationshipAltered")]
-    partial class TicketCommentRelationshipAltered
+    [Migration("20211021163417_TicketListAltered")]
+    partial class TicketListAltered
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -239,6 +239,9 @@ namespace API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Message")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Roles")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SubmittedBy")

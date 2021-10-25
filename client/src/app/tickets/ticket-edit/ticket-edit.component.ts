@@ -33,7 +33,7 @@ export class TicketEditComponent implements OnInit {
   hideProjects: boolean = true;
   disableUsers: boolean = false;
   disableLoadMoreProjects: boolean = false;
-  disableLoadMoreUsers: boolean = false;
+  disableLoadMoreUsers: boolean = true;
   ticket: Ticket;
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
     $event: any
@@ -69,6 +69,10 @@ export class TicketEditComponent implements OnInit {
     this.memberService
       .getMembersForProject(projectTitle, this.userParams)
       .subscribe((response) => {
+        if (response.result.length == this.userParams.pageSize) {
+          this.disableLoadMoreUsers = false;
+          this.memberService.disableLoadMoreUsers = false;
+        }
         this.users = response.result;
         this.userParams.searchMatch = this.ticket.assignedTo;
       });
@@ -80,8 +84,6 @@ export class TicketEditComponent implements OnInit {
       .getMembersForProject(this.projectTitle, this.userParams)
       .subscribe((response) => {
         response.result.forEach((element) => this.users.push(element));
-        console.log(this.projectTitle);
-        console.log(this.userParams);
         if (response.result.length < this.userParams.pageSize) {
           this.disableLoadMoreUsers = true;
           this.memberService.disableLoadMoreUsers = true;
@@ -98,11 +100,11 @@ export class TicketEditComponent implements OnInit {
     this.projectService
       .getProjectsForUser(this.projectForUserParams)
       .subscribe((response) => {
-        this.projects = response.result;
-        if (response.result.length < this.projectForUserParams.pageSize) {
-          this.disableLoadMoreProjects = true;
-          this.projectService.disableLoadMoreProjects = true;
+        if (response.result.length == this.userParams.pageSize) {
+          this.disableLoadMoreProjects = false;
+          this.projectService.disableLoadMoreProjects = false;
         }
+        this.projects = response.result;
       });
   }
 

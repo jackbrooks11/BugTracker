@@ -2,7 +2,7 @@
   <div class="sidebar-sticky">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a routerLink="/" style="padding: 8px 30px 8px 25px;font-size: 25px;">
+        <a routerLink="/" style="padding: 8px 30px 8px 25px; font-size: 25px;">
           <i class="fa fa-bug" style="margin-right: 9px;"></i>
           <span>BugTracker</span>
         </a>
@@ -46,6 +46,6 @@
       type="password"
       placeholder="Password"
     />
-    <button class="btn btn-outline-success" type="submit">Search</button>
+    <button [disabled]="!model.username || !model.password" class="btn btn-outline-success" type="submit">Log In</button>
   </form>
 </nav>

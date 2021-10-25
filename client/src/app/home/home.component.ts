@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../_models/user';
 import { AccountService } from '../_services/account.service';
@@ -19,6 +18,10 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    var datee = new Date();
+    datee.setDate(datee.getDate() - 1);
+    console.log(datee);
+
   }
 
   registerToggle() {

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Pagination } from 'src/app/_models/pagination';
 import { Project } from 'src/app/_models/project';
 import { Ticket } from 'src/app/_models/ticket';
-import { TicketForProjectParams } from 'src/app/_models/ticketForProjectParams';
+import { TicketParams } from 'src/app/_models/ticketParams';
 import { ProjectsService } from 'src/app/_services/projects.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
@@ -15,14 +15,14 @@ import { TicketsService } from 'src/app/_services/tickets.service';
 export class ProjectTicketsComponent implements OnInit {
   tickets: Ticket[];
   pagination: Pagination;
-  ticketParams: TicketForProjectParams;
+  ticketParams: TicketParams;
   project: Project;
   constructor(
     private ticketService: TicketsService,
     private projectService: ProjectsService,
     private route: ActivatedRoute
   ) {
-    this.ticketParams = new TicketForProjectParams();
+    this.ticketParams = new TicketParams();
   }
 
   ngOnInit(): void {

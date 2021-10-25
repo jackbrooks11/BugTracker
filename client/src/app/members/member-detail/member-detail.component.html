@@ -5,27 +5,9 @@
         <div class="card">
           <div class="card-body">
             <div class="e-profile">
-              <div class="row">
+              <div class="row" *ngIf="roles">
                 <div class="col-12 col-sm-auto mb-3">
-                  <div class="mx-auto" style="width: 140px">
-                    <div
-                      class="
-                        d-flex
-                        justify-content-center
-                        align-items-center
-                        rounded
-                      "
-                      style="
-                        height: 140px;
-                        background-color: rgb(233, 236, 239);
-                      "
-                    >
-                      <span
-                        style="color: rgb(166, 168, 170); font: bold 8pt Arial"
-                        >140x140</span
-                      >
-                    </div>
-                  </div>
+                  <app-member-photo style="font-size: 70px;" [roles]="roles.roles"></app-member-photo>
                 </div>
                 <div
                   class="
@@ -44,8 +26,8 @@
                       <small>Last seen {{member.lastActive | date}}</small>
                     </div>
                   </div>
-                  <div class="text-center text-sm-right" *ngIf="user">
-                    <span class="badge badge-secondary">{{user.roles}}</span>
+                  <div class="text-center text-sm-right">
+                    <span class="badge badge-secondary">{{roles.roles}}</span>
                     <div class="text-muted">
                       <small *ngIf="member">Joined {{member.created | date}}</small>
                     </div>

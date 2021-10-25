@@ -6,7 +6,6 @@ import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Ticket } from '../_models/ticket';
 import { TicketComment } from '../_models/ticketComment';
-import { TicketForProjectParams } from '../_models/ticketForProjectParams';
 import { TicketParams } from '../_models/ticketParams';
 
 @Injectable({
@@ -19,15 +18,11 @@ export class TicketsService {
   ticketCache = new Map();
   ticketForUserCache = new Map();
   ticketForProjectCache = new Map();
-  ticketParams: TicketParams;
-  ticketForUserParams: TicketParams;
-  ticketForProjectParams: TicketForProjectParams;
+  ticketParams: TicketParams = new TicketParams();
+  ticketForUserParams: TicketParams = new TicketParams();
+  ticketForProjectParams: TicketParams = new TicketParams();
 
-  constructor(private http: HttpClient) {
-    this.ticketParams = new TicketParams();
-    this.ticketForUserParams = new TicketParams();
-    this.ticketForProjectParams = new TicketParams();
-  }
+  constructor(private http: HttpClient) {}
 
   getTickets(ticketParams: TicketParams) {
     var response = this.ticketCache.get(Object.values(ticketParams).join('-'));
@@ -85,7 +80,7 @@ export class TicketsService {
     );
   }
 
-  getTicketsForProject(projectTitle: string, ticketParams: TicketForProjectParams) {
+  getTicketsForProject(projectTitle: string, ticketParams: TicketParams) {
     var response = this.ticketForProjectCache.get(
       Object.values(ticketParams).join('-') + '-' + projectTitle
     );
@@ -117,7 +112,13 @@ export class TicketsService {
   }
 
   getTicket(id: number) {
-    const ticket = [...this.ticketCache.values()]
+    var ticket = [...this.ticketCache.values()]
+      .reduce((arr, elem) => arr.concat(elem.result), [])
+      .find((ticket: Ticket) => ticket.id === id);
+    if (ticket) {
+      return of(ticket);
+    }
+    ticket = [...this.ticketForUserCache.values()]
       .reduce((arr, elem) => arr.concat(elem.result), [])
       .find((ticket: Ticket) => ticket.id === id);
     if (ticket) {
@@ -135,12 +136,14 @@ export class TicketsService {
   }
 
   addCommentToTicket(comment: TicketComment, id: number) {
-    console.log("HI");
-    return this.http.post(this.baseUrl + 'tickets/' + id + '/comments/create', comment).pipe(
-      map(() => {
-        this.ticketCache.clear();
-      })
-    );
+    console.log('HI');
+    return this.http
+      .post(this.baseUrl + 'tickets/' + id + '/comments/create', comment)
+      .pipe(
+        map(() => {
+          this.ticketCache.clear();
+        })
+      );
   }
 
   createTicket(model: any) {
@@ -155,6 +158,19 @@ export class TicketsService {
   deleteTickets(ticketIdsToDelete: number[]) {
     return this.http
       .post(this.baseUrl + 'tickets/delete', ticketIdsToDelete)
+      .pipe(
+        map(() => {
+          this.ticketCache.clear();
+        })
+      );
+  }
+
+  deleteCommentFromTicket(commentIdsToDelete: number[], id: number) {
+    return this.http
+      .post(
+        this.baseUrl + 'tickets/' + id + '/comments/delete',
+        commentIdsToDelete
+      )
       .pipe(
         map(() => {
           this.ticketCache.clear();

@@ -239,6 +239,9 @@ namespace API.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Roles")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SubmittedBy")
                         .HasColumnType("TEXT");
 

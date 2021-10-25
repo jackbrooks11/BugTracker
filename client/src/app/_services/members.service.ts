@@ -24,7 +24,7 @@ export class MembersService {
   memberNotInProjectCache = new Map();
   userParams: UserParams;
   userForProjectParams: UserParams;
-  disableLoadMoreUsers: boolean = false;
+  disableLoadMoreUsers: boolean = true;
   paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>();
 
   constructor(private http: HttpClient) {
@@ -115,6 +115,7 @@ export class MembersService {
   }
 
   addUserToProject(projectId: number, username: string) {
+    console.log(projectId, username);
     var model: any = {};
     model.projectId = projectId;
     model.username = username;

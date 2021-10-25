@@ -74,9 +74,10 @@ export class TicketModalComponent implements OnInit {
       .getProjectsForUser(this.projectForUserParams)
       .subscribe((response) => {
         this.projects = response.result;
-        if (response.result.length < this.projectForUserParams.pageSize) {
-          this.disableLoadMoreProjects = true;
-          this.projectService.disableLoadMoreProjects = true;
+        console.log(response);
+        if (response.result.length == this.projectForUserParams.pageSize) {
+          this.disableLoadMoreProjects = false;
+          this.projectService.disableLoadMoreProjects = false;
         }
       });
   }
@@ -120,9 +121,9 @@ export class TicketModalComponent implements OnInit {
       .getMembersForProject(projectTitle, this.userParams)
       .subscribe((response) => {
         this.users = response.result;
-        if (response.result.length < this.userParams.pageSize) {
-          this.disableLoadMoreUsers = true;
-          this.memberService.disableLoadMoreUsers = true;
+        if (response.result.length == this.userParams.pageSize) {
+          this.disableLoadMoreUsers = false;
+          this.memberService.disableLoadMoreUsers = false;
         }
       });
   }

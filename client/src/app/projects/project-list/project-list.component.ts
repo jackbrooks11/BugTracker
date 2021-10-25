@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { concatMap, mergeMap, switchMap } from 'rxjs/operators';
 import { ProjectModalComponent } from 'src/app/modals/project-modal/project-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
 import { Project } from 'src/app/_models/project';
 import { ProjectParams } from 'src/app/_models/projectParams';
+import { MembersService } from 'src/app/_services/members.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
 
 @Component({
@@ -20,7 +22,8 @@ export class ProjectListComponent implements OnInit {
   projectIdsToDelete: number[] = [];
   constructor(
     private projectService: ProjectsService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private memberService: MembersService
   ) {
     this.projectParams = this.projectService.getProjectParams();
   }
@@ -100,10 +103,9 @@ export class ProjectListComponent implements OnInit {
 
   createProject() {
     this.projectService
-      .createProject(this.bsModalRef.content.createProjectForm.value)
-      .subscribe((value) => {
-        this.loadProjects();
-      });
+      .createProject(this.bsModalRef.content.createProjectForm.value).subscribe(() => {
+        this.memberService.addUserToProject(this.bsModalRef.content.createProjectForm.value.id, 'admin');
+      })
   }
 
   deleteProjects() {

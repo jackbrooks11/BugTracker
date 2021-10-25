@@ -16,6 +16,11 @@ body{
     font-family: 'Conv_helveticaneuecyr-bold';
 }
 
+.delete-button {
+    background: transparent;
+    border: none;
+}
+
 .be-img-comment {
     width: 60px;
     height: 60px;
@@ -30,7 +35,7 @@ body{
 }
 
 .be-comment-content {
-    margin-left: 80px;
+    margin-left: 90px;
 }
 
 .be-comment-content span {
@@ -54,8 +59,9 @@ body{
     margin-bottom: 15px;
 }
 
-.be-comment-time {
+.be-comment-delete {
     text-align: right;
+    font-size: 11px;
 }
 
 .be-comment-time {
@@ -108,4 +114,9 @@ body{
 
 .form-group textarea.form-input {
     height: 100px;
+}
+
+.delete-checkbox {
+    float: left;
+    padding-right: 10px;
 }

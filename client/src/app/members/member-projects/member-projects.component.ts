@@ -53,6 +53,7 @@ export class MemberProjectsComponent implements OnInit {
       .subscribe((response) => {
         this.projects = response.result;
         this.pagination = response.pagination;
+        console.log(response);
       });
   }
 
