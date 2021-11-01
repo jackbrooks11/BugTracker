@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class TicketListAltered : Migration
+    public partial class ControllersAltered : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -176,7 +176,7 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProjectUser",
+                name: "ProjectUsers",
                 columns: table => new
                 {
                     ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -184,15 +184,15 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectUser", x => new { x.UserId, x.ProjectId });
+                    table.PrimaryKey("PK_ProjectUsers", x => new { x.UserId, x.ProjectId });
                     table.ForeignKey(
-                        name: "FK_ProjectUser_AspNetUsers_UserId",
+                        name: "FK_ProjectUsers_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProjectUser_Projects_ProjectId",
+                        name: "FK_ProjectUsers_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "Id",
@@ -208,8 +208,8 @@ namespace API.Migrations
                     Title = table.Column<string>(type: "TEXT", nullable: true),
                     Project = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
-                    SubmittedBy = table.Column<string>(type: "TEXT", nullable: true),
-                    AssignedTo = table.Column<string>(type: "TEXT", nullable: true),
+                    Submitter = table.Column<string>(type: "TEXT", nullable: true),
+                    Assignee = table.Column<string>(type: "TEXT", nullable: true),
                     Priority = table.Column<string>(type: "TEXT", nullable: true),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
                     State = table.Column<string>(type: "TEXT", nullable: true),
@@ -236,7 +236,7 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketComment",
+                name: "TicketComments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -249,13 +249,37 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketComment", x => x.Id);
+                    table.PrimaryKey("PK_TicketComments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TicketComment_Tickets_TicketId",
+                        name: "FK_TicketComments_Tickets_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Tickets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketPropertyChange",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Editor = table.Column<string>(type: "TEXT", nullable: true),
+                    Property = table.Column<string>(type: "TEXT", nullable: true),
+                    OldValue = table.Column<string>(type: "TEXT", nullable: true),
+                    NewValue = table.Column<string>(type: "TEXT", nullable: true),
+                    Changed = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    TicketId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketPropertyChange", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TicketPropertyChange_Tickets_TicketId",
+                        column: x => x.TicketId,
+                        principalTable: "Tickets",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -296,13 +320,18 @@ namespace API.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectUser_ProjectId",
-                table: "ProjectUser",
+                name: "IX_ProjectUsers_ProjectId",
+                table: "ProjectUsers",
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketComment_TicketId",
-                table: "TicketComment",
+                name: "IX_TicketComments_TicketId",
+                table: "TicketComments",
+                column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketPropertyChange_TicketId",
+                table: "TicketPropertyChange",
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
@@ -334,10 +363,13 @@ namespace API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "ProjectUser");
+                name: "ProjectUsers");
 
             migrationBuilder.DropTable(
-                name: "TicketComment");
+                name: "TicketComments");
+
+            migrationBuilder.DropTable(
+                name: "TicketPropertyChange");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

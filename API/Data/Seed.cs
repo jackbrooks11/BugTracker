@@ -46,20 +46,6 @@ namespace API.Data
             await userManager.AddToRolesAsync(admin, new[] {"Admin", "Project Manager"});
             
         }
-
-
-        public static async Task SeedTickets(DataContext context)
-        {
-            if (await context.Tickets.AnyAsync()) return;
-            var ticketData = await System.IO.File.ReadAllTextAsync("Data/TicketSeedData.json");
-            var tickets = JsonSerializer.Deserialize<List<Ticket>>(ticketData);
-            foreach(var ticket in tickets)
-            {
-                context.Tickets.Add(ticket);
-            }
-            await context.SaveChangesAsync();
-
-        }
        /* public static async Task SeedProjects(DataContext context)
         {
             if (await context.Projects.AnyAsync()) return;

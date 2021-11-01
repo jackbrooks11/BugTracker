@@ -3,12 +3,11 @@ export interface Ticket {
     title: string;
     project: string;
     description: string;
-    submittedBy: string;
-    assignedTo: string;
+    submitter: string;
+    assignee: string;
     priority: string;
     type: string;
     state: string;
     created: string;
     lastEdited: string;
-    comments: Comment;
 }

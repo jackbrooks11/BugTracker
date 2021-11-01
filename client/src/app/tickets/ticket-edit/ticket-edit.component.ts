@@ -11,6 +11,7 @@ import { UserParams } from 'src/app/_models/userParams';
 import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
+import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 @Component({
@@ -48,11 +49,12 @@ export class TicketEditComponent implements OnInit {
     private memberService: MembersService,
     private projectService: ProjectsService,
     private accountService: AccountService,
+    private projectUserService: ProjectUsersService,
     private route: ActivatedRoute,
     private toastr: ToastrService
   ) {
     this.disableLoadMoreProjects = this.projectService.disableLoadMoreProjects;
-    this.disableLoadMoreUsers = this.memberService.disableLoadMoreUsers;
+    this.disableLoadMoreUsers = this.projectUserService.disableLoadMoreUsers;
     this.accountService.currentUser$
       .pipe(take(1))
       .subscribe((user) => (this.user = user));
@@ -66,27 +68,27 @@ export class TicketEditComponent implements OnInit {
   loadUsers(projectTitle: string) {
     this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
     this.userParams.pageSize = 10;
-    this.memberService
+    this.projectUserService
       .getMembersForProject(projectTitle, this.userParams)
       .subscribe((response) => {
         if (response.result.length == this.userParams.pageSize) {
           this.disableLoadMoreUsers = false;
-          this.memberService.disableLoadMoreUsers = false;
+          this.projectUserService.disableLoadMoreUsers = false;
         }
         this.users = response.result;
-        this.userParams.searchMatch = this.ticket.assignedTo;
+        this.userParams.searchMatch = this.ticket.assignee;
       });
   }
 
   loadMoreUsers() {
     this.userParams.pageNumber += 1;
-    this.memberService
+    this.projectUserService
       .getMembersForProject(this.projectTitle, this.userParams)
       .subscribe((response) => {
         response.result.forEach((element) => this.users.push(element));
         if (response.result.length < this.userParams.pageSize) {
           this.disableLoadMoreUsers = true;
-          this.memberService.disableLoadMoreUsers = true;
+          this.projectUserService.disableLoadMoreUsers = true;
         }
         this.getFilteredUsers();
       });
@@ -141,7 +143,7 @@ export class TicketEditComponent implements OnInit {
 
   getFilteredUsers() {
     this.hideUsers = false;
-    this.userParams.searchMatch = this.ticket.assignedTo;
+    this.userParams.searchMatch = this.ticket.assignee;
     if (this.userParams.searchMatch == '') {
       this.filteredUsers = this.users;
       return;
@@ -157,7 +159,7 @@ export class TicketEditComponent implements OnInit {
   updateDeveloper(userName: string) {
     this.hideUsers = true;
     this.userParams.searchMatch = userName;
-    this.editForm.controls['assignedTo'].setValue(userName);
+    this.editForm.controls['assignee'].setValue(userName);
   }
 
   getFilteredProjects() {
@@ -186,7 +188,7 @@ export class TicketEditComponent implements OnInit {
     this.disableUsers = false;
 
     this.userParams.searchMatch = '';
-    this.editForm.controls['assignedTo'].setValue('');
+    this.editForm.controls['assignee'].setValue('');
     this.loadUsers(title);
 
     this.projectForUserParams.searchMatch = title;

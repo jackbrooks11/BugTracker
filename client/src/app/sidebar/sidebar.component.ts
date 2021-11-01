@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 
 @Component({
@@ -11,6 +11,7 @@ export class SidebarComponent implements OnInit {
   show: boolean = true;
   showTicketDropdown: boolean = false;
   showProjectDropdown: boolean = false;
+  @Output() onToggleShow = new EventEmitter<any>();
 
   constructor(public accountService: AccountService) { }
 
@@ -19,6 +20,7 @@ export class SidebarComponent implements OnInit {
   
   toggleShow() {
     this.show = !this.show;
+    this.onToggleShow.emit(this.show);
   }
 
   toggleTicketDropdown() {

@@ -1,25 +1,25 @@
-<h2>All Projects</h2>
-<div class="container" style="padding-top: 25px">
+<div class="container mt-3">
+  <h2>All Projects</h2>
   <div>
     <button
-    type="button"
-    *appHasRole="['Admin']"
-    (click)="openProjectModal()"
-    class="btn btn-md btn-outline-primary mb-2"
-    style="flex: left"
-  >
-    New Project
-  </button>
-  <button
-  type="button"
-  *appHasRole="['Admin']"
-  (click)="deleteProjects()"
-  class="btn btn-md btn-danger mb-2"
-  style="flex: right"
-  [disabled]="projectIdsToDelete.length == 0"
->
-  Delete
-</button>
+      type="button"
+      *appHasRole="['Admin']"
+      (click)="openProjectModal()"
+      class="btn btn-md btn-outline-primary mb-2"
+      style="flex: left"
+    >
+      New Project
+    </button>
+    <button
+      type="button"
+      *appHasRole="['Admin']"
+      (click)="deleteProjects()"
+      class="btn btn-md btn-danger mb-2"
+      style="flex: right"
+      [disabled]="projectIdsToDelete.length == 0"
+    >
+      Delete
+    </button>
   </div>
   <div>
     <div style="float: left">
@@ -123,7 +123,9 @@
             />
           </td>
           <td>
-            <a href='#' routerLink='/projects/{{ project.id }}'>{{ project.title }}</a>
+            <a href="#" routerLink="/projects/{{ project.id }}">{{
+              project.title
+            }}</a>
           </td>
           <td>{{ project.description }}</td>
           <td>{{ project.created | date: "medium" }}</td>

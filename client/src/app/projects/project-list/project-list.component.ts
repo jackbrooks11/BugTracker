@@ -104,7 +104,7 @@ export class ProjectListComponent implements OnInit {
   createProject() {
     this.projectService
       .createProject(this.bsModalRef.content.createProjectForm.value).subscribe(() => {
-        this.memberService.addUserToProject(this.bsModalRef.content.createProjectForm.value.id, 'admin');
+        this.loadProjects();
       })
   }
 

@@ -1,37 +1,79 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using API.Data;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     [Authorize]
     public class TicketsController : BaseApiController
     {
-        private readonly ITicketRepository _ticketRepository;
+        private readonly DataContext _context;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
-        private readonly IProjectRepository _projectRepository;
-        public TicketsController(ITicketRepository ticketRepository, IUserRepository userRepository,
-        IProjectRepository projectRepository, IMapper mapper)
+        public TicketsController(DataContext context, IMapper mapper)
         {
-            _projectRepository = projectRepository;
-            _userRepository = userRepository;
+            _context = context;  
             _mapper = mapper;
-            _ticketRepository = ticketRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets([FromQuery] TicketParams ticketParams)
         {
-            var tickets = await _ticketRepository.GetTicketsAsync(ticketParams);
+            var query = _context.Tickets
+                .Include(t => t.Comments)
+                .AsNoTracking();
+            if (ticketParams.SearchMatch != null)
+            {
+                query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Project.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Assignee.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Priority.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.State.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Type.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
+            }
+            if (!ticketParams.Ascending)
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderByDescending(t => t.Title),
+                    "project" => query.OrderByDescending(t => t.Project),
+                    "assignee" => query.OrderByDescending(t => t.Assignee),
+                    "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderByDescending(t => t.State),
+                    "type" => query.OrderByDescending(t => t.Type),
+                    _ => query.OrderByDescending(t => t.Created)
+
+                };
+            }
+            else
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderBy(t => t.Title),
+                    "project" => query.OrderBy(t => t.Project),
+                    "assignee" => query.OrderBy(t => t.Assignee),
+                    "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderBy(t => t.State),
+                    "type" => query.OrderBy(t => t.Type),
+                    _ => query.OrderBy(t => t.Created)
+
+                };
+            }
+            var tickets = await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
 
             Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
 
@@ -41,79 +83,66 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(int id)
         {
-            return await _ticketRepository.GetTicketByIdAsync(id);
+            return await _context.Tickets.Include(x => x.Comments).FirstOrDefaultAsync(y => y.Id == id);
+        }
+
+        [HttpPost("create")]
+        public async Task<ActionResult> CreateTicket(Ticket ticket)
+        {
+          var project = await _context.Projects
+                .Include(t => t.Tickets)
+                .SingleOrDefaultAsync(x => x.Title == ticket.Project);
+            if (ticket.Assignee.Length > 0)
+            {
+                var user = await _context.Users
+                    .Include(t => t.Tickets)
+                    .SingleOrDefaultAsync(x => x.UserName == ticket.Assignee);
+                user.Tickets.Add(ticket);
+            }
+            project.Tickets.Add(ticket);
+            _context.Tickets.Add(ticket);
+
+            if (await _context.SaveChangesAsync() > 0) return NoContent();
+
+            return BadRequest("Failed to create ticket");
         }
 
         [HttpPut]
         public async Task<ActionResult> UpdateTicket(Ticket ticketUpdated)
         {
-            var project = _projectRepository.GetProjectByTitleAsync(ticketUpdated.Project).Result;
+            var project = await _context.Projects
+                .Include(t => t.Tickets)
+                .SingleOrDefaultAsync(x => x.Title == ticketUpdated.Project);
             var errorMessage = await ValidateTicket(ticketUpdated, project);
             if (errorMessage != "")
             {
                 return BadRequest(errorMessage);
             }
             var id = ticketUpdated.Id;
-            var ticket = await _ticketRepository.GetTicketByIdAsync(id);
+            var ticket = await _context.Tickets.Include(x => x.Comments).FirstOrDefaultAsync(y => y.Id == id);
             _mapper.Map(ticketUpdated, ticket);
             ticket.LastEdited = DateTime.Now;
-            _projectRepository.AddTicketToProjectAsync(ticket);
-            _projectRepository.Update(project);
-            _ticketRepository.Update(ticket);
+            project.Tickets.Add(ticket);
+            _context.Entry(project).State = EntityState.Modified;
+            _context.Entry(ticket).State = EntityState.Modified;
 
-            if (await _ticketRepository.SaveAllAsync()) return NoContent();
+            if (await _context.SaveChangesAsync() > 0) return NoContent();
 
             return BadRequest("Failed to update ticket");
-        }
-
-        [HttpPost("{id}/comments/create")]
-        public async Task<ActionResult> AddCommentToTicket(int id, TicketComment comment)
-        {
-            var ticket = await _ticketRepository.GetTicketByIdAsync(id);
-            _ticketRepository.AddCommentToTicket(ticket, comment);
-            _ticketRepository.Update(ticket);
-            if (await _ticketRepository.SaveAllAsync()) return NoContent();
-            return BadRequest("Failed to create comment");
-        }
-
-        [HttpPost("{id}/comments/delete")]
-        public async Task<ActionResult> DeleteCommentsFromTicket(int id, int[] commentIdsToDelete)
-        {
-            var ticket = await _ticketRepository.GetTicketByIdAsync(id);
-            _ticketRepository.DeleteCommentsFromTicket(ticket, commentIdsToDelete);
-            _ticketRepository.Update(ticket);
-            if (await _ticketRepository.SaveAllAsync()) return NoContent();
-            return BadRequest("Failed to delete comment(s)");
-        }
-
-        [HttpPost("create")]
-        public async Task<ActionResult> CreateTicket(Ticket ticket)
-        {
-            var project = _projectRepository.GetProjectByTitleAsync(ticket.Project).Result;
-            var errorMessage = await ValidateTicket(ticket, project);
-            if (errorMessage != "")
-            {
-                return BadRequest(errorMessage);
-            }
-            if (ticket.AssignedTo.Length > 0)
-            {
-                _userRepository.AddTicketForUserAsync(ticket);
-            }
-            _projectRepository.AddTicketToProjectAsync(ticket);
-            _ticketRepository.Create(ticket);
-
-            if (await _ticketRepository.SaveAllAsync()) return NoContent();
-
-            return BadRequest("Failed to create ticket");
         }
 
         [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("delete")]
         public async Task<ActionResult> DeleteTickets(int[] ticketIdsToDelete)
         {
-            _ticketRepository.Delete(ticketIdsToDelete);
+            var ticketsToDelete = _context.Tickets.Where(t => ticketIdsToDelete.Contains(t.Id));
+            foreach (var ticket in ticketsToDelete)
+            {
 
-            if (await _ticketRepository.SaveAllAsync()) return NoContent();
+                _context.Remove(ticket);
+            }
+
+            if (await _context.SaveChangesAsync() > 0) return NoContent();
 
             return BadRequest("Failed to delete tickets");
         }
@@ -122,8 +151,52 @@ namespace API.Controllers
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForUser([FromQuery] TicketParams ticketParams)
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
+            var query = _context.Tickets
+                .AsNoTracking();
+            if (ticketParams.SearchMatch != null)
+            {
+                query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Project.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Assignee.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Priority.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.State.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Type.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
+            }
+            if (!ticketParams.Ascending)
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderByDescending(t => t.Title),
+                    "project" => query.OrderByDescending(t => t.Project),
+                    "assignee" => query.OrderByDescending(t => t.Assignee),
+                    "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderByDescending(t => t.State),
+                    "type" => query.OrderByDescending(t => t.Type),
+                    _ => query.OrderByDescending(t => t.Created)
 
-            var tickets = await _ticketRepository.GetTicketsForUserAsync(username, ticketParams);
+                };
+            }
+            else
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderBy(t => t.Title),
+                    "project" => query.OrderBy(t => t.Project),
+                    "assignee" => query.OrderBy(t => t.Assignee),
+                    "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderBy(t => t.State),
+                    "type" => query.OrderBy(t => t.Type),
+                    _ => query.OrderBy(t => t.Created)
+                };
+            }
+            query = query.Where(t => t.Assignee.ToLower() == username.ToLower());
+
+            var tickets = await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
 
             Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
 
@@ -133,7 +206,47 @@ namespace API.Controllers
         [HttpGet("{projectTitle}/tickets")]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForProject(string projectTitle, [FromQuery] TicketParams ticketParams)
         {
-            var tickets = await _ticketRepository.GetTicketsForProjectAsync(projectTitle, ticketParams);
+            var query = _context.Tickets
+                        .AsNoTracking();
+            if (ticketParams.SearchMatch != null)
+            {
+                query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Assignee.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
+            }
+            if (!ticketParams.Ascending)
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderByDescending(t => t.Title),
+                    "project" => query.OrderByDescending(t => t.Project),
+                    "assignee" => query.OrderByDescending(t => t.Assignee),
+                    "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderByDescending(t => t.State),
+                    "type" => query.OrderByDescending(t => t.Type),
+                    _ => query.OrderByDescending(t => t.Created)
+                };
+            }
+            else
+            {
+                query = ticketParams.OrderBy switch
+                {
+                    "title" => query.OrderBy(t => t.Title),
+                    "project" => query.OrderBy(t => t.Project),
+                    "assignee" => query.OrderBy(t => t.Assignee),
+                    "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
+                    t.Priority == "Medium" ? 2 :
+                    1)),
+                    "state" => query.OrderBy(t => t.State),
+                    "type" => query.OrderBy(t => t.Type),
+                    _ => query.OrderBy(t => t.Created)
+                };
+            }
+            query = query.Where(t => t.Project.ToLower() == projectTitle.ToLower());
+
+            var tickets = await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
 
             Response.AddPaginationHeader(tickets.CurrentPage, tickets.PageSize, tickets.TotalCount, tickets.TotalPages);
 
@@ -147,20 +260,24 @@ namespace API.Controllers
             {
                 return "Project field can not be empty";
             }
-            if (!await _projectRepository.ProjectExists(ticket.Project))
+            if (!await _context.Projects.AnyAsync(x => x.Title.ToLower() == ticket.Project.ToLower()))
             {
 
                 return "Project does not exist";
             }
-            var usersForProject = await _userRepository.GetUsersForProjectAsync(project.Id, userParams);
 
-            var assigneeCheck = usersForProject.FindAll(u => u.UserName == ticket.AssignedTo);
-            if (assigneeCheck.Count == 0 && ticket.AssignedTo != "")
+            /*Get Users for Project*/
+            
+            var assigneeCheck = await _context.ProjectUsers.AnyAsync(pu => pu.ProjectId == project.Id && pu.User.UserName.ToLower() == ticket.Assignee.ToLower());
+
+            if (!assigneeCheck && ticket.Assignee != "")
             {
                 return "User assigned to ticket does not belong to project";
             }
 
-            if (await _userRepository.GetUserByUsernameAsync(ticket.AssignedTo) == null && ticket.AssignedTo != "")
+            if (await _context.Users
+            .Include(t => t.Tickets)
+            .SingleOrDefaultAsync(x => x.UserName == ticket.Assignee) == null && ticket.Assignee != "")
             {
                 Response.StatusCode = 400;
                 return "User assigned to ticket does not exist";
@@ -170,8 +287,9 @@ namespace API.Controllers
                 Response.StatusCode = 400;
                 return "Ticket must have a title";
             }
-            var ticketWithNewTitle = await _ticketRepository.GetTicketByTitleAsync(ticket.Title);
-            if (await _ticketRepository.TicketExists(ticket.Title)
+            var ticketWithNewTitle = await _context.Tickets
+              .SingleOrDefaultAsync(x => x.Title == ticket.Title);
+            if (await _context.Tickets.AnyAsync(x => x.Title.ToLower() == ticket.Title.ToLower())
             && ticketWithNewTitle != null && ticketWithNewTitle.Id != ticket.Id)
             {
                 Response.StatusCode = 400;

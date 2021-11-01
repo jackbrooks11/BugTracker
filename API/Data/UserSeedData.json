@@ -3,5 +3,15 @@
       "UserName": "jack",
       "Company": "Lakeside Software",
       "About": "I am Jack."
+    },
+    {
+      "UserName": "bob",
+      "Company": "Detroit Fire",
+      "About": "I am Bob."
+    },
+    {
+      "UserName": "justin",
+      "Company": "WePay",
+      "About": "I am Justin."
     }
 ]

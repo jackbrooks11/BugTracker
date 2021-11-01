@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211021163417_TicketListAltered")]
-    partial class TicketListAltered
+    [Migration("20211029185941_ControllersAltered")]
+    partial class ControllersAltered
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -175,7 +175,7 @@ namespace API.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("ProjectUser");
+                    b.ToTable("ProjectUsers");
                 });
 
             modelBuilder.Entity("API.Entities.Ticket", b =>
@@ -187,7 +187,7 @@ namespace API.Migrations
                     b.Property<int?>("AppUserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AssignedTo")
+                    b.Property<string>("Assignee")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
@@ -211,7 +211,7 @@ namespace API.Migrations
                     b.Property<string>("State")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SubmittedBy")
+                    b.Property<string>("Submitter")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -254,7 +254,38 @@ namespace API.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("TicketComment");
+                    b.ToTable("TicketComments");
+                });
+
+            modelBuilder.Entity("API.Entities.TicketPropertyChange", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Changed")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Editor")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Property")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("TicketId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketPropertyChange");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -399,6 +430,13 @@ namespace API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("API.Entities.TicketPropertyChange", b =>
+                {
+                    b.HasOne("API.Entities.Ticket", null)
+                        .WithMany("Changes")
+                        .HasForeignKey("TicketId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("API.Entities.AppRole", null)
@@ -458,6 +496,8 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Ticket", b =>
                 {
+                    b.Navigation("Changes");
+
                     b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618

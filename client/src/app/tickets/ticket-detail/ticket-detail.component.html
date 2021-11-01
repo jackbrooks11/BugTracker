@@ -48,15 +48,15 @@
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold"
-                                >Assigned Developer</label
+                                >Assignee</label
                               >
-                              <p *ngIf="ticket">{{ ticket.assignedTo | titlecase }}</p>
+                              <p *ngIf="ticket">{{ ticket.assignee | titlecase }}</p>
                             </div>
                           </div>
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold">Submitter</label>
-                              <p *ngIf="ticket">{{ ticket.submittedBy | titlecase }}</p>
+                              <p *ngIf="ticket">{{ ticket.submitter | titlecase }}</p>
                             </div>
                           </div>
                         </div>

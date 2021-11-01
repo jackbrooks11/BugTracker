@@ -1,19 +1,15 @@
 <ng-container *ngIf="accountService.currentUser$ | async">
   <div class="page-wrapper" [ngClass]="{ toggled: show }">
-    <div>
-      <button class="btn btn-lg btn-dark" (click)="toggleShow()">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
+    <button class="btn btn-lg btn-dark show-sidebar" (click)="toggleShow()">
+      <i class="fas fa-bars"></i>
+    </button>
+
     <nav id="sidebar" class="sidebar-wrapper bg-dark">
       <div class="sidebar-content">
         <div class="sidebar-menu">
           <ul>
-            <li style="padding-top: 70px; padding-left: 235px;">
-              <div
-                id="close-sidebar"
-                (click)="toggleShow()"
-              >
+            <li style="padding-top: 70px; padding-left: 235px">
+              <div id="close-sidebar" (click)="toggleShow()">
                 <i class="fas fa-times" style="color: white"></i>
               </div>
             </li>

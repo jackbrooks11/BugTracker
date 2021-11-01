@@ -11,6 +11,7 @@ import { AccountService } from './_services/account.service';
 export class AppComponent implements OnInit {
   title = 'BugTracker';
   users: any;
+  showSidebar: boolean = true;
 
   constructor(public accountService: AccountService) {}
 
@@ -23,6 +24,10 @@ export class AppComponent implements OnInit {
     if (user) {
       this.accountService.setCurrentUser(user);
     }
+  }
+
+  setShowSidebar(show: boolean) {
+    this.showSidebar = show;
   }
 
 }

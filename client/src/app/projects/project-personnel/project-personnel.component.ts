@@ -8,6 +8,7 @@ import { User } from 'src/app/_models/user';
 import { UserParams } from 'src/app/_models/userParams';
 import { MembersService } from 'src/app/_services/members.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
+import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
 
 @Component({
   selector: 'app-project-personnel',
@@ -24,8 +25,10 @@ export class ProjectPersonnelComponent implements OnInit {
   usernamesToDelete: string[] = [];
 
   constructor(
+    private projectUsersService: ProjectUsersService,
     private memberService: MembersService,
     private projectService: ProjectsService,
+    private projectUserService: ProjectUsersService,
     private modalService: BsModalService,
     private route: ActivatedRoute
   ) {
@@ -45,7 +48,7 @@ export class ProjectPersonnelComponent implements OnInit {
   }
 
   getUsersWithRoles() {
-      this.memberService
+      this.projectUserService
       .getMembersForProject(this.project.title, this.userParams).subscribe(response => {
         this.users = response.result,
         this.pagination = response.pagination;
@@ -91,7 +94,7 @@ export class ProjectPersonnelComponent implements OnInit {
   }
 
   addUserToProject() {
-    this.memberService.addUserToProject(this.project.id, this.bsModalRef.content.assignUserForm.value.username)
+    this.projectUsersService.addUserToProject(this.project.id, this.bsModalRef.content.assignUserForm.value.username)
       .subscribe(() => {
         this.loadUsers();
       });
@@ -99,7 +102,7 @@ export class ProjectPersonnelComponent implements OnInit {
 
   deleteUsers() {
     if(confirm("Are you sure to delete the selected user(s)?")) {
-      this.memberService
+      this.projectUsersService
       .deleteUsersFromProject(this.project, this.usernamesToDelete)
       .subscribe((value) => {
         this.usernamesToDelete = [];

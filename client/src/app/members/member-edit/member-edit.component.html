@@ -1,153 +1,162 @@
-<div
-  class="row flex-lg-nowrap"
-  style="padding: 0 15px 0 15px; max-width: 75%"
-  *ngIf="editMember && editForm"
->
-  <div class="col">
-    <div class="row">
-      <div class="col mb-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="e-profile">
-              <div class="row">
-                <div class="col-12 col-sm-auto mb-3">
-                  <app-member-photo style="font-size: 70px;" [roles]="user.roles"></app-member-photo>
-                </div>
-                <div
-                  class="
-                    col
-                    d-flex
-                    flex-column flex-sm-row
-                    justify-content-between
-                    mb-3
-                  "
-                >
-                  <div class="text-center text-sm-left mb-2 mb-sm-0">
-                    <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="member">
-                      {{ member.userName | titlecase }}
-                    </h4>
-                    <div class="text-muted" *ngIf="member">
-                      <small>Last seen {{ member.lastActive | date }}</small>
+<div class="container mt-3">
+  <div
+    class="row flex-lg-nowrap"
+    style="padding: 0 15px 0 15px; max-width: 75%"
+    *ngIf="editMember && editForm"
+  >
+    <div class="col">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="row">
+                  <div class="col-12 col-sm-auto mb-3">
+                    <app-member-photo
+                      style="font-size: 70px"
+                      [roles]="user.roles"
+                    ></app-member-photo>
+                  </div>
+                  <div
+                    class="
+                      col
+                      d-flex
+                      flex-column flex-sm-row
+                      justify-content-between
+                      mb-3
+                    "
+                  >
+                    <div class="text-center text-sm-left mb-2 mb-sm-0">
+                      <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="member">
+                        {{ member.userName | titlecase }}
+                      </h4>
+                      <div class="text-muted" *ngIf="member">
+                        <small>Last seen {{ member.lastActive | date }}</small>
+                      </div>
+                    </div>
+                    <div class="text-center text-sm-right">
+                      <span class="badge badge-secondary">{{
+                        user.roles
+                      }}</span>
+                      <div class="text-muted">
+                        <small *ngIf="member"
+                          >Joined {{ member.created | date }}</small
+                        >
+                      </div>
                     </div>
                   </div>
-                  <div class="text-center text-sm-right">
-                    <span class="badge badge-secondary">{{ user.roles }}</span>
-                    <div class="text-muted">
-                      <small *ngIf="member"
-                        >Joined {{ member.created | date }}</small
-                      >
-                    </div>
-                  </div>
                 </div>
-              </div>
 
-              <div class="alert alert-info" *ngIf="editForm.dirty">
-                <strong>Information: </strong> You have made changes. Any
-                unsaved changes will be lost.
-              </div>
-              <ul class="nav nav-tabs">
-                <li class="nav-item">
-                  <button
-                    class="nav-link"
-                    [ngClass]="{ active: settingsMode }"
-                    (click)="changeSettingsMode(true)"
-                  >
-                    Settings
-                  </button>
-                </li>
-                <li class="nav-item">
-                  <button
-                    class="nav-link"
-                    [ngClass]="{ active: !settingsMode }"
-                    (click)="changeSettingsMode(false)"
-                  >
-                    Change Password
-                  </button>
-                </li>
-              </ul>
-              <div class="tab-content pt-3">
-                <div class="tab-pane active">
-                  <form
-                    [formGroup]="editForm"
-                    (ngSubmit)="updateMember()"
-                    class="form"
-                    novalidate=""
-                  >
-                    <div class="row">
-                      <div class="col">
-                        <div class="row" *ngIf="settingsMode">
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold">Full Name</label>
-                              <app-text-input
-                                [formControl]="editForm.controls['fullName']"
-                              ></app-text-input>
-                            </div>
-                          </div>
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold">Company</label>
-                              <app-text-input
-                                [formControl]="editForm.controls['company']"
-                              ></app-text-input>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row" *ngIf="settingsMode">
-                          <div class="col mb-3">
-                            <div class="form-group">
-                              <label class="font-weight-bold">About</label>
-                              <app-text-input
-                                [formControl]="editForm.controls['about']"
-                                [label]="'about'"
-                              ></app-text-input>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row" *ngIf="!settingsMode">
-                          <div class="col-12 col-sm-6 mb-3">
-                            <div class="row">
-                              <div class="col">
-                                <div class="form-group">
-                                  <label>New Password</label>
-                                  <app-text-input
-                                    [formControl]="
-                                      editForm.controls['password']
-                                    "
-                                    [label]="'Password'"
-                                  ></app-text-input>
-                                </div>
+                <div class="alert alert-info" *ngIf="editForm.dirty">
+                  <strong>Information: </strong> You have made changes. Any
+                  unsaved changes will be lost.
+                </div>
+                <ul class="nav nav-tabs">
+                  <li class="nav-item">
+                    <button
+                      class="nav-link"
+                      [ngClass]="{ active: settingsMode }"
+                      (click)="changeSettingsMode(true)"
+                    >
+                      Settings
+                    </button>
+                  </li>
+                  <li class="nav-item">
+                    <button
+                      class="nav-link"
+                      [ngClass]="{ active: !settingsMode }"
+                      (click)="changeSettingsMode(false)"
+                    >
+                      Change Password
+                    </button>
+                  </li>
+                </ul>
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form
+                      [formGroup]="editForm"
+                      (ngSubmit)="updateMember()"
+                      class="form"
+                      novalidate=""
+                    >
+                      <div class="row">
+                        <div class="col">
+                          <div class="row" *ngIf="settingsMode">
+                            <div class="col">
+                              <div class="form-group">
+                                <label class="font-weight-bold"
+                                  >Full Name</label
+                                >
+                                <app-text-input
+                                  [formControl]="editForm.controls['fullName']"
+                                ></app-text-input>
                               </div>
                             </div>
-                            <div class="row">
-                              <div class="col">
-                                <div class="form-group">
-                                  <label>Confirm Password</label>
-                                  <app-text-input
-                                    [formControl]="
-                                      editForm.controls['confirmPassword']
-                                    "
-                                    [label]="'Confirm Password'"
-                                  ></app-text-input>
-                                </div>
+                            <div class="col">
+                              <div class="form-group">
+                                <label class="font-weight-bold">Company</label>
+                                <app-text-input
+                                  [formControl]="editForm.controls['company']"
+                                ></app-text-input>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="row">
-                          <div class="col d-flex justify-content-end">
-                            <button
-                              [disabled]="!editForm.dirty || !editForm.valid"
-                              class="btn btn-primary"
-                              type="submit"
-                            >
-                              Save Changes
-                            </button>
+                          <div class="row" *ngIf="settingsMode">
+                            <div class="col mb-3">
+                              <div class="form-group">
+                                <label class="font-weight-bold">About</label>
+                                <app-text-input
+                                  [formControl]="editForm.controls['about']"
+                                  [label]="'about'"
+                                ></app-text-input>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row" *ngIf="!settingsMode">
+                            <div class="col-12 col-sm-6 mb-3">
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>New Password</label>
+                                    <app-text-input
+                                      [formControl]="
+                                        editForm.controls['password']
+                                      "
+                                      [label]="'Password'"
+                                    ></app-text-input>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    <app-text-input
+                                      [formControl]="
+                                        editForm.controls['confirmPassword']
+                                      "
+                                      [label]="'Confirm Password'"
+                                    ></app-text-input>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col d-flex justify-content-end">
+                              <button
+                                [disabled]="!editForm.dirty || !editForm.valid"
+                                class="btn btn-primary"
+                                type="submit"
+                              >
+                                Save Changes
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

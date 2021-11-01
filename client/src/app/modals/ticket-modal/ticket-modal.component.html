@@ -52,8 +52,8 @@
                             <div class="form-group">
                               <label class="font-weight-bold">Project</label>
                               <input
-                                name="assignedTo"
-                                id="assignedTo"
+                                name="assignee"
+                                id="assignee"
                                 class="form-control"
                                 [formControl]="
                                   createTicketForm.controls['project']
@@ -97,14 +97,14 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold"
-                                >Assigned Developer</label
+                                >Assignee</label
                               >
 
                               <input
                                 [(ngModel)]="userParams.searchMatch"
                                 [ngModelOptions]="{ standalone: true }"
-                                name="assignedTo"
-                                id="assignedTo"
+                                name="assignee"
+                                id="assignee"
                                 [disabled]="disableUsers"
                                 (input)="getFilteredUsers()"
                                 list="userList"

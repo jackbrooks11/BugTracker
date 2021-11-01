@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
-using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,25 +17,28 @@ namespace API.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IProjectRepository _projectRepository;
-
+        private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<AppUser> __userManager;
-        public UsersController(IUserRepository userRepository, IProjectRepository projectRepository, UserManager<AppUser> _userManager, IMapper mapper)
+        public UsersController(DataContext context, UserManager<AppUser> _userManager, IMapper mapper)
         {
+            _context = context;
             __userManager = _userManager;
             _mapper = mapper;
-            _userRepository = userRepository;
-            _projectRepository = projectRepository;
         }
 
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var users = await _userRepository.GetUsersAsync(userParams);
-
+            var query = _context.Users
+                .AsNoTracking();
+            if (userParams.SearchMatch != null)
+            {
+                query = query.Where(u => (u.UserName.ToLower().Contains(userParams.SearchMatch.ToLower())));
+            }
+            query = query.OrderBy(u => u.UserName);
+            var users = await PagedList<AppUser>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(users);
@@ -46,7 +47,9 @@ namespace API.Controllers
         [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<AppUser>> GetUser(string username)
         {
-            return await _userRepository.GetUserByUsernameAsync(username);
+            return await _context.Users
+                 .Include(t => t.Tickets)
+                 .SingleOrDefaultAsync(x => x.UserName == username);
 
         }
 
@@ -54,23 +57,29 @@ namespace API.Controllers
         public async Task<ActionResult<AppUser>> UpdateUser(EditMemberDto partialUser)
         {
             var username = User.GetUsername();
-            var user = await _userRepository.GetUserByUsernameAsync(username);
+            var user = await _context.Users
+                 .Include(t => t.Tickets)
+                 .SingleOrDefaultAsync(x => x.UserName == username);
             _mapper.Map(partialUser, user);
+
+            /*Update user password*/
             if (partialUser.Password != "")
             {
                 var token = await __userManager.GeneratePasswordResetTokenAsync(user);
                 var result = await __userManager.ResetPasswordAsync(user, token, partialUser.Password);
-                if (!result.Succeeded) {
+                if (!result.Succeeded)
+                {
                     return BadRequest("Inadequate Password");
                 }
             }
-            _userRepository.Update(user);
+            _context.Entry(user).State = EntityState.Modified;
 
-            if (await _userRepository.SaveAllAsync()) return user;
+            if (await _context.SaveChangesAsync() > 0) return user;
 
             return BadRequest("Failed to update user");
         }
 
+        /* Create separate controller for roles */
         [HttpGet("{username}/roles")]
         public async Task<ActionResult> GetUserRoles(string username)
         {
@@ -85,115 +94,6 @@ namespace API.Controllers
                 .ToListAsync();
 
             return Ok(roles[0]);
-        }
-
-        [HttpGet("{projectTitle}/users")]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersForProject(string projectTitle, [FromQuery] UserParams userParams)
-        {
-            var users = __userManager.Users
-                .Where(pu => pu.ProjectUsers.Any(u => u.Project.Title == projectTitle))
-                .Include(r => r.UserRoles)
-                .ThenInclude(r => r.Role)
-                .AsNoTracking();
-            if (userParams.SearchMatch != null)
-            {
-                users = users.Where(u => u.UserRoles.Any(r => r.Role.Name.ToLower().Contains(userParams.SearchMatch))
-                || u.UserName.ToLower().Contains(userParams.SearchMatch));
-            }
-            var userLength = users.Count();
-            if (!userParams.Ascending)
-            {
-                users = users.OrderByDescending(u => u.UserName);
-            }
-            else
-            {
-                users = users.OrderBy(u => u.UserName);
-            }
-            users = users
-                .Skip((userParams.PageNumber - 1) * userParams.PageSize)
-                .Take(userParams.PageSize);
-            var userList = await users
-            .Select(u => new
-            {
-                u.Id,
-                Username = u.UserName,
-                Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
-            }).ToListAsync();
-            var usersReformatted = new List<PaginatedUserDto>();
-            foreach (var user in userList)
-            {
-                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles));
-            }
-
-            var usersPaginated = new PagedList<PaginatedUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
-            Response.AddPaginationHeader(usersPaginated.CurrentPage, usersPaginated.PageSize, usersPaginated.TotalCount, usersPaginated.TotalPages);
-            return Ok(usersPaginated);
-        }
-
-        [HttpGet("{projectTitle}/usersNotInProject")]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersNotInProject(string projectTitle, [FromQuery] UserParams userParams)
-        {
-            var users = __userManager.Users
-                .Where((pu => !pu.ProjectUsers.Any(u => u.Project.Title == projectTitle)))
-                .Include(r => r.UserRoles)
-                .ThenInclude(r => r.Role)
-                .AsNoTracking();
-            if (userParams.SearchMatch != null)
-            {
-                users = users.Where(u => u.UserRoles.Any(r => r.Role.Name.ToLower().Contains(userParams.SearchMatch))
-                || u.UserName.ToLower().Contains(userParams.SearchMatch));
-            }
-            var userLength = users.Count();
-            if (!userParams.Ascending)
-            {
-                users = users.OrderByDescending(u => u.UserName);
-            }
-            else
-            {
-                users = users.OrderBy(u => u.UserName);
-            }
-            users = users
-                .Skip((userParams.PageNumber - 1) * userParams.PageSize)
-                .Take(userParams.PageSize);
-            var userList = await users
-            .Select(u => new
-            {
-                u.Id,
-                Username = u.UserName,
-                Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
-            }).ToListAsync();
-            var usersReformatted = new List<PaginatedUserDto>();
-            foreach (var user in userList)
-            {
-                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles));
-            }
-
-            var usersPaginated = new PagedList<PaginatedUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
-            Response.AddPaginationHeader(usersPaginated.CurrentPage, usersPaginated.PageSize, usersPaginated.TotalCount, usersPaginated.TotalPages);
-            return Ok(usersPaginated);
-        }
-
-        [Authorize(Policy = "RequireAdminRole")]
-        [HttpPost("{projectId}/addUser")]
-        public async Task<ActionResult> AddUserToProject(ProjectUserDto projectUser)
-        {
-            var user = await _userRepository.GetUserByUsernameAsync(projectUser.Username);
-            _projectRepository.AddUserToProjectAsync(projectUser.ProjectId, user);
-
-            if (await _projectRepository.SaveAllAsync()) return NoContent();
-
-            return BadRequest("Failed to add user to project");
-        }
-
-        [Authorize(Policy = "RequireAdminRole")]
-        [HttpPost("{projectId}/deleteUsers")]
-        public async Task<ActionResult> DeleteUsersFromProject(DeleteUsersFromProjectDto usernamesToDelete)
-        {
-            _projectRepository.DeleteUsers(usernamesToDelete);
-
-            if (await _projectRepository.SaveAllAsync()) return NoContent();
-
-            return BadRequest("Failed to delete user(s) from project");
         }
     }
 }

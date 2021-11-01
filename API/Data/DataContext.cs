@@ -13,7 +13,8 @@ namespace API.Data
             
         }
 
-        public DbSet<ProjectUser> ProjectUser { get; set; }
+        public DbSet<ProjectUser> ProjectUsers { get; set; }
+        public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Project> Projects { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
@@ -45,6 +46,7 @@ namespace API.Data
                 .IsRequired();
             builder.Entity<ProjectUser>()
                 .HasKey(k => new {k.UserId, k.ProjectId});
+                
         }   
     }
 }

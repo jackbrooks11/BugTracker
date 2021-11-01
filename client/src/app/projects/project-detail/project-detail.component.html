@@ -1,52 +1,57 @@
-<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 100%">
-  <div class="col">
-    <div class="row">
-      <div class="col mb-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="e-profile">
-              <div class="tab-content pt-3">
-                <div class="tab-pane active">
-                  <form *ngIf="project" class="form" novalidate="">
-                    <div class="row">
-                      <div class="col">
-                        <div class="form-group">
-                          <h4>Details for {{ project.title | titlecase }}</h4>
-                        </div>
-                        <div class="p-3">
-                          <a
-                            href="#"
-                            routerLink="/projects"
-                            style="padding-right: 50px"
-                            >Back to project list</a
-                          >
-                          <a
-                            href="#"
-                            routerLink="/projects/{{ project.id }}/edit"
-                            >Edit Project</a
-                          >
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold">Title</label>
-                              <p>{{ project.title }}</p>
+<div class="container mt-3">
+  <div
+    class="row flex-lg-nowrap"
+    style="padding: 0 15px 0 15px; max-width: 100%;"
+  >
+    <div class="col">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form *ngIf="project" class="form" novalidate="">
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <h4>Details for {{ project.title | titlecase }}</h4>
+                          </div>
+                          <div class="p-3">
+                            <a
+                              href="#"
+                              routerLink="/projects"
+                              style="padding-right: 50px"
+                              >Back to project list</a
+                            >
+                            <a
+                              href="#"
+                              routerLink="/projects/{{ project.id }}/edit"
+                              >Edit Project</a
+                            >
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <label class="font-weight-bold">Title</label>
+                                <p>{{ project.title }}</p>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold"
-                                >Description</label
-                              >
-                              <p>{{ project.description }}</p>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <label class="font-weight-bold"
+                                  >Description</label
+                                >
+                                <p>{{ project.description }}</p>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -55,28 +60,31 @@
       </div>
     </div>
   </div>
-</div>
-<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 100%">
-  <div class="col" style="max-width: 100%">
-    <div class="row">
-      <div class="col mb-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="e-profile">
-              <div class="tab-content pt-3">
-                <div class="tab-pane active">
-                  <form *ngIf="project" class="form" novalidate="">
-                    <div class="row">
-                      <div class="col">
-                        <div class="form-group">
-                          <h4>Project Personnel</h4>
-                        </div>
-                        <div class="p-3">
-                          <app-project-personnel></app-project-personnel>
+  <div
+    class="row flex-lg-nowrap"
+    style="padding: 0 15px 0 15px; max-width: 100%"
+  >
+    <div class="col" style="max-width: 100%">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form *ngIf="project" class="form" novalidate="">
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <h4>Project Personnel</h4>
+                          </div>
+                          <div class="p-3">
+                            <app-project-personnel></app-project-personnel>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -85,28 +93,31 @@
       </div>
     </div>
   </div>
-</div>
-<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 100%">
-  <div class="col">
-    <div class="row">
-      <div class="col mb-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="e-profile">
-              <div class="tab-content pt-3">
-                <div class="tab-pane active">
-                  <form *ngIf="project" class="form" novalidate="">
-                    <div class="row">
-                      <div class="col">
-                        <div class="form-group">
-                          <h4>Project Tickets</h4>
-                        </div>
-                        <div class="p-3">
-                          <app-project-tickets></app-project-tickets>
+  <div
+    class="row flex-lg-nowrap"
+    style="padding: 0 15px 0 15px; max-width: 100%"
+  >
+    <div class="col">
+      <div class="row">
+        <div class="col mb-3">
+          <div class="card">
+            <div class="card-body">
+              <div class="e-profile">
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form *ngIf="project" class="form" novalidate="">
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <h4>Project Tickets</h4>
+                          </div>
+                          <div class="p-3">
+                            <app-project-tickets></app-project-tickets>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </form>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>

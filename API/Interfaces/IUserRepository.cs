@@ -8,13 +8,7 @@ namespace API.Interfaces
 {
     public interface IUserRepository
     {
-        void Update(AppUser user);
-
-        void AddTicketForUserAsync(Ticket ticket);
         Task<bool> SaveAllAsync();
-        Task<PagedList<AppUser>> GetUsersAsync(UserParams userParams);
-        Task<PagedList<AppUser>> GetUsersForProjectAsync(int id, UserParams userParams);
-
         Task<AppUser> GetUserByIdAsync(int id);
-        Task<AppUser> GetUserByUsernameAsync(string username);    }
+    }
 }

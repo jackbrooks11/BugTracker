@@ -1,5 +1,5 @@
-<h2>All Tickets</h2>
-<div class="container" style="padding-top: 25px">
+<div class="container mt-3">
+  <h2>All Tickets</h2>
   <div>
     <button
       type="button"
@@ -92,13 +92,13 @@
             </button>
           </th>
           <th>
-            Developer Assigned
+            Assignee
             <button
               type="button"
               class="ordering"
               name="orderBy"
               (click)="loadTickets(true, 2)"
-              btnRadio="assignedTo"
+              btnRadio="assignee"
               [(ngModel)]="ticketParams.orderBy"
             >
               <i class="fas fa-sort" *ngIf="ticketParams.icons[2] == 0"></i>
@@ -201,11 +201,15 @@
           <td>{{ ticket.project }}</td>
           <td>
             <a
+              *ngIf="ticket.assignee"
               style="color: #777"
               href="#"
-              routerLink="/members/{{ ticket.assignedTo }}"
-              >{{ ticket.assignedTo | titlecase }}</a
+              routerLink="/members/{{ ticket.assignee }}"
+              >{{ ticket.assignee | titlecase }}</a
             >
+            <div *ngIf="!ticket.assignee">
+              Unassigned
+            </div>
           </td>
           <td
             [ngClass]="{
