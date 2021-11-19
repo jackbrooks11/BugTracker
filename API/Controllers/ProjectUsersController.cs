@@ -60,8 +60,8 @@ namespace API.Controllers
             return BadRequest("Failed to add user to project");
         }
 
-        [HttpGet("{projectTitle}/users")]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersForProject(string projectTitle, [FromQuery] UserParams userParams)
+        [HttpGet("{projectTitle}/usersPaginated")]
+        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersForProjectPaginated(string projectTitle, [FromQuery] UserParams userParams)
         {
             var users = __userManager.Users
                 .Where(pu => pu.ProjectUsers.Any(u => u.Project.Title == projectTitle))
@@ -104,11 +104,27 @@ namespace API.Controllers
         }
 
         [HttpGet("{projectTitle}/usersNotInProject")]
-        public ActionResult<IEnumerable<ProjectUser>> GetUsersNotInProject(string projectTitle)
+        public ActionResult<IEnumerable<string>> GetUsersNotInProject(string projectTitle)
         {
             var usersInProject = _context.ProjectUsers.Where(pu => pu.Project.Title == projectTitle).Select(u => u.User.Id).ToList();
-            var usersNotInProject = _context.Users.Where(u => !usersInProject.Contains(u.Id));
+            var usersNotInProject = _context.Users.Where(u => !usersInProject.Contains(u.Id))
+            .OrderBy(u => u.UserName)
+            .Select(u => u.UserName);
             return Ok(usersNotInProject);
+        }
+
+        [HttpGet("{username}/projects")]
+        public ActionResult<IEnumerable<ProjectUser>> GetProjectsForUser(string username)
+        {
+            var projects = _context.ProjectUsers.Where(pu => pu.User.UserName == username).Select(p => p.Project);
+            return Ok(projects);
+        }
+
+        [HttpGet("{projectTitle}/users")]
+        public ActionResult<IEnumerable<string>> GetUsersForProject(string projectTitle)
+        {
+            var users = _context.ProjectUsers.Where(pu => pu.Project.Title == projectTitle).Select(u => u.User.UserName);
+            return Ok(users);
         }
     }
 }

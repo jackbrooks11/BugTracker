@@ -8,14 +8,14 @@
               <div class="tab-content pt-3">
                 <div class="tab-pane active">
                   <form class="form" novalidate="">
-                    <div class="row">
+                    <div class="row" *ngIf="ticket">
                       <div class="col">
                         <div class="form-group">
                           <h4 *ngIf="ticket">
                             Details for {{ ticket.title | titlecase }}
                           </h4>
                         </div>
-                        <div class="p-3" *ngIf="ticket">
+                        <div class="p-3">
                           <a
                             href="#"
                             routerLink="/tickets"
@@ -28,7 +28,7 @@
                         </div>
                         <div class="row">
                           <div class="col">
-                            <div class="form-group" *ngIf="ticket">
+                            <div class="form-group">
                               <label class="font-weight-bold">Title</label>
                               <p>{{ ticket.title }}</p>
                             </div>
@@ -47,16 +47,17 @@
                         <div class="row">
                           <div class="col">
                             <div class="form-group">
-                              <label class="font-weight-bold"
-                                >Assignee</label
-                              >
-                              <p *ngIf="ticket">{{ ticket.assignee | titlecase }}</p>
+                              <label class="font-weight-bold">Assignee</label>
+                              <div *ngIf="ticket.assignee">
+                                {{ ticket.assignee | titlecase }}
+                              </div>
+                              <div *ngIf="!ticket.assignee">Unassigned</div>
                             </div>
                           </div>
                           <div class="col">
                             <div class="form-group">
                               <label class="font-weight-bold">Submitter</label>
-                              <p *ngIf="ticket">{{ ticket.submitter | titlecase }}</p>
+                              <p>{{ ticket.submitter | titlecase }}</p>
                             </div>
                           </div>
                         </div>
@@ -64,13 +65,13 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Project</label>
-                              <p *ngIf="ticket">{{ ticket.project }}</p>
+                              <p>{{ ticket.project }}</p>
                             </div>
                           </div>
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Priority</label>
-                              <p *ngIf="ticket">{{ ticket.priority }}</p>
+                              <p>{{ ticket.priority }}</p>
                             </div>
                           </div>
                         </div>
@@ -78,13 +79,13 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Status</label>
-                              <p *ngIf="ticket">{{ ticket.state }}</p>
+                              <p>{{ ticket.state }}</p>
                             </div>
                           </div>
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Type</label>
-                              <p *ngIf="ticket">{{ ticket.type }}</p>
+                              <p>{{ ticket.type }}</p>
                             </div>
                           </div>
                         </div>
@@ -92,7 +93,7 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Created</label>
-                              <p *ngIf="ticket">
+                              <p>
                                 {{ ticket.created | date: "short" }}
                               </p>
                             </div>
@@ -100,7 +101,7 @@
                           <div class="col mb-3">
                             <div class="form-group">
                               <label class="font-weight-bold">Updated</label>
-                              <p *ngIf="ticket">
+                              <p>
                                 {{ ticket.lastEdited | date: "short" }}
                               </p>
                             </div>
@@ -118,4 +119,5 @@
     </div>
   </div>
 </div>
+<app-ticket-history></app-ticket-history>
 <app-ticket-comments></app-ticket-comments>

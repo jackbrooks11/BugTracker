@@ -1,16 +1,13 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
 import { Project } from 'src/app/_models/project';
-import { ProjectParams } from 'src/app/_models/projectParams';
 import { Ticket } from 'src/app/_models/ticket';
 import { User } from 'src/app/_models/user';
-import { UserParams } from 'src/app/_models/userParams';
 import { AccountService } from 'src/app/_services/account.service';
-import { MembersService } from 'src/app/_services/members.service';
-import { ProjectsService } from 'src/app/_services/projects.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
@@ -20,22 +17,24 @@ import { TicketsService } from 'src/app/_services/tickets.service';
   styleUrls: ['./ticket-edit.component.css'],
 })
 export class TicketEditComponent implements OnInit {
-  editTicketForm: FormGroup;
-  @ViewChild('editForm') editForm: NgForm;
+  editForm: FormGroup;
   user: User;
-  userParams: UserParams = new UserParams();
-  projectForUserParams: ProjectParams = new ProjectParams();
-  users: User[] = [];
-  filteredUsers: User[] = [];
-  projects: Project[] = [];
-  filteredProjects: Project[] = [];
-  projectTitle: string;
+  usernameListSize: number = 10;
+  usernames: string[] = [];
+  displayUsernames: string[] = [];
   hideUsers: boolean = true;
-  hideProjects: boolean = true;
   disableUsers: boolean = false;
-  disableLoadMoreProjects: boolean = false;
-  disableLoadMoreUsers: boolean = true;
+  disableLoadMoreUsers: boolean = false;
+
+  projectListSize: number = 10;
+  projects: Project[] = [];
+  displayProjects: string[] = [];
+  hideProjects: boolean = true;
+  disableLoadMoreProjects: boolean = true;
+
   ticket: Ticket;
+
+
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
     $event: any
   ) {
@@ -46,82 +45,123 @@ export class TicketEditComponent implements OnInit {
 
   constructor(
     private ticketService: TicketsService,
-    private memberService: MembersService,
-    private projectService: ProjectsService,
+    private fb: FormBuilder,
     private accountService: AccountService,
     private projectUserService: ProjectUsersService,
     private route: ActivatedRoute,
     private toastr: ToastrService
   ) {
-    this.disableLoadMoreProjects = this.projectService.disableLoadMoreProjects;
-    this.disableLoadMoreUsers = this.projectUserService.disableLoadMoreUsers;
     this.accountService.currentUser$
       .pipe(take(1))
       .subscribe((user) => (this.user = user));
   }
 
   ngOnInit(): void {
-    this.loadProjects();
     this.loadTicket();
   }
 
-  loadUsers(projectTitle: string) {
-    this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
-    this.userParams.pageSize = 10;
-    this.projectUserService
-      .getMembersForProject(projectTitle, this.userParams)
-      .subscribe((response) => {
-        if (response.result.length == this.userParams.pageSize) {
-          this.disableLoadMoreUsers = false;
-          this.projectUserService.disableLoadMoreUsers = false;
-        }
-        this.users = response.result;
-        this.userParams.searchMatch = this.ticket.assignee;
-      });
-  }
-
-  loadMoreUsers() {
-    this.userParams.pageNumber += 1;
-    this.projectUserService
-      .getMembersForProject(this.projectTitle, this.userParams)
-      .subscribe((response) => {
-        response.result.forEach((element) => this.users.push(element));
-        if (response.result.length < this.userParams.pageSize) {
-          this.disableLoadMoreUsers = true;
-          this.projectUserService.disableLoadMoreUsers = true;
-        }
-        this.getFilteredUsers();
-      });
+  initializeForm() {
+    this.editForm = this.fb.group({
+      title: [this.ticket.title],
+      description: [this.ticket.description],
+      project: [this.ticket.project],
+      assignee: [this.ticket.assignee],
+      priority: [this.ticket.priority],
+      state: [this.ticket.state],
+      type: [this.ticket.type],
+    });
+    console.log(this.editForm);
   }
 
   loadProjects() {
-    this.projectForUserParams.searchMatch =
-      this.projectForUserParams.searchMatch.toLowerCase();
-    this.projectForUserParams.ascending = true;
-    this.projectService.setProjectForUserParams(this.projectForUserParams);
-    this.projectService
-      .getProjectsForUser(this.projectForUserParams)
+    this.projectUserService
+      .getProjectsForUser(this.user.username)
       .subscribe((response) => {
-        if (response.result.length == this.userParams.pageSize) {
-          this.disableLoadMoreProjects = false;
-          this.projectService.disableLoadMoreProjects = false;
-        }
-        this.projects = response.result;
+        this.projects = response;
+        this.filterProjects();
       });
   }
 
+  projectInput() {
+    this.hideProjects = false;
+    this.hideUsers = true;
+    this.disableUsers = true;
+    this.editForm.markAsDirty();
+    this.filterProjects();
+  }
+  filterProjects() {
+    this.editForm.controls['project'].setValue('');
+    var filteredProjects = [];
+    this.projects.forEach((element) => {
+      if (element.title.includes(this.ticket.project)) {
+        filteredProjects.push(element.title);
+      }
+    });
+    this.displayProjects = filteredProjects.slice(0, this.projectListSize);
+    if (this.displayProjects.length < this.projectListSize) {
+      this.disableLoadMoreProjects = true;
+    } else {
+      this.disableLoadMoreProjects = false;
+    }
+  }
+
   loadMoreProjects() {
-    this.projectForUserParams.pageNumber += 1;
-    this.projectService
-      .getProjectsForUser(this.projectForUserParams)
-      .subscribe((response) => {
-        response.result.forEach((element) => this.projects.push(element));
-        if (response.result.length < this.projectForUserParams.pageSize) {
-          this.disableLoadMoreProjects = true;
-          this.projectService.disableLoadMoreProjects = true;
-        }
-        this.getFilteredProjects();
-      });
+    this.projectListSize += 10;
+    this.filterProjects();
+  }
+
+  /*Function called when project is clicked*/
+  updateProject(title: string) {
+    this.hideProjects = true;
+    this.disableUsers = false;
+    this.ticket.project = title;
+    this.ticket.assignee = '';
+    this.editForm.controls['project'].setValue(title);
+    this.editForm.controls['assignee'].setValue('');
+    this.editForm.markAsDirty();
+    this.loadUsers(title);
+  }
+
+  resetProjectListSize() {
+    this.projectListSize = 10;
+  }
+
+  userInput() {
+    this.editForm.markAsDirty();
+    this.filterUsernames();
+  }
+
+  loadUsers(projectTitle: string) {
+    this.projectUserService.getUsersForProject(projectTitle).subscribe(users => {
+      this.usernames = users;
+      console.log(this.usernames);
+      this.filterUsernames();
+      this.hideUsers = true;
+    })
+  }
+
+  filterUsernames() {
+    this.hideUsers = false;
+    this.editForm.controls['assignee'].setValue('');
+    var filteredUsernames = [];
+    var lenFilteredUsernames = 0;
+    this.usernames.forEach(element => {
+      if (element.includes(this.ticket.assignee)) {
+        filteredUsernames.push(element);
+        lenFilteredUsernames += 1;
+      }
+    })
+    this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
+    if (this.displayUsernames.length < this.usernameListSize) {
+      this.disableLoadMoreUsers = true;
+    }
+    else {
+      this.disableLoadMoreUsers = false;
+    }
+  }
+
+  resetUserListSize() {
+    this.usernameListSize = 10;
   }
 
   loadTicket() {
@@ -129,73 +169,36 @@ export class TicketEditComponent implements OnInit {
       .getTicket(Number(this.route.snapshot.paramMap.get('id')))
       .subscribe((ticket) => {
         this.ticket = ticket;
-        this.projectTitle = ticket.project;
-        this.loadUsers(this.ticket.project);
+        this.initializeForm();
+        this.loadUsers(ticket.project);
+        this.loadProjects();
       });
   }
 
-  updateTicket() {
-    this.ticketService.updateTicket(this.ticket).subscribe(() => {
-      this.toastr.success('Ticket updated successfully');
-      this.editForm.reset(this.ticket);
-    });
-  }
-
-  getFilteredUsers() {
-    this.hideUsers = false;
-    this.userParams.searchMatch = this.ticket.assignee;
-    if (this.userParams.searchMatch == '') {
-      this.filteredUsers = this.users;
-      return;
-    }
-    this.filteredUsers = [];
-    for (let i = 0; i < this.users.length; ++i) {
-      if (this.users[i].username.includes(this.userParams.searchMatch)) {
-        this.filteredUsers.push(this.users[i]);
-      }
-    }
+  loadMoreUsers() {
+    this.usernameListSize += 10;
+    this.filterUsernames();
   }
 
   updateDeveloper(userName: string) {
     this.hideUsers = true;
-    this.userParams.searchMatch = userName;
+    this.ticket.assignee = userName;
     this.editForm.controls['assignee'].setValue(userName);
+    this.editForm.markAsDirty();
   }
 
-  getFilteredProjects() {
-    this.hideProjects = false;
-    this.disableUsers = true;
-    this.projectForUserParams.searchMatch = this.ticket.project;
-    if (this.projectForUserParams.searchMatch == '') {
-      this.filteredProjects = this.projects;
-      return;
-    }
-    this.filteredProjects = [];
-    for (let i = 0; i < this.projects.length; ++i) {
-      if (
-        this.projects[i].title.includes(this.projectForUserParams.searchMatch)
-      ) {
-        this.filteredProjects.push(this.projects[i]);
-      }
-    }
+  updateTicket() {
+    console.log(this.ticket);
+    this.ticketService.updateTicket(this.ticket).subscribe(() => {
+      this.toastr.success('Ticket updated successfully');
+      this.editForm.reset(this.ticket);
+      this.editForm.markAsPristine();
+      this.editForm.markAsUntouched();
+      this.hideUsers = true;
+    });
   }
 
-  /*Function called when project is clicked*/
-  updateProject(title: string) {
-    this.projectTitle = title;
-    //Hide project list and allow user to assign member to ticket
-    this.hideProjects = true;
-    this.disableUsers = false;
-
-    this.userParams.searchMatch = '';
-    this.editForm.controls['assignee'].setValue('');
-    this.loadUsers(title);
-
-    this.projectForUserParams.searchMatch = title;
-    this.editForm.controls['project'].setValue(title);
-  }
-
-  hideUserList() {
-    this.hideUsers = true;
+  onChange(){
+    this.editForm.markAsDirty();
   }
 }

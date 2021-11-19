@@ -26,13 +26,13 @@
                                 >Assigned Developer</label
                               >
                               <input
-                                [(ngModel)]="userParams.searchMatch"
+                                [(ngModel)]="searchMatch"
                                 [ngModelOptions]="{ standalone: true }"
                                 name="assignedTo"
                                 id="assignedTo"
                                 list="userList"
                                 class="form-control"
-                                (input)="getFilteredUsers()"
+                                (input)="resetListSize(); filterUsernames()"
                               />
                               <div
                                 id="userList"
@@ -43,27 +43,28 @@
                                   border: thin solid;
                                 "
                               >
-                                <p
+                                <div
                                   class="dropdown-item"
-                                  *ngFor="let filteredUser of filteredUsers"
-                                  (click)="
-                                    updateDeveloper(filteredUser.userName)
-                                  "
+                                  *ngFor="let username of displayUsernames"
+                                  (click)="updateDeveloper(username)"
                                   style="cursor: pointer"
                                 >
-                                  {{ filteredUser.userName }}
-                                </p>
-                                <p
+                                  {{ username }}
+                                </div>
+                                <div
                                   class="dropdown-item"
-                                  [hidden]="disableLoadMoreUsers"
+                                  [hidden]="
+                                    disableLoadMoreUsers
+                                  "
                                 >
                                   <button
                                     class="btn btn-sm btn-light"
+                                    [ngModelOptions]="{ standalone: true }"
                                     (click)="loadMoreUsers()"
                                   >
                                     Load More Users
                                   </button>
-                                </p>
+                                </div>
                               </div>
                             </div>
                           </div>

@@ -18,6 +18,7 @@ export class TicketListComponent implements OnInit {
   bsModalRef: BsModalRef;
   checkAll: boolean = false;
   ticketIdsToDelete: number[] = [];
+  headers: string[] = ["Title", "Project Name", "Assignee", "Priority", "State", "Type", "Created"]
 
   constructor(
     private ticketService: TicketsService,
@@ -99,7 +100,7 @@ export class TicketListComponent implements OnInit {
   createTicket() {
     this.ticketService
       .createTicket(this.bsModalRef.content.createTicketForm.value)
-      .subscribe((value) => {
+      .subscribe(response => {
         this.loadTickets();
       });
   }
@@ -108,7 +109,7 @@ export class TicketListComponent implements OnInit {
     if(confirm("Are you sure to delete the selected ticket(s)?")) {
       this.ticketService
       .deleteTickets(this.ticketIdsToDelete)
-      .subscribe((value) => {
+      .subscribe(response => {
         this.ticketIdsToDelete = [];
         this.loadTickets();
       });

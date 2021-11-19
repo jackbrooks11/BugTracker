@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { concatMap, mergeMap, switchMap } from 'rxjs/operators';
 import { ProjectModalComponent } from 'src/app/modals/project-modal/project-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
 import { Project } from 'src/app/_models/project';
 import { ProjectParams } from 'src/app/_models/projectParams';
-import { MembersService } from 'src/app/_services/members.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
 
 @Component({
@@ -23,7 +21,7 @@ export class ProjectListComponent implements OnInit {
   constructor(
     private projectService: ProjectsService,
     private modalService: BsModalService,
-    private memberService: MembersService
+    private cdr: ChangeDetectorRef
   ) {
     this.projectParams = this.projectService.getProjectParams();
   }
@@ -31,6 +29,11 @@ export class ProjectListComponent implements OnInit {
   ngOnInit(): void {
     this.loadProjects();
   }
+
+  ngAfterViewChecked(){
+    //your code to update the model
+    this.cdr.detectChanges();
+ }
 
   updateTable(toggle: boolean, index: number) {
     if (toggle) {
@@ -59,7 +62,7 @@ export class ProjectListComponent implements OnInit {
   ) {
     this.updateTable(toggle, index);
     this.projectService
-      .getProjects(this.projectParams)
+      .getProjectsPaginated(this.projectParams)
       .subscribe((response) => {
         this.projects = response.result;
         this.pagination = response.pagination;

@@ -1,10 +1,7 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Member } from 'src/app/_models/member';
 import { Project } from 'src/app/_models/project';
-import { UserParams } from 'src/app/_models/userParams';
-import { MembersService } from 'src/app/_services/members.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
 
 @Component({
@@ -16,9 +13,10 @@ export class PersonnelModalComponent implements OnInit {
   assignUserForm: FormGroup;
   validationErrors: string[] = [];
   project: Project;
-  userParams: UserParams = new UserParams();
-  users: Member[] = [];
-  filteredUsers: Member[] = [];
+  searchMatch: string = '';
+  usernames: string[] = [];
+  displayUsernames: string[] = [];
+  usernameListSize: number = 10;
   disableLoadMoreUsers: boolean = false;
   @Input() submitted = new EventEmitter();
   hide: boolean = true;
@@ -26,13 +24,11 @@ export class PersonnelModalComponent implements OnInit {
   constructor(
     public bsModalRef: BsModalRef,
     private fb: FormBuilder,
-    private memberService: MembersService,
     private projectUsersService: ProjectUsersService
   ) {}
 
   ngOnInit(): void {
     this.initializeForm();
-    console.log("HI");
     this.loadUsers(this.project.title);
   }
 
@@ -48,54 +44,49 @@ export class PersonnelModalComponent implements OnInit {
   }
 
   loadUsers(projectTitle: string) {
-    this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
-    this.userParams.pageSize = 10;
+    this.searchMatch = this.searchMatch.toLowerCase();
+    this.disableLoadMoreUsers = false;
     this.projectUsersService
-      .getMembersNotInProject(projectTitle, this.userParams)
+      .getMembersNotInProject(projectTitle)
       .subscribe((response) => {
-        console.log(response);
-        this.users = response.result;
-        if (response.result.length < this.userParams.pageSize) {
-          this.disableLoadMoreUsers = true;
-          this.projectUsersService.disableLoadMoreUsers = true;
-        }
+        this.usernames = response;
+        this.filterUsernames();
+        this.hide = true;
       });
+  }
+
+  filterUsernames() {
+    this.hide = false;
+    this.assignUserForm.controls['username'].setValue('');
+    var filteredUsernames = [];
+    var lenFilteredUsernames = 0;
+    this.usernames.forEach(element => {
+      if (element.includes(this.searchMatch)) {
+        filteredUsernames.push(element);
+        lenFilteredUsernames += 1;
+      }
+    })
+    this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
+    if (this.displayUsernames.length < this.usernameListSize) {
+      this.disableLoadMoreUsers = true;
+    }
+    else {
+      this.disableLoadMoreUsers = false;
+    }
   }
 
   loadMoreUsers() {
-    this.userParams.pageNumber += 1;
-    this.projectUsersService
-      .getMembersNotInProject(this.project.title, this.userParams)
-      .subscribe((response) => {
-        response.result.forEach((element) => this.users.push(element));
-        if (response.result.length < this.userParams.pageSize) {
-          this.disableLoadMoreUsers = true;
-          this.projectUsersService.disableLoadMoreUsers = true;
-        }
-        this.getFilteredUsers();
-      });
+    this.usernameListSize += 10;
+    this.filterUsernames();
   }
 
-  getFilteredUsers() {
-    this.hide = false;
-    console.log(this.users);
-    if (this.userParams.searchMatch == '') {
-      this.filteredUsers = this.users;
-      return;
-    }
-    this.filteredUsers = [];
-
-    console.log(this.users.length);
-    for (let i = 0; i < this.users.length; ++i) {
-      if (this.users[i].userName.includes(this.userParams.searchMatch)) {
-        this.filteredUsers.push(this.users[i]);
-      }
-    }
+  resetListSize() {
+    this.usernameListSize = 10;
   }
 
   updateDeveloper(userName: string) {
     this.hide = true;
-    this.userParams.searchMatch = userName;
+    this.searchMatch = userName;
     this.assignUserForm.controls['username'].setValue(userName);
   }
 }

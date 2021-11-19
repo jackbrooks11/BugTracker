@@ -25,7 +25,24 @@ export class ProjectsService {
     this.projectForUserParams = new ProjectParams();
   }
 
-  getProjects(projectParams: ProjectParams) {
+  getProjects() {
+    var response = this.projectCache.get(
+      '-'
+    );
+    if (response) {
+      return of(response);
+    }
+    return this.http.get<Project[]>(
+      this.baseUrl + 'projects'
+    ).pipe(
+      map((response) => {
+        this.projectCache.set('-', response);
+        return response;
+      })
+    ); 
+  }
+
+  getProjectsPaginated(projectParams: ProjectParams) {
     var response = this.projectCache.get(
       Object.values(projectParams).join('-')
     );
@@ -42,7 +59,7 @@ export class ProjectsService {
     params = params.append('ascending', projectParams.ascending);
     params = params.append('searchMatch', projectParams.searchMatch);
     return this.getPaginatedResult<Project[]>(
-      this.baseUrl + 'projects',
+      this.baseUrl + 'projects/paginated',
       params
     ).pipe(
       map((response) => {

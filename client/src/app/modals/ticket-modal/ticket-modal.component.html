@@ -52,14 +52,15 @@
                             <div class="form-group">
                               <label class="font-weight-bold">Project</label>
                               <input
-                                name="assignee"
-                                id="assignee"
+                                [(ngModel)]="projectsSearchMatch"
+                                [ngModelOptions]="{ standalone: true }"
+                                name="project"
+                                id="project"
                                 class="form-control"
-                                [formControl]="
-                                  createTicketForm.controls['project']
-                                "
                                 list="projectList"
-                                (input)="getFilteredProjects()"
+                                (input)="
+                                  resetProjectListSize(); filterProjects()
+                                "
                               />
                               <div
                                 id="projectList"
@@ -72,13 +73,11 @@
                               >
                                 <div
                                   class="dropdown-item"
-                                  *ngFor="
-                                    let filteredProject of filteredProjects
-                                  "
-                                  (click)="updateProject(filteredProject.title)"
+                                  *ngFor="let project of displayProjects"
+                                  (click)="updateProject(project)"
                                   style="cursor: pointer"
                                 >
-                                  {{ filteredProject.title }}
+                                  {{ project }}
                                 </div>
                                 <div
                                   class="dropdown-item"
@@ -96,51 +95,47 @@
                           </div>
                           <div class="col mb-3">
                             <div class="form-group">
-                              <label class="font-weight-bold"
-                                >Assignee</label
-                              >
+                              <label class="font-weight-bold">Assignee</label>
 
                               <input
-                                [(ngModel)]="userParams.searchMatch"
+                                [(ngModel)]="usersSearchMatch"
                                 [ngModelOptions]="{ standalone: true }"
                                 name="assignee"
                                 id="assignee"
                                 [disabled]="disableUsers"
-                                (input)="getFilteredUsers()"
                                 list="userList"
                                 type="search"
                                 class="form-control"
                                 placeholder="Search"
                                 aria-label="Search"
                                 aria-describedby="search-addon"
+                                (input)="resetListSize(); filterUsernames()"
                               />
                               <div
                                 id="userList"
-                                *ngIf="!hide"
                                 style="
                                   max-height: 200px;
                                   overflow: scroll;
                                   border: thin solid;
                                 "
+                                *ngIf="!hideUsers"
                               >
                                 <div
                                   class="dropdown-item"
-                                  *ngFor="let filteredUser of filteredUsers"
+                                  *ngFor="let username of displayUsernames"
                                   (click)="
-                                    updateDeveloper(filteredUser.username)
+                                    updateDeveloper(username)
                                   "
                                   style="cursor: pointer"
                                 >
-                                  {{ filteredUser.username }}
+                                  {{ username }}
                                 </div>
                                 <div
                                   class="dropdown-item"
                                   [hidden]="disableLoadMoreUsers"
                                 >
-                                  <button
-                                    class="btn btn-sm btn-light"
-                                    (click)="loadMoreUsers()"
-                                  >
+                                  <button class="btn btn-sm btn-light"
+                                  (click)="loadMoreUsers()">
                                     Load More Users
                                   </button>
                                 </div>

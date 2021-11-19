@@ -26,7 +26,14 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects([FromQuery] ProjectParams projectParams)
+
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjects() {
+            var projects = await _context.Projects.AsNoTracking().AnyAsync();
+            return Ok(projects);
+        }
+
+        [HttpGet("paginated")]
+        public async Task<ActionResult<IEnumerable<Project>>> GetProjectsPaginated([FromQuery] ProjectParams projectParams)
         {
             var query = _context.Projects
                 .Include(t => t.Tickets)

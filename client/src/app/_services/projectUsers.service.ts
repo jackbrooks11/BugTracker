@@ -9,22 +9,20 @@ import { Project } from '../_models/project';
 import { UserParams } from '../_models/userParams';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProjectUsersService {
   baseUrl = environment.apiUrl;
 
-  membersForProject: Member[] = [];
-  membersNotInProject: Member[] = [];
-
+  projectsForUserCache = new Map();
   memberForProjectCache = new Map();
   memberNotInProjectCache = new Map();
 
-  memberForProjectParams: UserParams = new UserParams();
-
   disableLoadMoreUsers: boolean = true;
+  disableLoadMoreProjects: boolean = true;
 
   constructor(private http: HttpClient) {}
+
 
   addUserToProject(projectId: number, username: string) {
     var model: any = {};
@@ -43,14 +41,16 @@ export class ProjectUsersService {
     var model: any = {};
     model.project = project;
     model.usernamesToDelete = usernamesToDelete;
-    return this.http.post(this.baseUrl + 'projectUsers/' + project.id + '/deleteUsers', model).pipe(
-      map(() => {
-        this.memberForProjectCache.clear();
-      })
-    );
+    return this.http
+      .post(this.baseUrl + 'projectUsers/' + project.id + '/deleteUsers', model)
+      .pipe(
+        map(() => {
+          this.memberForProjectCache.clear();
+        })
+      );
   }
 
-  getMembersForProject(projectTitle: string, userParams: UserParams) {
+  getMembersForProjectPaginated(projectTitle: string, userParams: UserParams) {
     var response = this.memberForProjectCache.get(
       Object.values(userParams).join('-') + '-' + projectTitle
     );
@@ -68,7 +68,7 @@ export class ProjectUsersService {
     params = params.append('searchMatch', userParams.searchMatch);
 
     return this.getPaginatedResult<Member[]>(
-      this.baseUrl + 'projectUsers/' + projectTitle + '/users',
+      this.baseUrl + 'projectUsers/' + projectTitle + '/usersPaginated',
       params
     ).pipe(
       map((response) => {
@@ -81,31 +81,61 @@ export class ProjectUsersService {
     );
   }
 
-  getMembersNotInProject(projectTitle: string, userParams: UserParams) {
+  getMembersNotInProject(projectTitle: string) {
     var response = this.memberNotInProjectCache.get(
-      Object.values(userParams).join('-') + '-' + projectTitle
+      projectTitle
     );
     if (response) {
       return of(response);
     }
 
-    let params = this.getPaginationHeaders(
-      userParams.pageNumber,
-      userParams.pageSize
+    return this.http.get<Member[]>(
+      this.baseUrl +
+      'projectUsers/' +
+      projectTitle +
+      '/usersNotInProject'
+    ).pipe(
+      map((response) => {
+        this.memberNotInProjectCache.set(projectTitle, response);
+        return response;
+      })
     );
+  }
 
-    params = params.append('orderBy', userParams.orderBy);
-    params = params.append('ascending', userParams.ascending);
-    params = params.append('searchMatch', userParams.searchMatch);
+  getProjectsForUser(username: string) {
+    var response = this.projectsForUserCache.get(
+      username
+    );
+    if (response) {
+      return of(response);
+    }
 
-    return this.getPaginatedResult<Member[]>(
-      this.baseUrl + 'projectUsers/' + projectTitle + '/usersNotInProject',
-      params
+    return this.http.get<Project[]>(
+      this.baseUrl + 'projectUsers/' + username + '/projects'
+    ).pipe(
+      map((response) => {
+        this.projectsForUserCache.set(
+          username, response
+        );
+        return response;
+      })
+    );
+  }
+
+  getUsersForProject(projectTitle: string) {
+    var response = this.memberForProjectCache.get(
+      projectTitle
+    );
+    if (response) {
+      return of(response);
+    }
+
+    return this.http.get<Member[]>(
+      this.baseUrl + 'projectUsers/' + projectTitle + '/users'
     ).pipe(
       map((response) => {
         this.memberForProjectCache.set(
-          Object.values(userParams).join('-') + '-' + projectTitle,
-          response
+          projectTitle, response
         );
         return response;
       })

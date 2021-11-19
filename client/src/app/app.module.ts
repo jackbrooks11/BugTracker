@@ -44,6 +44,7 @@ import { MemberPhotoComponent } from './members/member-photo/member-photo.compon
 import { TypeChartComponent } from './charts/type-chart/type-chart.component';
 import { StatusChartComponent } from './charts/status-chart/status-chart.component';
 import { PriorityChartComponent } from './charts/priority-chart/priority-chart.component';
+import { TicketHistoryComponent } from './tickets/ticket-history/ticket-history.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -79,7 +80,8 @@ import { PriorityChartComponent } from './charts/priority-chart/priority-chart.c
     MemberPhotoComponent,
     TypeChartComponent,
     StatusChartComponent,
-    PriorityChartComponent
+    PriorityChartComponent,
+    TicketHistoryComponent
   ],
   imports: [
     BrowserModule,

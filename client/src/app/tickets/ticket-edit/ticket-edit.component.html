@@ -12,8 +12,7 @@
                 <div class="tab-content pt-3">
                   <div class="tab-pane active">
                     <form
-                      name="ticketForm"
-                      #editForm="ngForm"
+                      name="editForm"
                       *ngIf="ticket"
                       (ngSubmit)="updateTicket()"
                       class="form"
@@ -46,6 +45,7 @@
                                   [(ngModel)]="ticket.title"
                                   type="text"
                                   name="title"
+                                  (input)="onChange()"
                                 />
                               </div>
                             </div>
@@ -61,6 +61,7 @@
                                   [(ngModel)]="ticket.description"
                                   type="text"
                                   name="description"
+                                  (input)="onChange()"
                                 >
                                 </textarea>
                               </div>
@@ -74,8 +75,7 @@
                                   [(ngModel)]="ticket.project"
                                   name="project"
                                   id="project"
-                                  (input)="getFilteredProjects()"
-                                  (click)="hideUserList()"
+                                  (input)="resetProjectListSize(); projectInput()"
                                   list="projectList"
                                   type="search"
                                   class="form-control"
@@ -95,14 +95,14 @@
                                   <div
                                     class="dropdown-item"
                                     *ngFor="
-                                      let filteredProject of filteredProjects
+                                      let project of displayProjects
                                     "
                                     (click)="
-                                      updateProject(filteredProject.title)
+                                      updateProject(project)
                                     "
                                     style="cursor: pointer"
                                   >
-                                    {{ filteredProject.title }}
+                                    {{ project }}
                                   </div>
                                   <div
                                     class="dropdown-item"
@@ -129,7 +129,7 @@
                                   [(ngModel)]="ticket.assignee"
                                   name="assignee"
                                   id="assignee"
-                                  (input)="getFilteredUsers()"
+                                  (input)="resetUserListSize(); userInput()"
                                   [disabled]="disableUsers"
                                   list="userList"
                                   type="search"
@@ -149,13 +149,13 @@
                                 >
                                   <div
                                     class="dropdown-item"
-                                    *ngFor="let filteredUser of filteredUsers"
+                                    *ngFor="let username of displayUsernames"
                                     (click)="
-                                      updateDeveloper(filteredUser.username)
+                                      updateDeveloper(username)
                                     "
                                     style="cursor: pointer"
                                   >
-                                    {{ filteredUser.username }}
+                                    {{ username }}
                                   </div>
                                   <div
                                     class="dropdown-item"
@@ -183,6 +183,7 @@
                                   id="priority"
                                   class="form-control"
                                   [(ngModel)]="ticket.priority"
+                                  (change)="onChange()"
                                 >
                                   <option>Low</option>
                                   <option>Medium</option>
@@ -198,6 +199,7 @@
                                   name="state"
                                   id="state"
                                   class="form-control"
+                                  (change)="onChange()"
                                 >
                                   <option>Open</option>
                                   <option>In Progress</option>
@@ -216,6 +218,7 @@
                                   name="type"
                                   id="type"
                                   class="form-control"
+                                  (change)="onChange()"
                                 >
                                   <option>Bug</option>
                                   <option>Feature Request</option>

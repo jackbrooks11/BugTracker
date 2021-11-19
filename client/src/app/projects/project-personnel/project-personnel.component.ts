@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { PersonnelModalComponent } from 'src/app/modals/personnel-modal/personnel-modal.component';
@@ -30,7 +30,8 @@ export class ProjectPersonnelComponent implements OnInit {
     private projectService: ProjectsService,
     private projectUserService: ProjectUsersService,
     private modalService: BsModalService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.userParams = new UserParams();
   }
@@ -42,6 +43,10 @@ export class ProjectPersonnelComponent implements OnInit {
     })
   }
 
+  ngAfterViewChecked(){
+    //your code to update the model
+    this.cdr.detectChanges();
+ }
   loadUsers(toggle: boolean = false, index: number = this.userParams.index) {
     this.updateTable(toggle, index);
     this.getUsersWithRoles();
@@ -49,7 +54,7 @@ export class ProjectPersonnelComponent implements OnInit {
 
   getUsersWithRoles() {
       this.projectUserService
-      .getMembersForProject(this.project.title, this.userParams).subscribe(response => {
+      .getMembersForProjectPaginated(this.project.title, this.userParams).subscribe(response => {
         this.users = response.result,
         this.pagination = response.pagination;
       });
@@ -97,6 +102,8 @@ export class ProjectPersonnelComponent implements OnInit {
     this.projectUsersService.addUserToProject(this.project.id, this.bsModalRef.content.assignUserForm.value.username)
       .subscribe(() => {
         this.loadUsers();
+        this.projectUserService.memberNotInProjectCache.clear();
+        this.projectUserService.projectsForUserCache.clear();
       });
   }
 

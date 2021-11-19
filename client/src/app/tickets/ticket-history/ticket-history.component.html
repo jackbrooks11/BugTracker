@@ -1,0 +1,117 @@
+<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 100%">
+  <div class="col">
+    <div class="row">
+      <div class="col mb-3">
+        <div class="card">
+          <div class="card-body">
+            <div class="e-profile">
+              <div class="tab-content pt-3">
+                <div style="float: left">
+                  <label>Show</label>
+                  <select
+                    name="itemsPerPage"
+                    [(ngModel)]="ticketParams.pageSize"
+                    (change)="loadTickets()"
+                  >
+                    <option>5</option>
+                    <option>10</option>
+                    <option>25</option>
+                    <option>50</option>
+                  </select>
+                  entries
+                </div>
+                <input
+                  type="text"
+                  name="search"
+                  placeholder="Search"
+                  [(ngModel)]="ticketParams.searchMatch"
+                  (input)="loadTickets()"
+                  style="float: right"
+                />
+              </div>
+
+              <div class="table-responsive margin-bottom-2x">
+                <table class="table margin-bottom-none">
+                  <thead>
+                    <tr>
+                      <th *ngFor="let header of headers; index as i">
+                        {{ header }}
+                        <button
+                          type="button"
+                          class="ordering"
+                          (click)="loadTickets(true, i)"
+                          btnRadio="{{ editor }}"
+                          [(ngModel)]="ticketParams.orderBy"
+                        >
+                          <i
+                            class="fas fa-sort"
+                            *ngIf="ticketParams.icons[i] == 0"
+                          ></i>
+                          <i
+                            class="fas fa-sort-up"
+                            *ngIf="ticketParams.icons[i] == 1"
+                          ></i>
+                          <i
+                            class="fas fa-sort-down"
+                            *ngIf="ticketParams.icons[i] == 2"
+                          ></i>
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let ticket of tickets">
+                      <td>{{ ticket.title }}</td>
+                      <td>{{ ticket.assignee }}</td>
+                      <td>{{ ticket.priority }}</td>
+                      <td>{{ ticket.state }}</td>
+                      <td>{{ ticket.type }}</td>
+                      <td>{{ ticket.created | date: "short" }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div *ngIf="pagination">
+                <span style="float: left">
+                  Showing
+                  {{
+                    pagination.totalItems > 0
+                      ? pagination.itemsPerPage * (pagination.currentPage - 1) +
+                        1
+                      : pagination.itemsPerPage * (pagination.currentPage - 1)
+                  }}
+                  to
+                  {{
+                    pagination.itemsPerPage * pagination.currentPage >
+                    pagination.totalItems
+                      ? pagination.totalItems
+                      : pagination.itemsPerPage * pagination.currentPage
+                  }}
+                  of {{ pagination.totalItems }} entries
+                </span>
+                <div
+                  class="d-flex justify-content-center"
+                  *ngIf="pagination"
+                  style="float: right"
+                >
+                  <pagination
+                    [boundaryLinks]="true"
+                    [totalItems]="pagination.totalItems"
+                    [itemsPerPage]="pagination.itemsPerPage"
+                    [(ngModel)]="pagination.currentPage"
+                    (pageChanged)="pageChanged($event)"
+                    previousText="&lsaquo;"
+                    nextText="&rsaquo;"
+                    firstText="&laquo;"
+                    lastText="&raquo;"
+                  >
+                  </pagination>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
