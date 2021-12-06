@@ -5,6 +5,7 @@ import { take } from 'rxjs/operators';
 import { TicketComment } from 'src/app/_models/ticketComment';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
+import { TicketCommentsService } from 'src/app/_services/ticketComments.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 @Component({
@@ -30,6 +31,7 @@ export class TicketCommentsComponent implements OnInit {
 
   constructor(
     private ticketService: TicketsService,
+    private ticketCommentService: TicketCommentsService,
     private accountService: AccountService,
     private route: ActivatedRoute,
     private fb: FormBuilder
@@ -65,9 +67,10 @@ export class TicketCommentsComponent implements OnInit {
     comment.ticketId = this.ticketId;
     comment.submittedBy = this.user.username;
     comment.roles = this.user.roles.flat().toString();
-    this.ticketService
+    this.ticketCommentService
       .addCommentToTicket(comment, this.ticketId)
       .subscribe(() => {
+        this.ticketService.ticketCache.clear();
         this.loadTicket();
         this.commentForm.reset();
         this.initializeForm();
@@ -76,9 +79,10 @@ export class TicketCommentsComponent implements OnInit {
 
   deleteComments() {
     if(confirm("Are you sure to delete the selected comment(s)?")) {
-      this.ticketService
+      this.ticketCommentService
       .deleteCommentFromTicket(this.commentIdsToDelete, this.ticketId)
       .subscribe((value) => {
+        this.ticketService.ticketCache.clear();
         this.commentIdsToDelete = [];
         this.loadTicket();
       });

@@ -283,7 +283,7 @@ namespace API.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("TicketPropertyChange");
+                    b.ToTable("TicketPropertyChanges");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

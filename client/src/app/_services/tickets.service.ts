@@ -5,7 +5,6 @@ import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../_models/pagination';
 import { Ticket } from '../_models/ticket';
-import { TicketComment } from '../_models/ticketComment';
 import { TicketParams } from '../_models/ticketParams';
 
 @Injectable({
@@ -13,7 +12,7 @@ import { TicketParams } from '../_models/ticketParams';
 })
 export class TicketsService {
   baseUrl = environment.apiUrl;
-  tickets: Ticket[] = [];
+  tickets: Ticket[];
   ticketsForUser: Ticket[] = [];
   ticketCache = new Map();
   ticketForUserCache = new Map();
@@ -24,7 +23,20 @@ export class TicketsService {
 
   constructor(private http: HttpClient) {}
 
-  getTickets(ticketParams: TicketParams) {
+  getTickets() {
+    console.log(this.tickets);
+    if (this.tickets) {
+      return of(this.tickets);
+    }
+    return this.http.get<Ticket[]>(this.baseUrl + 'tickets').pipe(
+      map((response) => {
+        this.tickets = response;
+        return response;
+      })
+    );
+  }
+
+  getTicketsPaginated(ticketParams: TicketParams) {
     var response = this.ticketCache.get(Object.values(ticketParams).join('-'));
     if (response) {
       return of(response);
@@ -39,7 +51,7 @@ export class TicketsService {
     params = params.append('ascending', ticketParams.ascending);
     params = params.append('searchMatch', ticketParams.searchMatch);
     return this.getPaginatedResult<Ticket[]>(
-      this.baseUrl + 'tickets',
+      this.baseUrl + 'tickets/paginated',
       params
     ).pipe(
       map((response) => {
@@ -135,17 +147,6 @@ export class TicketsService {
     );
   }
 
-  addCommentToTicket(comment: TicketComment, id: number) {
-    console.log('HI');
-    return this.http
-      .post(this.baseUrl + 'tickets/' + id + '/comments/create', comment)
-      .pipe(
-        map(() => {
-          this.ticketCache.clear();
-        })
-      );
-  }
-
   createTicket(model: any) {
     return this.http.post(this.baseUrl + 'tickets/create', model).pipe(
       map(() => {
@@ -158,19 +159,6 @@ export class TicketsService {
   deleteTickets(ticketIdsToDelete: number[]) {
     return this.http
       .post(this.baseUrl + 'tickets/delete', ticketIdsToDelete)
-      .pipe(
-        map(() => {
-          this.ticketCache.clear();
-        })
-      );
-  }
-
-  deleteCommentFromTicket(commentIdsToDelete: number[], id: number) {
-    return this.http
-      .post(
-        this.baseUrl + 'tickets/' + id + '/comments/delete',
-        commentIdsToDelete
-      )
       .pipe(
         map(() => {
           this.ticketCache.clear();

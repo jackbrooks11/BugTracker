@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Ticket } from 'src/app/_models/ticket';
-import { TicketParams } from 'src/app/_models/ticketParams';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 const BARCHART_LABELS: string[] = [
@@ -17,7 +16,6 @@ const BARCHART_LABELS: string[] = [
 })
 export class TypeChartComponent implements OnInit {
   tickets: Ticket[] = [];
-  ticketParams: TicketParams = new TicketParams();
   public barChartData: any[] = [
     { data: [0, 0, 0, 0], label: 'Tickets By Type' },
   ];
@@ -26,16 +24,17 @@ export class TypeChartComponent implements OnInit {
   public barChartLegend = true;
   public barChartOptions: any = {
     scaleShowVerticalLines: false,
-    response: true,
-    legend: { position: 'left' }
+    responsive: true,
+    legend: {
+      position: 'bottom',
+    },
   };
 
   constructor(private ticketService: TicketsService) {}
 
   ngOnInit(): void {
-    this.ticketParams.pageSize = 100;
-    this.ticketService.getTickets(this.ticketParams).subscribe((tickets) => {
-      for (var ticket of tickets.result) {
+    this.ticketService.getTickets().subscribe((tickets) => {
+      for (var ticket of tickets) {
         if (ticket.type == 'Bug') {
           this.barChartData[0]['data'][0] += 1;
         } else if (ticket.type == 'Feature Request') {

@@ -1,6 +1,5 @@
-import { ThrowStmt } from '@angular/compiler';
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
@@ -9,6 +8,7 @@ import { Ticket } from 'src/app/_models/ticket';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
+import { TicketPropertyChangesService } from 'src/app/_services/ticketPropertyChanges.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 @Component({
@@ -34,7 +34,6 @@ export class TicketEditComponent implements OnInit {
 
   ticket: Ticket;
 
-
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
     $event: any
   ) {
@@ -48,6 +47,7 @@ export class TicketEditComponent implements OnInit {
     private fb: FormBuilder,
     private accountService: AccountService,
     private projectUserService: ProjectUsersService,
+    private ticketPropertyChangeService: TicketPropertyChangesService,
     private route: ActivatedRoute,
     private toastr: ToastrService
   ) {
@@ -70,7 +70,6 @@ export class TicketEditComponent implements OnInit {
       state: [this.ticket.state],
       type: [this.ticket.type],
     });
-    console.log(this.editForm);
   }
 
   loadProjects() {
@@ -86,7 +85,7 @@ export class TicketEditComponent implements OnInit {
     this.hideProjects = false;
     this.hideUsers = true;
     this.disableUsers = true;
-    this.editForm.markAsDirty();
+    this.onChange();
     this.filterProjects();
   }
   filterProjects() {
@@ -118,7 +117,6 @@ export class TicketEditComponent implements OnInit {
     this.ticket.assignee = '';
     this.editForm.controls['project'].setValue(title);
     this.editForm.controls['assignee'].setValue('');
-    this.editForm.markAsDirty();
     this.loadUsers(title);
   }
 
@@ -127,17 +125,18 @@ export class TicketEditComponent implements OnInit {
   }
 
   userInput() {
-    this.editForm.markAsDirty();
+    this.onChange();
     this.filterUsernames();
   }
 
   loadUsers(projectTitle: string) {
-    this.projectUserService.getUsersForProject(projectTitle).subscribe(users => {
-      this.usernames = users;
-      console.log(this.usernames);
-      this.filterUsernames();
-      this.hideUsers = true;
-    })
+    this.projectUserService
+      .getUsersForProject(projectTitle)
+      .subscribe((users) => {
+        this.usernames = users;
+        this.filterUsernames();
+        this.hideUsers = true;
+      });
   }
 
   filterUsernames() {
@@ -145,17 +144,16 @@ export class TicketEditComponent implements OnInit {
     this.editForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     var lenFilteredUsernames = 0;
-    this.usernames.forEach(element => {
+    this.usernames.forEach((element) => {
       if (element.includes(this.ticket.assignee)) {
         filteredUsernames.push(element);
         lenFilteredUsernames += 1;
       }
-    })
+    });
     this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
     if (this.displayUsernames.length < this.usernameListSize) {
       this.disableLoadMoreUsers = true;
-    }
-    else {
+    } else {
       this.disableLoadMoreUsers = false;
     }
   }
@@ -184,21 +182,24 @@ export class TicketEditComponent implements OnInit {
     this.hideUsers = true;
     this.ticket.assignee = userName;
     this.editForm.controls['assignee'].setValue(userName);
-    this.editForm.markAsDirty();
   }
 
   updateTicket() {
-    console.log(this.ticket);
     this.ticketService.updateTicket(this.ticket).subscribe(() => {
       this.toastr.success('Ticket updated successfully');
       this.editForm.reset(this.ticket);
-      this.editForm.markAsPristine();
-      this.editForm.markAsUntouched();
-      this.hideUsers = true;
+      this.ticketPropertyChangeService.changeCache.clear();
+      this.onUpdate();
     });
   }
 
-  onChange(){
+  onChange() {
     this.editForm.markAsDirty();
+  }
+
+  onUpdate() {
+    this.editForm.markAsPristine();
+    this.editForm.markAsUntouched();
+    this.hideUsers = true;
   }
 }

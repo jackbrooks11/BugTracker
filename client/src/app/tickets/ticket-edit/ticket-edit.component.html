@@ -1,250 +1,234 @@
 <div class="container mt-3">
-  <div
-    class="row flex-lg-nowrap"
-    style="padding: 0 15px 0 15px; max-width: 100%"
-  >
-    <div class="col">
-      <div class="row">
-        <div class="col mb-3">
-          <div class="card">
-            <div class="card-body">
-              <div class="e-profile">
-                <div class="tab-content pt-3">
-                  <div class="tab-pane active">
-                    <form
-                      name="editForm"
-                      *ngIf="ticket"
-                      (ngSubmit)="updateTicket()"
-                      class="form"
-                      novalidate=""
-                      autocomplete="off"
-                    >
+  <div class="row">
+    <div class="col mb-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="e-profile">
+            <div class="tab-content pt-3">
+              <div class="tab-pane active">
+                <form
+                  name="editForm"
+                  *ngIf="ticket"
+                  (ngSubmit)="updateTicket()"
+                  class="form"
+                  novalidate=""
+                  autocomplete="off"
+                >
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <h4>Details for {{ ticket.title | titlecase }}</h4>
+                      </div>
+                      <div class="p-3">
+                        <a
+                          href="#"
+                          style="padding-right: 50px"
+                          routerLink="/tickets/{{ ticket.id }}"
+                          >Back to ticket detail</a
+                        >
+                      </div>
+                      <div class="alert alert-info" *ngIf="editForm.dirty">
+                        <strong>Information: </strong> You have made changes.
+                        Any unsaved changes will be lost.
+                      </div>
                       <div class="row">
                         <div class="col">
                           <div class="form-group">
-                            <h4>Details for {{ ticket.title | titlecase }}</h4>
+                            <label class="font-weight-bold">Title</label>
+                            <input
+                              class="form-control"
+                              [(ngModel)]="ticket.title"
+                              type="text"
+                              name="title"
+                              (input)="onChange()"
+                            />
                           </div>
-                          <div class="p-3">
-                            <a
-                              href="#"
-                              style="padding-right: 50px"
-                              routerLink="/tickets/{{ ticket.id }}"
-                              >Back to ticket detail</a
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Description</label>
+                            <textarea
+                              class="form-control"
+                              [(ngModel)]="ticket.description"
+                              type="text"
+                              name="description"
+                              (input)="onChange()"
                             >
+                            </textarea>
                           </div>
-                          <div class="alert alert-info" *ngIf="editForm.dirty">
-                            <strong>Information: </strong> You have made
-                            changes. Any unsaved changes will be lost.
-                          </div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label class="font-weight-bold">Title</label>
-                                <input
-                                  class="form-control"
-                                  [(ngModel)]="ticket.title"
-                                  type="text"
-                                  name="title"
-                                  (input)="onChange()"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col">
-                              <div class="form-group">
-                                <label class="font-weight-bold"
-                                  >Description</label
-                                >
-                                <textarea
-                                  class="form-control"
-                                  [(ngModel)]="ticket.description"
-                                  type="text"
-                                  name="description"
-                                  (input)="onChange()"
-                                >
-                                </textarea>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col mb-3">
-                              <div class="form-group">
-                                <label class="font-weight-bold">Project</label>
-                                <input
-                                  [(ngModel)]="ticket.project"
-                                  name="project"
-                                  id="project"
-                                  (input)="resetProjectListSize(); projectInput()"
-                                  list="projectList"
-                                  type="search"
-                                  class="form-control"
-                                  placeholder="Search"
-                                  aria-label="Search"
-                                  aria-describedby="search-addon"
-                                />
-                                <div
-                                  id="projectList"
-                                  *ngIf="!hideProjects"
-                                  style="
-                                    max-height: 200px;
-                                    overflow: scroll;
-                                    border: thin solid;
-                                  "
-                                >
-                                  <div
-                                    class="dropdown-item"
-                                    *ngFor="
-                                      let project of displayProjects
-                                    "
-                                    (click)="
-                                      updateProject(project)
-                                    "
-                                    style="cursor: pointer"
-                                  >
-                                    {{ project }}
-                                  </div>
-                                  <div
-                                    class="dropdown-item"
-                                    [hidden]="disableLoadMoreProjects"
-                                  >
-                                    <button
-                                      name="loadMoreProjects"
-                                      type="button"
-                                      class="btn btn-sm btn-light"
-                                      (click)="loadMoreProjects()"
-                                    >
-                                      Load More Projects
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="col mb-3">
-                              <div class="form-group">
-                                <label class="font-weight-bold"
-                                  >Assigned To</label
-                                >
-                                <input
-                                  [(ngModel)]="ticket.assignee"
-                                  name="assignee"
-                                  id="assignee"
-                                  (input)="resetUserListSize(); userInput()"
-                                  [disabled]="disableUsers"
-                                  list="userList"
-                                  type="search"
-                                  class="form-control"
-                                  placeholder="Search"
-                                  aria-label="Search"
-                                  aria-describedby="search-addon"
-                                />
-                                <div
-                                  id="userList"
-                                  *ngIf="!hideUsers"
-                                  style="
-                                    max-height: 200px;
-                                    overflow: scroll;
-                                    border: thin solid;
-                                  "
-                                >
-                                  <div
-                                    class="dropdown-item"
-                                    *ngFor="let username of displayUsernames"
-                                    (click)="
-                                      updateDeveloper(username)
-                                    "
-                                    style="cursor: pointer"
-                                  >
-                                    {{ username }}
-                                  </div>
-                                  <div
-                                    class="dropdown-item"
-                                    [hidden]="disableLoadMoreUsers"
-                                  >
-                                    <button
-                                      name="loadMoreUsers"
-                                      type="button"
-                                      class="btn btn-sm btn-light"
-                                      (click)="loadMoreUsers()"
-                                    >
-                                      Load More Users
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col mb-3">
-                              <div class="form-group">
-                                <label class="font-weight-bold">Priority</label>
-                                <select
-                                  name="priority"
-                                  id="priority"
-                                  class="form-control"
-                                  [(ngModel)]="ticket.priority"
-                                  (change)="onChange()"
-                                >
-                                  <option>Low</option>
-                                  <option>Medium</option>
-                                  <option>High</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col mb-3">
-                              <div class="form-group">
-                                <label class="font-weight-bold">Status</label>
-                                <select
-                                  [(ngModel)]="ticket.state"
-                                  name="state"
-                                  id="state"
-                                  class="form-control"
-                                  (change)="onChange()"
-                                >
-                                  <option>Open</option>
-                                  <option>In Progress</option>
-                                  <option>Cancelled</option>
-                                  <option>Done</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col mb-3">
-                              <div class="form-group">
-                                <label class="font-weight-bold">Type</label>
-                                <select
-                                  [(ngModel)]="ticket.type"
-                                  name="type"
-                                  id="type"
-                                  class="form-control"
-                                  (change)="onChange()"
-                                >
-                                  <option>Bug</option>
-                                  <option>Feature Request</option>
-                                  <option>Issue</option>
-                                  <option>Requirement</option>
-                                </select>
-                              </div>
-                            </div>
-                            <div class="col mb-3"></div>
-                          </div>
-                          <div class="row">
-                            <div class="col d-flex justify-content-end">
-                              <button
-                                [disabled]="!editForm.dirty || disableUsers"
-                                class="btn btn-primary"
-                                type="submit"
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col mb-3">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Project</label>
+                            <input
+                              [(ngModel)]="ticket.project"
+                              name="project"
+                              id="project"
+                              (input)="resetProjectListSize(); projectInput()"
+                              list="projectList"
+                              type="search"
+                              class="form-control"
+                              placeholder="Search"
+                              aria-label="Search"
+                              aria-describedby="search-addon"
+                            />
+                            <div
+                              id="projectList"
+                              *ngIf="!hideProjects"
+                              style="
+                                max-height: 200px;
+                                overflow: scroll;
+                                border: thin solid;
+                              "
+                            >
+                              <div
+                                class="dropdown-item"
+                                *ngFor="let project of displayProjects"
+                                (click)="updateProject(project)"
+                                style="cursor: pointer"
                               >
-                                Save Changes
-                              </button>
+                                {{ project }}
+                              </div>
+                              <div
+                                class="dropdown-item"
+                                [hidden]="disableLoadMoreProjects"
+                              >
+                                <button
+                                  name="loadMoreProjects"
+                                  type="button"
+                                  class="btn btn-sm btn-light"
+                                  (click)="loadMoreProjects()"
+                                >
+                                  Load More Projects
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col mb-3">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Assigned To</label>
+                            <input
+                              [(ngModel)]="ticket.assignee"
+                              name="assignee"
+                              id="assignee"
+                              (input)="resetUserListSize(); userInput()"
+                              [disabled]="disableUsers"
+                              list="userList"
+                              type="search"
+                              class="form-control"
+                              placeholder="Search"
+                              aria-label="Search"
+                              aria-describedby="search-addon"
+                            />
+                            <div
+                              id="userList"
+                              *ngIf="!hideUsers"
+                              style="
+                                max-height: 200px;
+                                overflow: scroll;
+                                border: thin solid;
+                              "
+                            >
+                              <div
+                                class="dropdown-item"
+                                *ngFor="let username of displayUsernames"
+                                (click)="updateDeveloper(username)"
+                                style="cursor: pointer"
+                              >
+                                {{ username }}
+                              </div>
+                              <div
+                                class="dropdown-item"
+                                [hidden]="disableLoadMoreUsers"
+                              >
+                                <button
+                                  name="loadMoreUsers"
+                                  type="button"
+                                  class="btn btn-sm btn-light"
+                                  (click)="loadMoreUsers()"
+                                >
+                                  Load More Users
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </form>
+                      <div class="row">
+                        <div class="col mb-3">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Priority</label>
+                            <select
+                              name="priority"
+                              id="priority"
+                              class="form-control"
+                              [(ngModel)]="ticket.priority"
+                              (change)="onChange()"
+                            >
+                              <option>Low</option>
+                              <option>Medium</option>
+                              <option>High</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col mb-3">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Status</label>
+                            <select
+                              [(ngModel)]="ticket.state"
+                              name="state"
+                              id="state"
+                              class="form-control"
+                              (change)="onChange()"
+                            >
+                              <option>Open</option>
+                              <option>In Progress</option>
+                              <option>Done</option>
+                              <option>Closed</option>
+                              <option>Cancelled</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col mb-3">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Type</label>
+                            <select
+                              [(ngModel)]="ticket.type"
+                              name="type"
+                              id="type"
+                              class="form-control"
+                              (change)="onChange()"
+                            >
+                              <option>Bug</option>
+                              <option>Feature Request</option>
+                              <option>Issue</option>
+                              <option>Requirement</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="col mb-3"></div>
+                      </div>
+                      <div class="row">
+                        <div class="col d-flex justify-content-end">
+                          <button
+                            [disabled]="!editForm.dirty || disableUsers"
+                            class="btn btn-primary"
+                            type="submit"
+                          >
+                            Save Changes
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>

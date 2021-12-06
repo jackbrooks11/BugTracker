@@ -18,7 +18,7 @@ export class TicketListComponent implements OnInit {
   bsModalRef: BsModalRef;
   checkAll: boolean = false;
   ticketIdsToDelete: number[] = [];
-  headers: string[] = ["Title", "Project Name", "Assignee", "Priority", "State", "Type", "Created"]
+  headers: string[] = ["Title", "Project Name", "Assignee", "Priority", "State", "Type", "Created"];
 
   constructor(
     private ticketService: TicketsService,
@@ -56,7 +56,7 @@ export class TicketListComponent implements OnInit {
     index: number = this.ticketParams.index
   ) {
     this.updateTable(toggle, index);
-    this.ticketService.getTickets(this.ticketParams).subscribe((response) => {
+    this.ticketService.getTicketsPaginated(this.ticketParams).subscribe((response) => {
       this.tickets = response.result;
       this.pagination = response.pagination;
       if (this.checkAll) {
@@ -111,6 +111,7 @@ export class TicketListComponent implements OnInit {
       .deleteTickets(this.ticketIdsToDelete)
       .subscribe(response => {
         this.ticketIdsToDelete = [];
+        this.ticketService.ticketForUserCache.clear();
         this.loadTickets();
       });
     }

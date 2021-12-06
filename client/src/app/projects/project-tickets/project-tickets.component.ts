@@ -15,14 +15,16 @@ import { TicketsService } from 'src/app/_services/tickets.service';
 export class ProjectTicketsComponent implements OnInit {
   tickets: Ticket[];
   pagination: Pagination;
-  ticketParams: TicketParams;
+  ticketParams: TicketParams = new TicketParams();
   project: Project;
+  headers: string[] = ["Title", "Assignee", "Priority", "State", "Type", "Created"];
+  
   constructor(
     private ticketService: TicketsService,
     private projectService: ProjectsService,
     private route: ActivatedRoute
   ) {
-    this.ticketParams = new TicketParams();
+    this.ticketParams.icons = [0, 0, 0, 0, 0, 2];
   }
 
   ngOnInit(): void {

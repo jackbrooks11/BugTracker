@@ -1,6 +1,10 @@
 <ng-container *ngIf="accountService.currentUser$ | async">
   <div class="page-wrapper" [ngClass]="{ toggled: show }">
-    <button class="btn btn-lg btn-dark show-sidebar" (click)="toggleShow()" [hidden]="show">
+    <button
+      class="btn btn-lg btn-dark show-sidebar"
+      (click)="toggleShow()"
+      [hidden]="show"
+    >
       <i class="fas fa-bars"></i>
     </button>
 

@@ -18,10 +18,6 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    var datee = new Date();
-    datee.setDate(datee.getDate() - 1);
-    console.log(datee);
-
   }
 
   registerToggle() {

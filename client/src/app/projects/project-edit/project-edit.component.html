@@ -1,80 +1,76 @@
-<div class="row flex-lg-nowrap" style="padding: 0 15px 0 15px; max-width: 100%">
-  <div class="col">
-    <div class="row">
-      <div class="col mb-3">
-        <div class="card">
-          <div class="card-body">
-            <div class="e-profile">
-              <div class="tab-content pt-3">
-                <div class="tab-pane active">
-                  <form
-                    #editForm="ngForm"
-                    (ngSubmit)="updateProject()"
-                    *ngIf="project"
-                    class="form"
-                    novalidate=""
-                  >
-                    <div class="row">
-                      <div class="col">
-                        <div class="form-group">
-                          <h4>Details for {{ project.title | titlecase }}</h4>
-                        </div>
-                        <div class="p-3">
-                          <a
-                            href="#"
-                            routerLink="/projects/{{ project.id }}"
-                            style="padding-right: 50px"
-                            >Back to project detail</a
-                          >
-                        </div>
-                        <div class="alert alert-info" *ngIf="editForm.dirty">
-                          <strong>Information: </strong> You have made changes.
-                          Any unsaved changes will be lost.
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold">Title</label>
-                              <input
-                                class="form-control"
-                                [(ngModel)]="project.title"
-                                type="text"
-                                name="title"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col">
-                            <div class="form-group">
-                              <label class="font-weight-bold"
-                                >Description</label
-                              >
-                              <textarea
-                                class="form-control"
-                                [(ngModel)]="project.description"
-                                type="text"
-                                name="description"
-                              >
-                              </textarea>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col d-flex justify-content-end">
-                            <button
-                              [disabled]="!editForm.dirty"
-                              class="btn btn-primary"
-                              type="submit"
-                            >
-                              Save Changes
-                            </button>
+<div class="container mt-3">
+  <div class="row">
+    <div class="col mb-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="e-profile">
+            <div class="tab-content pt-3">
+              <div class="tab-pane active">
+                <form
+                  #editForm="ngForm"
+                  (ngSubmit)="updateProject()"
+                  *ngIf="project"
+                  class="form"
+                  novalidate=""
+                >
+                  <div class="row">
+                    <div class="col">
+                      <div class="form-group">
+                        <h4>Details for {{ project.title | titlecase }}</h4>
+                      </div>
+                      <div class="p-3">
+                        <a
+                          href="#"
+                          routerLink="/projects/{{ project.id }}"
+                          style="padding-right: 50px"
+                          >Back to project detail</a
+                        >
+                      </div>
+                      <div class="alert alert-info" *ngIf="editForm.dirty">
+                        <strong>Information: </strong> You have made changes.
+                        Any unsaved changes will be lost.
+                      </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Title</label>
+                            <input
+                              class="form-control"
+                              [(ngModel)]="project.title"
+                              type="text"
+                              name="title"
+                            />
                           </div>
                         </div>
                       </div>
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label class="font-weight-bold">Description</label>
+                            <textarea
+                              class="form-control"
+                              [(ngModel)]="project.description"
+                              type="text"
+                              name="description"
+                            >
+                            </textarea>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col d-flex justify-content-end">
+                          <button
+                            [disabled]="!editForm.dirty"
+                            class="btn btn-primary"
+                            type="submit"
+                          >
+                            Save Changes
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </form>
-                </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>

@@ -27,9 +27,9 @@ namespace API.Controllers
 
         [HttpGet]
 
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects() {
-            var projects = await _context.Projects.AsNoTracking().AnyAsync();
-            return Ok(projects);
+        public IEnumerable<Project> GetProjects() {
+            var projects = _context.Projects.AsNoTracking();
+            return projects;
         }
 
         [HttpGet("paginated")]

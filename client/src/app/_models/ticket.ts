@@ -1,3 +1,5 @@
+import { TicketPropertyChange } from "./ticketPropertyChange";
+
 export interface Ticket {
     id: number;
     title: string;
@@ -10,4 +12,5 @@ export interface Ticket {
     state: string;
     created: string;
     lastEdited: string;
+    changes: TicketPropertyChange[];
 }

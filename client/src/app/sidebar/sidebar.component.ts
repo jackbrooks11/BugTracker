@@ -24,7 +24,6 @@ export class SidebarComponent implements OnInit {
   }
 
   toggleTicketDropdown() {
-    console.log("HI");
     this.showTicketDropdown = !this.showTicketDropdown;
   }
 

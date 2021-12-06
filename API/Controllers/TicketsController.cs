@@ -21,15 +21,23 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         public TicketsController(DataContext context, IMapper mapper)
         {
-            _context = context;  
+            _context = context;
             _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTickets([FromQuery] TicketParams ticketParams)
+
+        public IEnumerable<Ticket> GetTickets() {
+            var tickets = _context.Tickets.Include(c => c.Changes).AsNoTracking();
+            return tickets;
+        }
+
+        [HttpGet("paginated")]
+        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsPaginated([FromQuery] TicketParams ticketParams)
         {
             var query = _context.Tickets
                 .Include(t => t.Comments)
+                .Include(x => x.Changes)
                 .AsNoTracking();
             if (ticketParams.SearchMatch != null)
             {
@@ -83,15 +91,15 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Ticket>> GetTicket(int id)
         {
-            return await _context.Tickets.Include(x => x.Comments).FirstOrDefaultAsync(y => y.Id == id);
+            return await _context.Tickets.Include(x => x.Comments).Include(c => c.Changes).AsNoTracking().FirstOrDefaultAsync(y => y.Id == id);
         }
 
         [HttpPost("create")]
         public async Task<ActionResult> CreateTicket(Ticket ticket)
         {
-          var project = await _context.Projects
-                .Include(t => t.Tickets)
-                .SingleOrDefaultAsync(x => x.Title == ticket.Project);
+            var project = await _context.Projects
+                  .Include(t => t.Tickets)
+                  .SingleOrDefaultAsync(x => x.Title == ticket.Project);
             if (ticket.Assignee.Length > 0)
             {
                 var user = await _context.Users
@@ -120,11 +128,10 @@ namespace API.Controllers
             }
             var id = ticketUpdated.Id;
             var ticket = await _context.Tickets.Include(x => x.Comments).FirstOrDefaultAsync(y => y.Id == id);
+            AddChangesToTicket(ticket, ticketUpdated);
             _mapper.Map(ticketUpdated, ticket);
             ticket.LastEdited = DateTime.Now;
             project.Tickets.Add(ticket);
-            _context.Entry(project).State = EntityState.Modified;
-            _context.Entry(ticket).State = EntityState.Modified;
 
             if (await _context.SaveChangesAsync() > 0) return NoContent();
 
@@ -252,7 +259,6 @@ namespace API.Controllers
 
             return Ok(tickets);
         }
-
         private async Task<string> ValidateTicket(Ticket ticket, Project project)
         {
             var userParams = new UserParams();
@@ -260,15 +266,15 @@ namespace API.Controllers
             {
                 return "Project field can not be empty";
             }
-            if (!await _context.Projects.AnyAsync(x => x.Title.ToLower() == ticket.Project.ToLower()))
+            if (!await _context.Projects.AsNoTracking().AnyAsync(x => x.Title.ToLower() == ticket.Project.ToLower()))
             {
 
                 return "Project does not exist";
             }
 
             /*Get Users for Project*/
-            
-            var assigneeCheck = await _context.ProjectUsers.AnyAsync(pu => pu.ProjectId == project.Id && pu.User.UserName.ToLower() == ticket.Assignee.ToLower());
+
+            var assigneeCheck = await _context.ProjectUsers.AsNoTracking().AnyAsync(pu => pu.ProjectId == project.Id && pu.User.UserName.ToLower() == ticket.Assignee.ToLower());
 
             if (!assigneeCheck && ticket.Assignee != "")
             {
@@ -277,6 +283,7 @@ namespace API.Controllers
 
             if (await _context.Users
             .Include(t => t.Tickets)
+            .AsNoTracking()
             .SingleOrDefaultAsync(x => x.UserName == ticket.Assignee) == null && ticket.Assignee != "")
             {
                 Response.StatusCode = 400;
@@ -287,15 +294,91 @@ namespace API.Controllers
                 Response.StatusCode = 400;
                 return "Ticket must have a title";
             }
-            var ticketWithNewTitle = await _context.Tickets
-              .SingleOrDefaultAsync(x => x.Title == ticket.Title);
-            if (await _context.Tickets.AnyAsync(x => x.Title.ToLower() == ticket.Title.ToLower())
+            var ticketWithNewTitle = await _context.Tickets.
+              AsNoTracking().SingleOrDefaultAsync(x => x.Title == ticket.Title);
+            if (await _context.Tickets.AsNoTracking().AnyAsync(x => x.Title.ToLower() == ticket.Title.ToLower())
             && ticketWithNewTitle != null && ticketWithNewTitle.Id != ticket.Id)
             {
                 Response.StatusCode = 400;
                 return "Ticket already exists";
             }
             return "";
+        }
+
+        private void AddChangesToTicket(Ticket ticket, Ticket ticketUpdated)
+        {
+            if (ticket.Title != ticketUpdated.Title)
+            {
+                AddChangeToTicket(ticket, ticketUpdated, "Title");
+            }
+            if (ticket.Description != ticketUpdated.Description)
+            {
+                AddChangeToTicket(ticket, ticketUpdated, "Description");
+            }
+            if (ticket.Type != ticketUpdated.Type)
+            {
+                AddChangeToTicket(ticket, ticketUpdated, "Type");
+            }
+            if (ticket.Project != ticketUpdated.Project)
+            {
+                AddChangeToTicket(ticket, ticketUpdated, "Project");
+            }
+            if (ticket.Priority != ticketUpdated.Priority)
+            {
+                AddChangeToTicket(ticket, ticketUpdated, "Priority");
+            }
+            if (ticket.State != ticketUpdated.State)
+            {
+                AddChangeToTicket(ticket, ticketUpdated, "State");
+            }
+            if (ticket.Assignee != ticketUpdated.Assignee)
+            {
+                AddChangeToTicket(ticket, ticketUpdated, "Assignee");
+            }
+        }
+
+        private void AddChangeToTicket(Ticket ticket, Ticket ticketUpdated, string property)
+        {
+            TicketPropertyChange change = new TicketPropertyChange();
+            change.Property = property;
+            change.Editor = ticketUpdated.Submitter;
+            change.Changed = DateTime.Now;
+            if (property == "Title")
+            {
+                change.OldValue = ticket.Title;
+                change.NewValue = ticketUpdated.Title;
+            }
+            else if (property == "Description")
+            {
+                change.OldValue = ticket.Description;
+                change.NewValue = ticketUpdated.Description;
+            }
+            else if (property == "Type")
+            {
+                change.OldValue = ticket.Type;
+                change.NewValue = ticketUpdated.Type;
+            }
+            else if (property == "Project")
+            {
+                change.OldValue = ticket.Project;
+                change.NewValue = ticketUpdated.Project;
+            }
+            else if (property == "Priority")
+            {
+                change.OldValue = ticket.Priority;
+                change.NewValue = ticketUpdated.Priority;
+            }
+            else if (property == "State")
+            {
+                change.OldValue = ticket.State;
+                change.NewValue = ticketUpdated.State;
+            }
+            else if (property == "Assignee")
+            {
+                change.OldValue = ticket.Assignee;
+                change.NewValue = ticketUpdated.Assignee;
+            }
+            ticketUpdated.Changes.Add(change);
         }
     }
 }

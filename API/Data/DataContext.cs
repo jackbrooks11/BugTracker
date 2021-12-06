@@ -13,6 +13,7 @@ namespace API.Data
             
         }
 
+        public DbSet<TicketPropertyChange> TicketPropertyChanges { get; set; }
         public DbSet<ProjectUser> ProjectUsers { get; set; }
         public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<Ticket> Tickets { get; set; }

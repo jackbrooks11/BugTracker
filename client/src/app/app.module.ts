@@ -45,6 +45,7 @@ import { TypeChartComponent } from './charts/type-chart/type-chart.component';
 import { StatusChartComponent } from './charts/status-chart/status-chart.component';
 import { PriorityChartComponent } from './charts/priority-chart/priority-chart.component';
 import { TicketHistoryComponent } from './tickets/ticket-history/ticket-history.component';
+import { StatusLineChartComponent } from './charts/status-line-chart/status-line-chart.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -81,7 +82,8 @@ import { TicketHistoryComponent } from './tickets/ticket-history/ticket-history.
     TypeChartComponent,
     StatusChartComponent,
     PriorityChartComponent,
-    TicketHistoryComponent
+    TicketHistoryComponent,
+    StatusLineChartComponent
   ],
   imports: [
     BrowserModule,

@@ -13,6 +13,7 @@ export class MemberTicketsComponent implements OnInit {
   tickets: Ticket[];
   pagination: Pagination;
   ticketParams: TicketParams;
+  headers: string[] = ["Title", "Project Name", "Assignee", "Priority", "State", "Type", "Created"];
 
   constructor(private ticketService: TicketsService) {
     this.ticketParams = this.ticketService.getTicketForUserParams();

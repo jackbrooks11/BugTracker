@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211029185941_ControllersAltered")]
-    partial class ControllersAltered
+    [Migration("20211123200209_TicketPropChangeAdded")]
+    partial class TicketPropChangeAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -285,7 +285,7 @@ namespace API.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("TicketPropertyChange");
+                    b.ToTable("TicketPropertyChanges");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

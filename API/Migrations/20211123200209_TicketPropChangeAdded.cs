@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class ControllersAltered : Migration
+    public partial class TicketPropChangeAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -259,7 +259,7 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketPropertyChange",
+                name: "TicketPropertyChanges",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -273,9 +273,9 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketPropertyChange", x => x.Id);
+                    table.PrimaryKey("PK_TicketPropertyChanges", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TicketPropertyChange_Tickets_TicketId",
+                        name: "FK_TicketPropertyChanges_Tickets_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Tickets",
                         principalColumn: "Id",
@@ -330,8 +330,8 @@ namespace API.Migrations
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketPropertyChange_TicketId",
-                table: "TicketPropertyChange",
+                name: "IX_TicketPropertyChanges_TicketId",
+                table: "TicketPropertyChanges",
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
@@ -369,7 +369,7 @@ namespace API.Migrations
                 name: "TicketComments");
 
             migrationBuilder.DropTable(
-                name: "TicketPropertyChange");
+                name: "TicketPropertyChanges");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

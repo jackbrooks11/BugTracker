@@ -123,9 +123,7 @@
                                 <div
                                   class="dropdown-item"
                                   *ngFor="let username of displayUsernames"
-                                  (click)="
-                                    updateDeveloper(username)
-                                  "
+                                  (click)="updateDeveloper(username)"
                                   style="cursor: pointer"
                                 >
                                   {{ username }}
@@ -134,8 +132,10 @@
                                   class="dropdown-item"
                                   [hidden]="disableLoadMoreUsers"
                                 >
-                                  <button class="btn btn-sm btn-light"
-                                  (click)="loadMoreUsers()">
+                                  <button
+                                    class="btn btn-sm btn-light"
+                                    (click)="loadMoreUsers()"
+                                  >
                                     Load More Users
                                   </button>
                                 </div>
