@@ -40,11 +40,18 @@
       </div>
     </div>
   </div>
-  <div *ngIf="user" class="row mt-3">
-    <div class="col-md-12 mb-3">
+  <div *ngIf="user" class="row mt-3 mb-3">
+    <div class="col">
       <div class="card">
         <div class="card-body">
           <app-status-line-chart></app-status-line-chart>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <app-user-count-chart></app-user-count-chart>
         </div>
       </div>
     </div>

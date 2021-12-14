@@ -1,13 +1,15 @@
 <div>
-  <button
-    type="button"
-    (click)="openRolesModal()"
-    *appHasRole="['Admin']"
-    class="btn btn-md btn-outline-primary mb-2"
-    style="flex: left"
-  >
-    Assign User
-  </button>
+  <ng-container *ngIf="this.users && containsUser()">
+    <button
+      type="button"
+      (click)="openRolesModal()"
+      *appHasRole="['Admin', 'Project Manager']"
+      class="btn btn-md btn-outline-primary mb-2"
+      style="flex: left"
+    >
+      Assign User
+    </button>
+  </ng-container>
   <button
     type="button"
     (click)="deleteUsers()"

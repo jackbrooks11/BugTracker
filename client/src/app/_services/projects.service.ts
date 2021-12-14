@@ -12,7 +12,7 @@ import { ProjectParams } from '../_models/projectParams';
 })
 export class ProjectsService {
   baseUrl = environment.apiUrl;
-  projects: Project[] = [];
+  projects: Project[];
   projectsForUser: Project[] = [];
   projectCache = new Map();
   projectForUserCache = new Map();
@@ -26,20 +26,15 @@ export class ProjectsService {
   }
 
   getProjects() {
-    var response = this.projectCache.get(
-      '-'
-    );
-    if (response) {
-      return of(response);
+    if (this.projects) {
+      return of(this.projects);
     }
-    return this.http.get<Project[]>(
-      this.baseUrl + 'projects'
-    ).pipe(
+    return this.http.get<Project[]>(this.baseUrl + 'projects').pipe(
       map((response) => {
-        this.projectCache.set('-', response);
+        this.projects = response;
         return response;
       })
-    ); 
+    );
   }
 
   getProjectsPaginated(projectParams: ProjectParams) {

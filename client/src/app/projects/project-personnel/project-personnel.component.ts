@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { take } from 'rxjs/operators';
 import { PersonnelModalComponent } from 'src/app/modals/personnel-modal/personnel-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
 import { Project } from 'src/app/_models/project';
 import { User } from 'src/app/_models/user';
 import { UserParams } from 'src/app/_models/userParams';
+import { AccountService } from 'src/app/_services/account.service';
 import { MembersService } from 'src/app/_services/members.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
@@ -16,16 +18,18 @@ import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
   styleUrls: ['./project-personnel.component.css'],
 })
 export class ProjectPersonnelComponent implements OnInit {
+  user: User;
   users: User[];
   pagination: Pagination;
   bsModalRef: BsModalRef;
-  userParams: UserParams;
+  userParams: UserParams = new UserParams();
   project: Project;
   checkAll: boolean = false;
   usernamesToDelete: string[] = [];
 
   constructor(
     private projectUsersService: ProjectUsersService,
+    private accountService: AccountService,
     private memberService: MembersService,
     private projectService: ProjectsService,
     private projectUserService: ProjectUsersService,
@@ -33,32 +37,36 @@ export class ProjectPersonnelComponent implements OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {
-    this.userParams = new UserParams();
+    this.accountService.currentUser$
+      .pipe(take(1))
+      .subscribe((user) => (this.user = user));
   }
 
   ngOnInit(): void {
-    this.projectService.getProjectById(Number(this.route.snapshot.paramMap.get('id'))).subscribe(project => {
-      this.project = project;
-      this.loadUsers();
-    })
+    this.projectService
+      .getProjectById(Number(this.route.snapshot.paramMap.get('id')))
+      .subscribe((project) => {
+        this.project = project;
+        this.loadUsers();
+      });
   }
 
-  ngAfterViewChecked(){
+  ngAfterViewChecked() {
     //your code to update the model
     this.cdr.detectChanges();
- }
+  }
   loadUsers(toggle: boolean = false, index: number = this.userParams.index) {
     this.updateTable(toggle, index);
     this.getUsersWithRoles();
   }
 
   getUsersWithRoles() {
-      this.projectUserService
-      .getMembersForProjectPaginated(this.project.title, this.userParams).subscribe(response => {
-        this.users = response.result,
-        this.pagination = response.pagination;
+    this.projectUserService
+      .getMembersForProjectPaginated(this.project.title, this.userParams)
+      .subscribe((response) => {
+        (this.users = response.result), (this.pagination = response.pagination);
       });
-    }
+  }
 
   updateTable(toggle: boolean, index: number) {
     if (toggle) {
@@ -99,7 +107,11 @@ export class ProjectPersonnelComponent implements OnInit {
   }
 
   addUserToProject() {
-    this.projectUsersService.addUserToProject(this.project.id, this.bsModalRef.content.assignUserForm.value.username)
+    this.projectUsersService
+      .addUserToProject(
+        this.project.id,
+        this.bsModalRef.content.assignUserForm.value.username
+      )
       .subscribe(() => {
         this.loadUsers();
         this.projectUserService.memberNotInProjectCache.clear();
@@ -108,13 +120,13 @@ export class ProjectPersonnelComponent implements OnInit {
   }
 
   deleteUsers() {
-    if(confirm("Are you sure to delete the selected user(s)?")) {
+    if (confirm('Are you sure to delete the selected user(s)?')) {
       this.projectUsersService
-      .deleteUsersFromProject(this.project, this.usernamesToDelete)
-      .subscribe((value) => {
-        this.usernamesToDelete = [];
-        this.loadUsers();
-      });
+        .deleteUsersFromProject(this.project, this.usernamesToDelete)
+        .subscribe((value) => {
+          this.usernamesToDelete = [];
+          this.loadUsers();
+        });
     }
   }
 
@@ -122,8 +134,8 @@ export class ProjectPersonnelComponent implements OnInit {
     const config = {
       class: 'modal-dialog-centered',
       initialState: {
-        project: this.project
-      }
+        project: this.project,
+      },
     };
     this.bsModalRef = this.modalService.show(PersonnelModalComponent, config);
     this.bsModalRef.content.submitted.subscribe((value) => {
@@ -141,13 +153,28 @@ export class ProjectPersonnelComponent implements OnInit {
     } else {
       this.usernamesToDelete.length = 0;
     }
-  }
+  };
 
   changed = (evt, username: string) => {
     if (evt.target.checked == true) {
       this.usernamesToDelete.push(username);
     } else {
-      this.usernamesToDelete.splice(this.usernamesToDelete.indexOf(username), 1);
+      this.usernamesToDelete.splice(
+        this.usernamesToDelete.indexOf(username),
+        1
+      );
     }
+  };
+
+  containsUser() {
+    if (this.user.roles.includes('Admin')) {
+      return true;
+    }
+    for (var user of this.users) {
+      if (user.username === this.user.username) {
+        return true;
+      }
+    }
+    return false;
   }
 }

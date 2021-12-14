@@ -13,7 +13,10 @@
                         <h4>Details for {{ project.title | titlecase }}</h4>
                       </div>
                       <div class="p-3">
-                        <a href="#" routerLink="/projects/{{ project.id }}/edit"
+                        <a
+                          *appHasRole="['Admin']"
+                          href="#"
+                          routerLink="/projects/{{ project.id }}/edit"
                           >Edit Project</a
                         >
                       </div>

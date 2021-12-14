@@ -40,7 +40,6 @@ namespace API.Controllers
             return BadRequest("Failed to delete user from project");
         }
 
-        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("{projectId}/addUser")]
         public async Task<ActionResult> AddProjectUser(ProjectUserDto projectUserDto)
         {

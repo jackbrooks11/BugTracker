@@ -27,7 +27,8 @@ namespace API.Controllers
 
         [HttpGet]
 
-        public IEnumerable<Ticket> GetTickets() {
+        public IEnumerable<Ticket> GetTickets()
+        {
             var tickets = _context.Tickets.Include(c => c.Changes).AsNoTracking();
             return tickets;
         }
@@ -293,14 +294,6 @@ namespace API.Controllers
             {
                 Response.StatusCode = 400;
                 return "Ticket must have a title";
-            }
-            var ticketWithNewTitle = await _context.Tickets.
-              AsNoTracking().SingleOrDefaultAsync(x => x.Title == ticket.Title);
-            if (await _context.Tickets.AsNoTracking().AnyAsync(x => x.Title.ToLower() == ticket.Title.ToLower())
-            && ticketWithNewTitle != null && ticketWithNewTitle.Id != ticket.Id)
-            {
-                Response.StatusCode = 400;
-                return "Ticket already exists";
             }
             return "";
         }

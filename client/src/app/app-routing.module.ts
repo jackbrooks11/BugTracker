@@ -17,6 +17,7 @@ import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
 import { AdminGuard } from './_guards/admin.guard';
 import { AuthGuard } from './_guards/auth.guard';
+import { HasTicketGuard } from './_guards/has-ticket.guard';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 
 const routes: Routes = [
@@ -31,11 +32,11 @@ const routes: Routes = [
       {path: 'member/tickets', component: MemberTicketsComponent},
       {path: 'member/projects/:id', component: ProjectDetailComponent},
       {path: 'member/projects', component: MemberProjectsComponent},
-      {path: 'tickets/:id/edit', component: TicketEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
+      {path: 'tickets/:id/edit', component: TicketEditComponent, canActivate: [HasTicketGuard], canDeactivate: [PreventUnsavedChangesGuard]},
       {path: 'tickets/:id', component: TicketDetailComponent},
       {path: 'tickets', component: TicketListComponent},
       {path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard]},
-      {path: 'projects/:id/edit', component: ProjectEditComponent},
+      {path: 'projects/:id/edit', component: ProjectEditComponent, canActivate: [AdminGuard]},
       {path: 'projects/:id', component: ProjectDetailComponent},
       {path: 'projects', component: ProjectListComponent}
     ]

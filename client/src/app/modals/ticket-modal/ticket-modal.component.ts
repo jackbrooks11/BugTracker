@@ -6,6 +6,7 @@ import { Project } from 'src/app/_models/project';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
+import { ProjectsService } from 'src/app/_services/projects.service';
 
 @Component({
   selector: 'app-ticket-modal',
@@ -17,7 +18,9 @@ export class TicketModalComponent implements OnInit {
   validationErrors: string[] = [];
 
   user: User;
-  
+
+  disableSubmit: boolean = true;
+
   usersSearchMatch: string = '';
   usernameListSize: number = 10;
   usernames: string[] = [];
@@ -39,6 +42,7 @@ export class TicketModalComponent implements OnInit {
     public bsModalRef: BsModalRef,
     private fb: FormBuilder,
     private projectUserService: ProjectUsersService,
+    private projectService: ProjectsService,
     private accountService: AccountService
   ) {
     this.accountService.currentUser$
@@ -67,19 +71,28 @@ export class TicketModalComponent implements OnInit {
     this.hideProjects = false;
     this.projectsSearchMatch = this.projectsSearchMatch.toLowerCase();
     this.disableLoadMoreProjects = false;
-    this.projectUserService
-      .getProjectsForUser(this.user.username)
-      .subscribe((response) => {
+    if (this.user.roles.includes('Admin')) {
+      this.projectService.getProjects().subscribe((response) => {
         this.projects = response;
         this.filterProjects();
         this.hideProjects = true;
       });
+    } else {
+      this.projectUserService
+        .getProjectsForUser(this.user.username)
+        .subscribe((response) => {
+          this.projects = response;
+          this.filterProjects();
+          this.hideProjects = true;
+        });
+    }
   }
 
   filterProjects() {
     this.hideProjects = false;
     this.hideUsers = true;
     this.disableUsers = true;
+    this.disableSubmit = true;
     this.createTicketForm.controls['project'].setValue('');
     var filteredProjects = [];
     var lenFilteredProjects = 0;
@@ -110,16 +123,27 @@ export class TicketModalComponent implements OnInit {
   updateProject(title: string) {
     this.hideProjects = true;
     this.disableUsers = false;
+    this.disableSubmit = false;
     this.projectsSearchMatch = title;
     this.createTicketForm.controls['project'].setValue(title);
     this.loadUsers(title);
   }
 
   loadUsers(projectTitle: string) {
-    this.projectUserService.getUsersForProject(projectTitle).subscribe(users => {
-      this.usernames = users;
+    if (
+      this.user.roles.includes('Admin') ||
+      this.user.roles.includes('Project Manager')
+    ) {
+      this.projectUserService
+        .getUsersForProject(projectTitle)
+        .subscribe((users) => {
+          this.usernames = users;
+          this.filterUsernames();
+        });
+    } else {
+      this.usernames = [this.user.username];
       this.filterUsernames();
-    })
+    }
   }
 
   filterUsernames() {
@@ -127,17 +151,16 @@ export class TicketModalComponent implements OnInit {
     this.createTicketForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     var lenFilteredUsernames = 0;
-    this.usernames.forEach(element => {
+    this.usernames.forEach((element) => {
       if (element.includes(this.usersSearchMatch)) {
         filteredUsernames.push(element);
         lenFilteredUsernames += 1;
       }
-    })
+    });
     this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
     if (this.displayUsernames.length < this.usernameListSize) {
       this.disableLoadMoreUsers = true;
-    }
-    else {
+    } else {
       this.disableLoadMoreUsers = false;
     }
   }

@@ -27,13 +27,14 @@ export class TypeChartComponent implements OnInit {
     responsive: true,
     legend: {
       position: 'bottom',
-    },
+    }
   };
 
   constructor(private ticketService: TicketsService) {}
 
   ngOnInit(): void {
     this.ticketService.getTickets().subscribe((tickets) => {
+      this.tickets = tickets;
       for (var ticket of tickets) {
         if (ticket.type == 'Bug') {
           this.barChartData[0]['data'][0] += 1;
@@ -45,7 +46,6 @@ export class TypeChartComponent implements OnInit {
           this.barChartData[0]['data'][3] += 1;
         }
       }
-      this.tickets = tickets;
     });
   }
 }

@@ -7,6 +7,7 @@ import { Project } from 'src/app/_models/project';
 import { Ticket } from 'src/app/_models/ticket';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
+import { ProjectsService } from 'src/app/_services/projects.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
 import { TicketPropertyChangesService } from 'src/app/_services/ticketPropertyChanges.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
@@ -19,6 +20,9 @@ import { TicketsService } from 'src/app/_services/tickets.service';
 export class TicketEditComponent implements OnInit {
   editForm: FormGroup;
   user: User;
+
+  disableSubmit: boolean = false;
+
   usernameListSize: number = 10;
   usernames: string[] = [];
   displayUsernames: string[] = [];
@@ -46,6 +50,7 @@ export class TicketEditComponent implements OnInit {
     private ticketService: TicketsService,
     private fb: FormBuilder,
     private accountService: AccountService,
+    private projectService: ProjectsService,
     private projectUserService: ProjectUsersService,
     private ticketPropertyChangeService: TicketPropertyChangesService,
     private route: ActivatedRoute,
@@ -73,21 +78,30 @@ export class TicketEditComponent implements OnInit {
   }
 
   loadProjects() {
-    this.projectUserService
-      .getProjectsForUser(this.user.username)
-      .subscribe((response) => {
+    if (this.user.roles.includes('Admin')) {
+      this.projectService.getProjects().subscribe((response) => {
         this.projects = response;
         this.filterProjects();
       });
+    } else {
+      this.projectUserService
+        .getProjectsForUser(this.user.username)
+        .subscribe((response) => {
+          this.projects = response;
+          this.filterProjects();
+        });
+    }
   }
 
   projectInput() {
     this.hideProjects = false;
     this.hideUsers = true;
     this.disableUsers = true;
+    this.disableSubmit = true;
     this.onChange();
     this.filterProjects();
   }
+
   filterProjects() {
     this.editForm.controls['project'].setValue('');
     var filteredProjects = [];
@@ -113,6 +127,7 @@ export class TicketEditComponent implements OnInit {
   updateProject(title: string) {
     this.hideProjects = true;
     this.disableUsers = false;
+    this.disableSubmit = false;
     this.ticket.project = title;
     this.ticket.assignee = '';
     this.editForm.controls['project'].setValue(title);
@@ -125,22 +140,29 @@ export class TicketEditComponent implements OnInit {
   }
 
   userInput() {
+    this.hideUsers = false;
     this.onChange();
     this.filterUsernames();
   }
 
   loadUsers(projectTitle: string) {
-    this.projectUserService
-      .getUsersForProject(projectTitle)
-      .subscribe((users) => {
-        this.usernames = users;
-        this.filterUsernames();
-        this.hideUsers = true;
-      });
+    if (
+      this.user.roles.includes('Admin') ||
+      this.user.roles.includes('Project Manager')
+    ) {
+      this.projectUserService
+        .getUsersForProject(projectTitle)
+        .subscribe((users) => {
+          this.usernames = users;
+          this.filterUsernames();
+        });
+    } else {
+      this.usernames = [this.user.username];
+      this.filterUsernames();
+    }
   }
 
   filterUsernames() {
-    this.hideUsers = false;
     this.editForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     var lenFilteredUsernames = 0;
@@ -162,6 +184,19 @@ export class TicketEditComponent implements OnInit {
     this.usernameListSize = 10;
   }
 
+  loadMoreUsers() {
+    this.usernameListSize += 10;
+    this.filterUsernames();
+  }
+
+  updateDeveloper(userName: string) {
+    this.hideUsers = true;
+    this.ticket.assignee = userName;
+    this.disableSubmit = false;
+    this.editForm.markAsDirty();
+    this.editForm.controls['assignee'].setValue(userName);
+  }
+
   loadTicket() {
     this.ticketService
       .getTicket(Number(this.route.snapshot.paramMap.get('id')))
@@ -172,18 +207,6 @@ export class TicketEditComponent implements OnInit {
         this.loadProjects();
       });
   }
-
-  loadMoreUsers() {
-    this.usernameListSize += 10;
-    this.filterUsernames();
-  }
-
-  updateDeveloper(userName: string) {
-    this.hideUsers = true;
-    this.ticket.assignee = userName;
-    this.editForm.controls['assignee'].setValue(userName);
-  }
-
   updateTicket() {
     this.ticketService.updateTicket(this.ticket).subscribe(() => {
       this.toastr.success('Ticket updated successfully');

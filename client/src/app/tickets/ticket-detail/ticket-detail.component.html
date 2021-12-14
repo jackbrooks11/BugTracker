@@ -15,9 +15,14 @@
                         </h4>
                       </div>
                       <div class="p-3">
-                        <a href="#" routerLink="/tickets/{{ ticket.id }}/edit"
+                        <ng-container *ngIf="ticket"> 
+                        <a
+                          *appHasTicket="ticket"
+                          href="#"
+                          routerLink="/tickets/{{ ticket.id }}/edit"
                           >Edit Ticket</a
                         >
+                        </ng-container>
                       </div>
                       <div class="row">
                         <div class="col">

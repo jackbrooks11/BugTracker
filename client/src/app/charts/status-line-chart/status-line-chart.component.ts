@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Ticket } from 'src/app/_models/ticket';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 @Component({
@@ -7,6 +8,7 @@ import { TicketsService } from 'src/app/_services/tickets.service';
   styleUrls: ['./status-line-chart.component.css'],
 })
 export class StatusLineChartComponent implements OnInit {
+  tickets: Ticket[];
   public barChartData: any[] = [
     {
       data: [
@@ -30,6 +32,16 @@ export class StatusLineChartComponent implements OnInit {
     scaleShowVerticalLines: false,
     responsive: true,
     legend: { position: 'left' },
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            stepSize: 1,
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
   };
 
   constructor(private ticketService: TicketsService) {}
@@ -37,26 +49,8 @@ export class StatusLineChartComponent implements OnInit {
   ngOnInit(): void {
     this.initializeLabels();
     this.ticketService.getTickets().subscribe((tickets) => {
-      for (var ticket of tickets) {
-        for (var change of ticket.changes) {
-          var changeDate = new Date(change.changed);
-          var dateIndex = this.barChartLabels.indexOf(
-            changeDate.toDateString()
-          );
-          if (change.property == 'State' && dateIndex != -1) {
-            if (change.newValue == 'Open') {
-              this.barChartData[0]['data'][dateIndex] += 1;
-            } else if (change.newValue == 'Closed') {
-              this.barChartData[1]['data'][dateIndex] += 1;
-            }
-          }
-        }
-        var createdDate = new Date(ticket.created);
-        var dateIndex = this.barChartLabels.indexOf(createdDate.toDateString());
-        if (dateIndex != -1) {
-          this.barChartData[0]['data'][dateIndex] += 1;
-        }
-      }
+      this.tickets = tickets;
+      this.generateData();
     });
   }
 
@@ -66,6 +60,27 @@ export class StatusLineChartComponent implements OnInit {
       var oldDate = new Date(currentDate);
       oldDate.setDate(oldDate.getDate() - i);
       this.barChartLabels.push(oldDate.toDateString());
+    }
+  }
+
+  generateData() {
+    for (var ticket of this.tickets) {
+      for (var change of ticket.changes) {
+        var changeDate = new Date(change.changed);
+        var dateIndex = this.barChartLabels.indexOf(changeDate.toDateString());
+        if (change.property == 'State' && dateIndex != -1) {
+          if (change.newValue == 'Open') {
+            this.barChartData[0]['data'][dateIndex] += 1;
+          } else if (change.newValue == 'Closed') {
+            this.barChartData[1]['data'][dateIndex] += 1;
+          }
+        }
+      }
+      var createdDate = new Date(ticket.created);
+      var dateIndex = this.barChartLabels.indexOf(createdDate.toDateString());
+      if (dateIndex != -1) {
+        this.barChartData[0]['data'][dateIndex] += 1;
+      }
     }
   }
 }

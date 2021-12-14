@@ -46,6 +46,8 @@ import { StatusChartComponent } from './charts/status-chart/status-chart.compone
 import { PriorityChartComponent } from './charts/priority-chart/priority-chart.component';
 import { TicketHistoryComponent } from './tickets/ticket-history/ticket-history.component';
 import { StatusLineChartComponent } from './charts/status-line-chart/status-line-chart.component';
+import { UserCountChartComponent } from './charts/user-count-chart/user-count-chart.component';
+import { HasTicketDirective } from './_directives/has-ticket.directive';
 @NgModule({
   declarations: [
     AppComponent,
@@ -65,6 +67,7 @@ import { StatusLineChartComponent } from './charts/status-line-chart/status-line
     AdminPanelComponent,
     HasRoleDirective,
     NotHaveRoleDirective,
+    HasTicketDirective,
     UserManagementComponent,
     RolesModalComponent,
     MemberTicketsComponent,
@@ -83,7 +86,8 @@ import { StatusLineChartComponent } from './charts/status-line-chart/status-line
     StatusChartComponent,
     PriorityChartComponent,
     TicketHistoryComponent,
-    StatusLineChartComponent
+    StatusLineChartComponent,
+    UserCountChartComponent
   ],
   imports: [
     BrowserModule,

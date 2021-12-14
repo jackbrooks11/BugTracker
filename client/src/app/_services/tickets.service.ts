@@ -24,7 +24,6 @@ export class TicketsService {
   constructor(private http: HttpClient) {}
 
   getTickets() {
-    console.log(this.tickets);
     if (this.tickets) {
       return of(this.tickets);
     }
