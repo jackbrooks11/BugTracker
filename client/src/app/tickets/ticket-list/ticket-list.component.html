@@ -20,7 +20,7 @@
       Delete
     </button>
   </div>
-  <div>
+  <div *ngIf="tickets.length > 0">
     <div style="float: left">
       <label>Show</label>
       <select
@@ -45,7 +45,8 @@
     />
   </div>
   <div class="table-responsive margin-bottom-2x">
-    <table class="table margin-bottom-none">
+    <h3 *ngIf="tickets.length == 0">No tickets to show.</h3>
+    <table *ngIf="tickets.length > 0" class="table margin-bottom-none">
       <thead>
         <tr>
           <th *appHasRole="['Admin']">
@@ -81,7 +82,7 @@
             <input
               type="checkbox"
               id="deleteCheck"
-              (change)="changed($event, ticket.id)"
+              (change)="checked($event, ticket.id)"
               [checked]="checkAll ? true : null"
             />
           </td>
@@ -117,7 +118,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="pagination">
+  <div *ngIf="pagination && tickets.length > 0">
     <span style="float: left">
       Showing
       {{

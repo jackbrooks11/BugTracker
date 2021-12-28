@@ -276,7 +276,7 @@ namespace API.Migrations
                     b.Property<string>("Property")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("TicketId")
+                    b.Property<int>("TicketId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -421,18 +421,24 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.TicketComment", b =>
                 {
-                    b.HasOne("API.Entities.Ticket", null)
+                    b.HasOne("API.Entities.Ticket", "Ticket")
                         .WithMany("Comments")
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("API.Entities.TicketPropertyChange", b =>
                 {
-                    b.HasOne("API.Entities.Ticket", null)
+                    b.HasOne("API.Entities.Ticket", "Ticket")
                         .WithMany("Changes")
-                        .HasForeignKey("TicketId");
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

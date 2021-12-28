@@ -12,7 +12,7 @@ import { ProjectsService } from 'src/app/_services/projects.service';
   styleUrls: ['./project-list.component.css'],
 })
 export class ProjectListComponent implements OnInit {
-  projects: Project[];
+  projects: Project[] = [];
   pagination: Pagination;
   projectParams: ProjectParams = new ProjectParams();
   bsModalRef: BsModalRef;

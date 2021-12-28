@@ -16,7 +16,7 @@ const BARCHART_LABELS: string[] = [
   styleUrls: ['./status-chart.component.css'],
 })
 export class StatusChartComponent implements OnInit {
-  tickets: Ticket[] = [];
+  tickets: Ticket[];
   public barChartData: any[] = [
     { data: [0, 0, 0, 0, 0], label: 'Tickets By Status' },
   ];

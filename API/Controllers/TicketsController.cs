@@ -277,7 +277,7 @@ namespace API.Controllers
 
             var assigneeCheck = await _context.ProjectUsers.AsNoTracking().AnyAsync(pu => pu.ProjectId == project.Id && pu.User.UserName.ToLower() == ticket.Assignee.ToLower());
 
-            if (!assigneeCheck && ticket.Assignee != "")
+            if (!assigneeCheck && ticket.Assignee != "Unassigned")
             {
                 return "User assigned to ticket does not belong to project";
             }
@@ -285,7 +285,7 @@ namespace API.Controllers
             if (await _context.Users
             .Include(t => t.Tickets)
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.UserName == ticket.Assignee) == null && ticket.Assignee != "")
+            .SingleOrDefaultAsync(x => x.UserName == ticket.Assignee) == null && ticket.Assignee != "Unassigned")
             {
                 Response.StatusCode = 400;
                 return "User assigned to ticket does not exist";

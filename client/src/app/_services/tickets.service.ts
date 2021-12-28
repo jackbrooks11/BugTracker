@@ -139,6 +139,7 @@ export class TicketsService {
   }
 
   updateTicket(ticket: Ticket) {
+    console.log(ticket);
     return this.http.put(this.baseUrl + 'tickets', ticket).pipe(
       map(() => {
         this.ticketCache.clear();

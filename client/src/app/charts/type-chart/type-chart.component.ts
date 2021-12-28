@@ -15,7 +15,7 @@ const BARCHART_LABELS: string[] = [
   styleUrls: ['./type-chart.component.css'],
 })
 export class TypeChartComponent implements OnInit {
-  tickets: Ticket[] = [];
+  tickets: Ticket[];
   public barChartData: any[] = [
     { data: [0, 0, 0, 0], label: 'Tickets By Type' },
   ];

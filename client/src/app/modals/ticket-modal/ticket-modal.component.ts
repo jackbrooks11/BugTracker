@@ -96,9 +96,9 @@ export class TicketModalComponent implements OnInit {
     this.createTicketForm.controls['project'].setValue('');
     var filteredProjects = [];
     var lenFilteredProjects = 0;
-    this.projects.forEach((element) => {
-      if (element.title.includes(this.projectsSearchMatch)) {
-        filteredProjects.push(element.title);
+    this.projects.forEach((project) => {
+      if (project.title.toLowerCase().includes(this.projectsSearchMatch.toLowerCase())) {
+        filteredProjects.push(project.title);
         lenFilteredProjects += 1;
       }
     });
@@ -148,12 +148,13 @@ export class TicketModalComponent implements OnInit {
 
   filterUsernames() {
     this.hideUsers = false;
+    this.disableSubmit = true;
     this.createTicketForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     var lenFilteredUsernames = 0;
-    this.usernames.forEach((element) => {
-      if (element.includes(this.usersSearchMatch)) {
-        filteredUsernames.push(element);
+    this.usernames.forEach((username) => {
+      if (username.toLowerCase().includes(this.usersSearchMatch.toLowerCase())) {
+        filteredUsernames.push(username);
         lenFilteredUsernames += 1;
       }
     });
@@ -175,12 +176,18 @@ export class TicketModalComponent implements OnInit {
   }
 
   updateDeveloper(userName: string) {
+    this.disableSubmit = false;
     this.hideUsers = true;
     this.usersSearchMatch = userName;
-    this.createTicketForm.controls['assignee'].setValue(userName);
+    if (userName == 'Unassigned') {
+      this.createTicketForm.controls['assignee'].setValue('');
+    } else {
+      this.createTicketForm.controls['assignee'].setValue(userName);
+    }
   }
 
   createTicket() {
+    console.log('TITS');
     this.submitted.emit(true);
     this.bsModalRef.hide();
   }

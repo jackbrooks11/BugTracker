@@ -1,6 +1,6 @@
 <div class="container mt-3">
   <h2>My Tickets</h2>
-  <div>
+  <div *ngIf="tickets.length > 0">
     <div style="float: left">
       <label>Show</label>
       <select
@@ -25,7 +25,8 @@
     />
   </div>
   <div class="table-responsive margin-bottom-2x">
-    <table class="table margin-bottom-none">
+    <h3 *ngIf="tickets.length == 0"><br />No tickets to show.</h3>
+    <table *ngIf="tickets.length > 0" class="table margin-bottom-none">
       <thead>
         <tr>
           <th *ngFor="let header of headers; index as i">
@@ -80,7 +81,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="pagination">
+  <div *ngIf="pagination && tickets.length > 0">
     <span style="float: left">
       Showing
       {{

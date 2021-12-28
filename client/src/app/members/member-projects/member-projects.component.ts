@@ -10,7 +10,7 @@ import { ProjectsService } from 'src/app/_services/projects.service';
   styleUrls: ['./member-projects.component.css']
 })
 export class MemberProjectsComponent implements OnInit {
-  projects: Project[];
+  projects: Project[] = [];
   pagination: Pagination;
   projectParams: ProjectParams;
 

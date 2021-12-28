@@ -1,8 +1,8 @@
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+<nav class="navbar navbar-dark sticky-top bg-primary flex-md-nowrap p-0">
   <div class="sidebar-sticky">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a routerLink="/" style="padding: 8px 30px 8px 25px; font-size: 25px;">
+        <a routerLink="/"  class="nav-title">
           <i class="fa fa-bug" style="margin-right: 9px;"></i>
           <span>BugTracker</span>
         </a>
@@ -12,6 +12,7 @@
 
   <div
     class="dropdown"
+    style="padding-right: 50px;"
     *ngIf="accountService.currentUser$ | async as user"
     dropdown
   >
@@ -28,6 +29,7 @@
   <form
     *ngIf="(accountService.currentUser$ | async) === null"
     #loginForm="ngForm"
+    style="padding-right: 40px;"
     class="d-flex ml-auto"
     (ngSubmit)="login()"
     autocomplete="off"

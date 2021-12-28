@@ -48,6 +48,7 @@ import { TicketHistoryComponent } from './tickets/ticket-history/ticket-history.
 import { StatusLineChartComponent } from './charts/status-line-chart/status-line-chart.component';
 import { UserCountChartComponent } from './charts/user-count-chart/user-count-chart.component';
 import { HasTicketDirective } from './_directives/has-ticket.directive';
+import { TicketInfoComponent } from './tickets/ticket-info/ticket-info.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -87,7 +88,8 @@ import { HasTicketDirective } from './_directives/has-ticket.directive';
     PriorityChartComponent,
     TicketHistoryComponent,
     StatusLineChartComponent,
-    UserCountChartComponent
+    UserCountChartComponent,
+    TicketInfoComponent
   ],
   imports: [
     BrowserModule,

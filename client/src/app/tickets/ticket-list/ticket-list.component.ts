@@ -12,9 +12,9 @@ import { TicketsService } from 'src/app/_services/tickets.service';
   styleUrls: ['./ticket-list.component.css'],
 })
 export class TicketListComponent implements OnInit {
-  tickets: Ticket[];
+  tickets: Ticket[] = [];
   pagination: Pagination;
-  ticketParams: TicketParams;
+  ticketParams: TicketParams = new TicketParams();
   bsModalRef: BsModalRef;
   checkAll: boolean = false;
   ticketIdsToDelete: number[] = [];
@@ -126,7 +126,7 @@ export class TicketListComponent implements OnInit {
     }
   }
 
-  changed = (evt, id: number) => {
+  checked = (evt, id: number) => {
     if (evt.target.checked == true) {
       this.ticketIdsToDelete.push(id);
     } else {

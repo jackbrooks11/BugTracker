@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class TicketPropChangeAdded : Migration
+    public partial class DeleteOnCascade : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -264,12 +264,12 @@ namespace API.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    TicketId = table.Column<int>(type: "INTEGER", nullable: false),
                     Editor = table.Column<string>(type: "TEXT", nullable: true),
                     Property = table.Column<string>(type: "TEXT", nullable: true),
                     OldValue = table.Column<string>(type: "TEXT", nullable: true),
                     NewValue = table.Column<string>(type: "TEXT", nullable: true),
-                    Changed = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    TicketId = table.Column<int>(type: "INTEGER", nullable: true)
+                    Changed = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -279,7 +279,7 @@ namespace API.Migrations
                         column: x => x.TicketId,
                         principalTable: "Tickets",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

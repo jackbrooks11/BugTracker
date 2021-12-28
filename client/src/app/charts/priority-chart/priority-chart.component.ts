@@ -10,7 +10,7 @@ const BARCHART_LABELS: string[] = ['Low', 'Medium', 'High'];
   styleUrls: ['./priority-chart.component.css'],
 })
 export class PriorityChartComponent implements OnInit {
-  tickets: Ticket[] = [];
+  tickets: Ticket[];
   public barChartData: any[] = [
     { data: [0, 0, 0, 0], label: 'Tickets By Priority' },
   ];

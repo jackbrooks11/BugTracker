@@ -6,6 +6,7 @@ namespace API.Entities
     {
         public int Id { get; set; }
         public int TicketId { get; set; }
+        public Ticket Ticket { get; set; }
         public string Editor { get; set; }
         public string Property { get; set; }
         public string OldValue { get; set; }

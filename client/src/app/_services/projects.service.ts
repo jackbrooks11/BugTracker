@@ -111,11 +111,9 @@ export class ProjectsService {
     );
   }
 
-  createProject(model: any) {
-    return this.http.post(this.baseUrl + 'projects/create', model).pipe(
-      map((project: Project) => {
-        const index = this.projects.indexOf(project);
-        this.projects[index] = project;
+  createProject(project: any) {
+    return this.http.post(this.baseUrl + 'projects/create', project).pipe(
+      map(() => {
         this.projectCache.clear();
       })
     );
@@ -135,9 +133,7 @@ export class ProjectsService {
     return this.http
       .post(this.baseUrl + 'projects/delete', projectIdsToDelete)
       .pipe(
-        map((project: Project) => {
-          const index = this.projects.indexOf(project);
-          this.projects[index] = project;
+        map(() => {
           this.projectCache.clear();
         })
       );

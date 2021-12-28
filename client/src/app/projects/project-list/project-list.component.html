@@ -21,7 +21,7 @@
       Delete
     </button>
   </div>
-  <div>
+  <div *ngIf="projects.length > 0">
     <div style="float: left">
       <label>Show</label>
       <select
@@ -46,7 +46,8 @@
     />
   </div>
   <div class="table-responsive margin-bottom-2x">
-    <table class="table margin-bottom-none">
+    <h3 *ngIf="projects.length == 0">No projects to show.</h3>
+    <table *ngIf="projects.length > 0" class="table margin-bottom-none">
       <thead>
         <tr>
           <th *appHasRole="['Admin']">
@@ -133,7 +134,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="pagination">
+  <div *ngIf="pagination && projects.length > 0">
     <span style="float: left">
       Showing
       {{

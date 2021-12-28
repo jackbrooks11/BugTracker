@@ -1,7 +1,15 @@
-.dropdown-toggle, .dropdown-item {
-    cursor: pointer;
+.dropdown-toggle,
+.dropdown-item {
+  cursor: pointer;
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
+}
+
+.nav-title {
+  color: white;
+  padding: 8px 30px 8px 25px;
+  font-size: 25px;
+  transition: 0.3s ease;
 }

@@ -10,9 +10,9 @@ import { TicketsService } from 'src/app/_services/tickets.service';
   styleUrls: ['./member-tickets.component.css'],
 })
 export class MemberTicketsComponent implements OnInit {
-  tickets: Ticket[];
+  tickets: Ticket[] = [];
   pagination: Pagination;
-  ticketParams: TicketParams;
+  ticketParams: TicketParams = new TicketParams();
   headers: string[] = ["Title", "Project Name", "Assignee", "Priority", "State", "Type", "Created"];
 
   constructor(private ticketService: TicketsService) {
@@ -51,7 +51,6 @@ export class MemberTicketsComponent implements OnInit {
     this.ticketService
       .getTicketsForUser(this.ticketParams)
       .subscribe((response) => {
-        console.log(response);
         this.tickets = response.result;
         this.pagination = response.pagination;
       });

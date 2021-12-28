@@ -1,6 +1,6 @@
 <div class="container mt-3">
   <h2>My Projects</h2>
-  <div>
+  <div *ngIf="projects.length > 0">
     <div style="float: left">
       <label>Show</label>
       <select
@@ -25,7 +25,8 @@
     />
   </div>
   <div class="table-responsive margin-bottom-2x">
-    <table class="table margin-bottom-none">
+    <h3 *ngIf="projects.length == 0"><br />No projects to show.</h3>
+    <table *ngIf="projects.length > 0" class="table margin-bottom-none">
       <thead>
         <tr>
           <th style="width: 30%">
@@ -94,7 +95,7 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="pagination">
+  <div *ngIf="pagination && projects.length > 0">
     <span style="float: left">
       Showing
       {{

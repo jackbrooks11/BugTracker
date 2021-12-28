@@ -88,6 +88,7 @@ body {
 .show-sidebar {
   position: fixed;
   transition-delay: 0.3s;
+  margin-top: 20px;
   z-index: 1;
 }
 .page-wrapper.toggled {
@@ -145,6 +146,10 @@ body {
 .sidebar-wrapper .sidebar-brand #close-sidebar {
   cursor: pointer;
   font-size: 20px;
+}
+
+.close-sidebar {
+  cursor: pointer;
 }
 /*--------------------sidebar-header----------------------*/
 

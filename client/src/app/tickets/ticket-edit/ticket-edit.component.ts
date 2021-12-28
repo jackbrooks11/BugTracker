@@ -163,6 +163,7 @@ export class TicketEditComponent implements OnInit {
   }
 
   filterUsernames() {
+    this.disableSubmit = true;
     this.editForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     var lenFilteredUsernames = 0;
@@ -194,7 +195,12 @@ export class TicketEditComponent implements OnInit {
     this.ticket.assignee = userName;
     this.disableSubmit = false;
     this.editForm.markAsDirty();
-    this.editForm.controls['assignee'].setValue(userName);
+    if (userName == 'Unassigned') {
+      this.editForm.controls['assignee'].setValue('');
+      console.log("HI");
+    } else {
+      this.editForm.controls['assignee'].setValue(userName);
+    }
   }
 
   loadTicket() {

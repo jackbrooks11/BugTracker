@@ -39,7 +39,9 @@ export class UserCountChartComponent implements OnInit {
   ngOnInit(): void {
     this.ticketService.getTickets().subscribe((tickets) => {
       this.tickets = tickets;
-      this.initializeLabelsAndData();
+      if (this.tickets.length > 0) {
+        this.initializeLabelsAndData();
+      }
     });
   }
 

@@ -136,6 +136,14 @@
                             >
                               <div
                                 class="dropdown-item"
+                                (click)="updateDeveloper('Unassigned')"
+                                [ngModelOptions]="{ standalone: true }"
+                                style="cursor: pointer"
+                              >
+                                Unassigned
+                              </div>
+                              <div
+                                class="dropdown-item"
                                 *ngFor="let username of displayUsernames"
                                 (click)="updateDeveloper(username)"
                                 style="cursor: pointer"
