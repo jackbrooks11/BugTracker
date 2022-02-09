@@ -33,11 +33,11 @@ export class TicketPropertyChangesService {
   }
 
   getTicketPropertyChangesPaginated(
-    ticketId: number,
-    ticketPropertyChangeParams: TicketPropertyChangeParams
+    ticketPropertyChangeParams: TicketPropertyChangeParams,
+    ticketId: number
   ) {
     var response = this.changeCache.get(
-      Object.values(ticketPropertyChangeParams).join('-')
+      Object.values(ticketPropertyChangeParams).join('-') + ticketId
     );
     if (response) {
       return of(response);

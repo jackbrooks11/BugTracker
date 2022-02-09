@@ -46,7 +46,7 @@ export class ProjectTicketsComponent implements OnInit {
 
   getTicketsForProject() {
     this.ticketService
-      .getTicketsForProject(this.project.title, this.ticketParams)
+      .getTicketsForProject(this.ticketParams, this.project.title)
       .subscribe((response) => {
         this.tickets = response.result;
         this.pagination = response.pagination;

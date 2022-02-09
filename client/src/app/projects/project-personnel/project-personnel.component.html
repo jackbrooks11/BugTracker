@@ -85,7 +85,7 @@
             [checked]="checkAll ? true : null"
           />
         </td>
-        <td>{{ user.username }}</td>
+        <td>{{ user.username | titlecase }}</td>
         <td>{{ user.roles }}</td>
       </tr>
     </tbody>

@@ -57,13 +57,32 @@ export class UserCountChartComponent implements OnInit {
         userTicketCounts[assignee] += 1;
       }
     }
-    var userTicketCountsArray = Object.entries(userTicketCounts).sort(
-      (a, b) => b[1] - a[1]
-    );
-    for (let i = 0; i < 5; ++i) {
-      this.barChartLabels.push(userTicketCountsArray[i][0]);
-      this.barChartData[0]['data'].push(userTicketCountsArray[i][1]);
+    var topFiveUsers = Object.entries(userTicketCounts).sort(
+      function(a, b) {
+        console.log(a, b);
+        if (a[0] > b[0]) {
+          return 1;
+        } 
+        else if (a[0] < b[0]) { 
+          return -1;
+        }
+        // Else go to the 2nd item
+        if (a[1] > b[1]) { 
+          return 1;
+        } 
+        else if (a[1] < b[1]) {
+          return -1;
+        } 
+        else { // nothing to split them
+          return 0;
+        }
+      });
+    topFiveUsers.splice(5);
+    for (let i = 0; i < topFiveUsers.length; ++i) {
+      this.barChartLabels.push(topFiveUsers[i][0]);
+      this.barChartData[0]['data'].push(topFiveUsers[i][1]);
     }
+
   }
 
   titleCase(str: string) {

@@ -122,8 +122,6 @@ export class ProjectsService {
   updateProject(project: Project) {
     return this.http.put(this.baseUrl + 'projects', project).pipe(
       map(() => {
-        const index = this.projects.indexOf(project);
-        this.projects[index] = project;
         this.projectCache.clear();
       })
     );

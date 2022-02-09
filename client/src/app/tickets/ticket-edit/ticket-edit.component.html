@@ -111,7 +111,7 @@
                         </div>
                         <div class="col mb-3">
                           <div class="form-group">
-                            <label class="font-weight-bold">Assigned To</label>
+                            <label class="font-weight-bold">Assignee</label>
                             <input
                               [(ngModel)]="ticket.assignee"
                               name="assignee"
@@ -148,7 +148,7 @@
                                 (click)="updateDeveloper(username)"
                                 style="cursor: pointer"
                               >
-                                {{ username }}
+                                {{ username | titlecase }}
                               </div>
                               <div
                                 class="dropdown-item"

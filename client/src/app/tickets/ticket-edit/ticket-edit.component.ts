@@ -105,9 +105,9 @@ export class TicketEditComponent implements OnInit {
   filterProjects() {
     this.editForm.controls['project'].setValue('');
     var filteredProjects = [];
-    this.projects.forEach((element) => {
-      if (element.title.includes(this.ticket.project)) {
-        filteredProjects.push(element.title);
+    this.projects.forEach((project) => {
+      if (project.title.toLowerCase().includes(this.ticket.project.toLowerCase())) {
+        filteredProjects.push(project.title);
       }
     });
     this.displayProjects = filteredProjects.slice(0, this.projectListSize);
@@ -167,9 +167,9 @@ export class TicketEditComponent implements OnInit {
     this.editForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     var lenFilteredUsernames = 0;
-    this.usernames.forEach((element) => {
-      if (element.includes(this.ticket.assignee)) {
-        filteredUsernames.push(element);
+    this.usernames.forEach((username) => {
+      if (username.toLowerCase().includes(this.ticket.assignee.toLowerCase())) {
+        filteredUsernames.push(username);
         lenFilteredUsernames += 1;
       }
     });

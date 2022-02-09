@@ -91,7 +91,7 @@ export class TicketsService {
     );
   }
 
-  getTicketsForProject(projectTitle: string, ticketParams: TicketParams) {
+  getTicketsForProject(ticketParams: TicketParams, projectTitle: string) {
     var response = this.ticketForProjectCache.get(
       Object.values(ticketParams).join('-') + '-' + projectTitle
     );

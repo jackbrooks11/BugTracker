@@ -25,7 +25,7 @@
     />
   </div>
   <div class="table-responsive margin-bottom-2x">
-    <h3 *ngIf="tickets.length == 0"><br />No tickets to show.</h3>
+    <h3 *ngIf="tickets.length == 0"><br>No tickets to show.</h3>
     <table *ngIf="tickets.length > 0" class="table margin-bottom-none">
       <thead>
         <tr>
@@ -62,7 +62,7 @@
               style="color: #777"
               href="#"
               routerLink="/members/{{ ticket.assignee }}"
-              >{{ ticket.assignee }}</a
+              >{{ ticket.assignee | titlecase }}</a
             >
           </td>
           <td

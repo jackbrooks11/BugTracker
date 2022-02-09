@@ -78,16 +78,17 @@ export class MemberEditComponent implements OnInit {
   }
 
   updateMember() {
-    console.log(this.editForm.controls.password.value);
     this.editMember.fullName = this.editForm.controls.fullName.value;
     this.editMember.company = this.editForm.controls.company.value;
     this.editMember.about = this.editForm.controls.about.value;
     this.editMember.password = this.editForm.controls.password.value;
-    this.memberService.updateMember(this.editMember).subscribe((member) => {
+    this.accountService.updateUser(this.editMember).subscribe((member) => {
+      console.log(this.member);
+      console.log(this.user);
       this.member = member;
       this.toastr.success('Profile updated successfully');
-      this.editForm.reset(this.member);
       this.initializeForm();
+      this.editForm.markAsUntouched();
     });
   }
 

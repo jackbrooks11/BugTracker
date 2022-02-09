@@ -73,8 +73,8 @@ export class TicketHistoryComponent implements OnInit {
     this.updateTable(toggle, index);
     this.ticketPropertyChangeService
       .getTicketPropertyChangesPaginated(
+        this.ticketPropertyChangeParams,
         Number(this.route.snapshot.paramMap.get('id')),
-        this.ticketPropertyChangeParams
       )
       .subscribe(
         (changes) => {

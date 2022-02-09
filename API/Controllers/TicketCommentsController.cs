@@ -1,43 +1,39 @@
-using System.Linq;
 using System.Threading.Tasks;
-using API.Data;
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     [Authorize]
     public class TicketCommentsController : BaseApiController
     {
-        private readonly DataContext _context;
+        private readonly ITicketService _ticketService;
+        private readonly ITicketCommentService _ticketCommentService;
 
-        public TicketCommentsController(DataContext context)
+        public TicketCommentsController(ITicketService ticketService, ITicketCommentService ticketCommentService)
         {
-            _context = context;
+            _ticketService = ticketService;
+            _ticketCommentService = ticketCommentService;
         }
         [HttpPost("{id}/comments/create")]
         public async Task<ActionResult> AddCommentToTicket(int id, TicketComment comment)
         {
-            var ticket = await _context.Tickets.Include(x => x.Comments).FirstOrDefaultAsync(y => y.Id == id);
+            var ticket = await _ticketService.GetTicket(id);
             ticket.Comments.Add(comment);
-            _context.Entry(ticket).State = EntityState.Modified;
-            if (await _context.SaveChangesAsync() > 0) return NoContent();
+            _ticketService.MarkTicketAsModified(ticket);
+            if (await _ticketService.SaveAllAsync()) return NoContent();
             return BadRequest("Failed to create comment");
         }
 
         [HttpPost("{id}/comments/delete")]
         public async Task<ActionResult> DeleteCommentsFromTicket(int id, int[] commentIdsToDelete)
         {
-            var ticket = await _context.Tickets.Include(x => x.Comments).FirstOrDefaultAsync(y => y.Id == id);
-            var commentsToDelete = ticket.Comments.Where(c => commentIdsToDelete.Contains(c.Id));
-            foreach (var comment in commentsToDelete)
-            {
-                _context.Remove(comment);
-            }
-            _context.Entry(ticket).State = EntityState.Modified;
-            if (await _context.SaveChangesAsync() > 0) return NoContent();
+            var ticket = await _ticketService.GetTicket(id);
+            _ticketCommentService.DeleteCommentsFromTicket(ticket, commentIdsToDelete);
+            _ticketService.MarkTicketAsModified(ticket);
+            if (await _ticketService.SaveAllAsync()) return NoContent();
             return BadRequest("Failed to delete comment(s)");
         }
     }

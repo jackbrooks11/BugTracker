@@ -62,7 +62,7 @@ export class ProjectPersonnelComponent implements OnInit {
 
   getUsersWithRoles() {
     this.projectUserService
-      .getMembersForProjectPaginated(this.project.title, this.userParams)
+      .getMembersForProjectPaginated(this.userParams, this.project.title)
       .subscribe((response) => {
         (this.users = response.result), (this.pagination = response.pagination);
       });

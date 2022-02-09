@@ -1,47 +1,43 @@
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
-using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     public class AccountController : BaseApiController
     {
-        private readonly ITokenService _tokenService;
-        private readonly IMapper _mapper;
-        private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService, IMapper mapper)
+        private readonly ITokenService _tokenService;
+        private readonly IUserService _userService;
+        private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
+        public AccountController(SignInManager<AppUser> signInManager, ITokenService tokenService,
+            IUserService userService, IAccountService accountService, IMapper mapper)
         {
             _signInManager = signInManager;
-            _userManager = userManager;
-            _mapper = mapper;
             _tokenService = tokenService;
+            _userService = userService;
+            _accountService = accountService;
+            _mapper = mapper;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
+            if (await _accountService.UserExists(registerDto.Username)) return BadRequest("Username is taken");
 
             var user = _mapper.Map<AppUser>(registerDto);
             user.UserName = registerDto.Username.ToLower();
 
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-            if (!result.Succeeded) return BadRequest(result.Errors);
-
-            var roleResult = await _userManager.AddToRoleAsync(user, "Developer");
-
-            if (!roleResult.Succeeded) return BadRequest(result.Errors);
-
+            var result = await _accountService.CreateUser(user, registerDto.Password);
+            if (result != null) {
+                return BadRequest(result);
+            }
             return new UserDto
             {
                 Username = user.UserName,
@@ -53,7 +49,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _userManager.Users.SingleOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+            var user = await _userService.GetUserByUsernameAsync(loginDto.Username);
             if (user == null) return Unauthorized("Invalid username");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
@@ -63,13 +59,28 @@ namespace API.Controllers
             return new UserDto
             {
                 Username = user.UserName,
+                Company = user.Company,
                 Token = await _tokenService.CreateToken(user)
             };
         }
-
-        private async Task<bool> UserExists(string username)
+                
+        [HttpPut]
+        public async Task<ActionResult<AppUser>> UpdateUser(EditMemberDto partialUser)
         {
-            return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
+            var user = await _userService.GetUserByUsernameAsync(User.GetUsername());
+            _mapper.Map(partialUser, user);
+            /*Update user password*/
+            if (partialUser.Password != "")
+            {
+                var result = await _accountService.ChangePassword(user, partialUser);
+                if (!result.Succeeded)
+                {
+                    return BadRequest("Inadequate Password");
+                }
+            }
+            _userService.MarkUserAsModified(user);
+            if (await _userService.SaveAllAsync()) return user;
+            return BadRequest("Failed to update user");
         }
     }
 }

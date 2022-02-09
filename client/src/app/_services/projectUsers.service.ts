@@ -50,7 +50,7 @@ export class ProjectUsersService {
       );
   }
 
-  getMembersForProjectPaginated(projectTitle: string, userParams: UserParams) {
+  getMembersForProjectPaginated(userParams: UserParams, projectTitle: string) {
     var response = this.memberForProjectCache.get(
       Object.values(userParams).join('-') + '-' + projectTitle
     );

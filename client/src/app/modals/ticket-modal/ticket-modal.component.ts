@@ -151,11 +151,9 @@ export class TicketModalComponent implements OnInit {
     this.disableSubmit = true;
     this.createTicketForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
-    var lenFilteredUsernames = 0;
     this.usernames.forEach((username) => {
       if (username.toLowerCase().includes(this.usersSearchMatch.toLowerCase())) {
         filteredUsernames.push(username);
-        lenFilteredUsernames += 1;
       }
     });
     this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
@@ -187,7 +185,6 @@ export class TicketModalComponent implements OnInit {
   }
 
   createTicket() {
-    console.log('TITS');
     this.submitted.emit(true);
     this.bsModalRef.hide();
   }

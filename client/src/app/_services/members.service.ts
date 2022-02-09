@@ -55,16 +55,6 @@ export class MembersService {
     );
   }
 
-  updateMember(editMember: EditMemberDto) {
-    return this.http.put(this.baseUrl + 'users', editMember).pipe(
-      map((member: Member) => {
-        const index = this.members.indexOf(member);
-        this.members[index] = member;
-        return member;
-      })
-    );
-  }
-
   getUserParams() {
     return this.userParams;
   }
