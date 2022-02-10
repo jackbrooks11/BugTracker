@@ -5,11 +5,11 @@ import { ProjectParams } from 'src/app/_models/projectParams';
 import { ProjectsService } from 'src/app/_services/projects.service';
 
 @Component({
-  selector: 'app-member-projects',
-  templateUrl: './member-projects.component.html',
-  styleUrls: ['./member-projects.component.css']
+  selector: 'app-user-projects',
+  templateUrl: './user-projects.component.html',
+  styleUrls: ['./user-projects.component.css']
 })
-export class MemberProjectsComponent implements OnInit {
+export class UserProjectsComponent implements OnInit {
   projects: Project[] = [];
   pagination: Pagination;
   projectParams: ProjectParams;

@@ -1,7 +1,7 @@
 <div class="container mt-3">
   <div
     class="row"
-    *ngIf="editMember && editForm"
+    *ngIf="editUser && editForm"
   >
     <div class="col mb-3">
       <div class="card">
@@ -9,10 +9,10 @@
           <div class="e-profile">
             <div class="row">
               <div class="col-12 col-sm-auto mb-3">
-                <app-member-photo
+                <app-user-photo
                   style="font-size: 70px"
-                  [roles]="user.roles"
-                ></app-member-photo>
+                  [roles]="loggedInUser.roles"
+                ></app-user-photo>
               </div>
               <div
                 class="
@@ -24,18 +24,18 @@
                 "
               >
                 <div class="text-center text-sm-left mb-2 mb-sm-0">
-                  <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="member">
-                    {{ member.userName | titlecase }}
+                  <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" *ngIf="user">
+                    {{ user.userName | titlecase }}
                   </h4>
-                  <div class="text-muted" *ngIf="member">
-                    <small>Last seen {{ member.lastActive | date }}</small>
+                  <div class="text-muted" *ngIf="user">
+                    <small>Last seen {{ user.lastActive | date }}</small>
                   </div>
                 </div>
                 <div class="text-center text-sm-right">
-                  <span class="badge badge-secondary">{{ user.roles }}</span>
+                  <span class="badge badge-secondary">{{ loggedInUser.roles }}</span>
                   <div class="text-muted">
-                    <small *ngIf="member"
-                      >Joined {{ member.created | date }}</small
+                    <small *ngIf="user"
+                      >Joined {{ user.created | date }}</small
                     >
                   </div>
                 </div>
@@ -70,7 +70,7 @@
               <div class="tab-pane active">
                 <form
                   [formGroup]="editForm"
-                  (ngSubmit)="updateMember()"
+                  (ngSubmit)="updateUser()"
                   class="form"
                   novalidate=""
                 >

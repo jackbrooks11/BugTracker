@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Observable, of } from 'rxjs';
 import { concatMap, map, switchMap, take } from 'rxjs/operators';
 import { Ticket } from '../_models/ticket';
-import { User } from '../_models/user';
+import { LoggedInUser } from '../_models/loggedInUser';
 import { AccountService } from '../_services/account.service';
 import { ProjectUsersService } from '../_services/projectUsers.service';
 import { TicketsService } from '../_services/tickets.service';
@@ -17,7 +17,7 @@ import { TicketsService } from '../_services/tickets.service';
   providedIn: 'root',
 })
 export class HasTicketGuard implements CanActivate {
-  user: User;
+  loggedInUser: LoggedInUser;
 
   constructor(
     private accountService: AccountService,
@@ -25,8 +25,8 @@ export class HasTicketGuard implements CanActivate {
     private projectUserService: ProjectUsersService,
     private toastr: ToastrService
   ) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.user = user;
+    this.accountService.currentUser$.pipe(take(1)).subscribe((loggedInUser) => {
+      this.loggedInUser = loggedInUser;
     });
   }
 
@@ -43,11 +43,11 @@ export class HasTicketGuard implements CanActivate {
       .pipe(
         map((finalData) => {
           if (
-            (this.user?.roles.includes('Project Manager') &&
-              finalData[1].includes(this.user.username)) ||
-            this.user?.roles.includes('Admin') ||
-            (this.user?.roles.includes('Developer') &&
-              finalData[0].assignee == this.user.username)
+            (this.loggedInUser?.roles.includes('Project Manager') &&
+              finalData[1].includes(this.loggedInUser.username)) ||
+            this.loggedInUser?.roles.includes('Admin') ||
+            (this.loggedInUser?.roles.includes('Developer') &&
+              finalData[0].assignee == this.loggedInUser.username)
           ) {
             return true;
           }

@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { RolesModalComponent } from 'src/app/modals/roles-modal/roles-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
-import { User } from 'src/app/_models/user';
 import { UserParams } from 'src/app/_models/userParams';
 import { AdminService } from 'src/app/_services/admin.service';
+import { User } from 'src/app/_models/user';
+import { PaginatedUserDto } from 'src/app/_models/paginatedUserDto';
 
 @Component({
   selector: 'app-user-management',
@@ -12,7 +13,7 @@ import { AdminService } from 'src/app/_services/admin.service';
   styleUrls: ['./user-management.component.css'],
 })
 export class UserManagementComponent implements OnInit {
-  users: User[];
+  users: PaginatedUserDto[];
   bsModalRef: BsModalRef;
   pagination: Pagination;
   userParams: UserParams;
@@ -60,7 +61,7 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
-  openRolesModal(user: User) {
+  openRolesModal(user: PaginatedUserDto) {
     const config = {
       class: 'modal-dialog-centered',
       initialState: {

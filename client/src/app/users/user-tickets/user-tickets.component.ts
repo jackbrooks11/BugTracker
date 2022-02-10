@@ -5,11 +5,11 @@ import { TicketParams } from 'src/app/_models/ticketParams';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
 @Component({
-  selector: 'app-member-tickets',
-  templateUrl: './member-tickets.component.html',
-  styleUrls: ['./member-tickets.component.css'],
+  selector: 'app-user-tickets',
+  templateUrl: './user-tickets.component.html',
+  styleUrls: ['./user-tickets.component.css'],
 })
-export class MemberTicketsComponent implements OnInit {
+export class UserTicketsComponent implements OnInit {
   tickets: Ticket[] = [];
   pagination: Pagination;
   ticketParams: TicketParams = new TicketParams();

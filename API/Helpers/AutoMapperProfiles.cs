@@ -11,7 +11,7 @@ namespace API.Helpers
             CreateMap<AppUser, AppUser>();
             CreateMap<Ticket, Ticket>();
             CreateMap<Project, Project>();
-            CreateMap<EditMemberDto, AppUser>();
+            CreateMap<EditUserDto, AppUser>();
         }
         
     }

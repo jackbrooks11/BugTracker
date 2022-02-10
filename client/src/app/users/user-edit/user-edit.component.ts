@@ -8,23 +8,23 @@ import {
 } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
-import { EditMemberDto } from 'src/app/_models/editMemberDto';
-import { Member } from 'src/app/_models/member';
+import { EditUserDto } from 'src/app/_models/editUserDto';
 import { User } from 'src/app/_models/user';
+import { LoggedInUser } from 'src/app/_models/loggedInUser';
 import { AccountService } from 'src/app/_services/account.service';
-import { MembersService } from 'src/app/_services/members.service';
+import { UserService } from 'src/app/_services/user.service';
 
 @Component({
-  selector: 'app-member-edit',
-  templateUrl: './member-edit.component.html',
-  styleUrls: ['./member-edit.component.css'],
+  selector: 'app-user-edit',
+  templateUrl: './user-edit.component.html',
+  styleUrls: ['./user-edit.component.css'],
 })
-export class MemberEditComponent implements OnInit {
+export class UserEditComponent implements OnInit {
   editForm: FormGroup;
-  editMember: EditMemberDto = Object();
+  editUser: EditUserDto = Object();
   passwordForm: FormGroup;
-  member: Member = null;
-  user: User;
+  user: User = null;
+  loggedInUser: LoggedInUser;
   settingsMode = true;
 
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
@@ -37,20 +37,20 @@ export class MemberEditComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private memberService: MembersService,
+    private userService: UserService,
     private toastr: ToastrService,
     private fb: FormBuilder
   ) {
     this.accountService.currentUser$
       .pipe(take(1))
-      .subscribe((user) => (this.user = user));
+      .subscribe((loggedInUser) => (this.loggedInUser = loggedInUser));
   }
 
   initializeForm() {
     this.editForm = this.fb.group({
-      fullName: [this.member.fullName],
-      about: [this.member.about],
-      company: [this.member.company],
+      fullName: [this.user.fullName],
+      about: [this.user.about],
+      company: [this.user.company],
       password: ['', [Validators.minLength(6), Validators.maxLength(25)]],
       confirmPassword: ['', [this.matchValues('password')]],
     });
@@ -71,21 +71,19 @@ export class MemberEditComponent implements OnInit {
   }
 
   loadMember() {
-    this.memberService.getMember(this.user.username).subscribe((member) => {
-      this.member = member;
+    this.userService.getUser(this.loggedInUser.username).subscribe((user) => {
+      this.user = user;
       this.initializeForm();
     });
   }
 
-  updateMember() {
-    this.editMember.fullName = this.editForm.controls.fullName.value;
-    this.editMember.company = this.editForm.controls.company.value;
-    this.editMember.about = this.editForm.controls.about.value;
-    this.editMember.password = this.editForm.controls.password.value;
-    this.accountService.updateUser(this.editMember).subscribe((member) => {
-      console.log(this.member);
-      console.log(this.user);
-      this.member = member;
+  updateUser() {
+    this.editUser.fullName = this.editForm.controls.fullName.value;
+    this.editUser.company = this.editForm.controls.company.value;
+    this.editUser.about = this.editForm.controls.about.value;
+    this.editUser.password = this.editForm.controls.password.value;
+    this.accountService.updateUser(this.editUser).subscribe((user) => {
+      this.user = user;
       this.toastr.success('Profile updated successfully');
       this.initializeForm();
       this.editForm.markAsUntouched();

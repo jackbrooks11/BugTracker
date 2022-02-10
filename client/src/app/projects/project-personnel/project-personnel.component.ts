@@ -5,12 +5,13 @@ import { take } from 'rxjs/operators';
 import { PersonnelModalComponent } from 'src/app/modals/personnel-modal/personnel-modal.component';
 import { Pagination } from 'src/app/_models/pagination';
 import { Project } from 'src/app/_models/project';
-import { User } from 'src/app/_models/user';
+import { LoggedInUser } from 'src/app/_models/loggedInUser';
 import { UserParams } from 'src/app/_models/userParams';
 import { AccountService } from 'src/app/_services/account.service';
-import { MembersService } from 'src/app/_services/members.service';
+import { UserService } from 'src/app/_services/user.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
+import { User } from 'src/app/_models/user';
 
 @Component({
   selector: 'app-project-personnel',
@@ -18,8 +19,8 @@ import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
   styleUrls: ['./project-personnel.component.css'],
 })
 export class ProjectPersonnelComponent implements OnInit {
-  user: User;
-  users: User[];
+  loggedInUser: LoggedInUser;
+  users: Partial<User>[];
   pagination: Pagination;
   bsModalRef: BsModalRef;
   userParams: UserParams = new UserParams();
@@ -30,7 +31,7 @@ export class ProjectPersonnelComponent implements OnInit {
   constructor(
     private projectUsersService: ProjectUsersService,
     private accountService: AccountService,
-    private memberService: MembersService,
+    private userService: UserService,
     private projectService: ProjectsService,
     private projectUserService: ProjectUsersService,
     private modalService: BsModalService,
@@ -39,7 +40,7 @@ export class ProjectPersonnelComponent implements OnInit {
   ) {
     this.accountService.currentUser$
       .pipe(take(1))
-      .subscribe((user) => (this.user = user));
+      .subscribe((loggedInUser) => (this.loggedInUser = loggedInUser));
   }
 
   ngOnInit(): void {
@@ -62,7 +63,7 @@ export class ProjectPersonnelComponent implements OnInit {
 
   getUsersWithRoles() {
     this.projectUserService
-      .getMembersForProjectPaginated(this.userParams, this.project.title)
+      .getUsersForProjectPaginated(this.userParams, this.project.title)
       .subscribe((response) => {
         (this.users = response.result), (this.pagination = response.pagination);
       });
@@ -85,12 +86,12 @@ export class ProjectPersonnelComponent implements OnInit {
       }
     }
     this.userParams.searchMatch = this.userParams.searchMatch.toLowerCase();
-    this.memberService.setUserParams(this.userParams);
+    this.userService.setUserParams(this.userParams);
   }
 
   pageChanged(event: any) {
     this.userParams.pageNumber = event.page;
-    this.memberService.setUserParams(this.userParams);
+    this.userService.setUserParams(this.userParams);
     this.loadUsers();
   }
 
@@ -114,7 +115,7 @@ export class ProjectPersonnelComponent implements OnInit {
       )
       .subscribe(() => {
         this.loadUsers();
-        this.projectUserService.memberNotInProjectCache.clear();
+        this.projectUserService.userNotInProjectCache.clear();
         this.projectUserService.projectsForUserCache.clear();
       });
   }
@@ -149,7 +150,7 @@ export class ProjectPersonnelComponent implements OnInit {
   toggleCheckAll = (evt) => {
     this.checkAll = !this.checkAll;
     if (evt.target.checked == true) {
-      this.users.forEach((val) => this.usernamesToDelete.push(val.username));
+      this.users.forEach((val) => this.usernamesToDelete.push(val.userName));
     } else {
       this.usernamesToDelete.length = 0;
     }
@@ -167,11 +168,11 @@ export class ProjectPersonnelComponent implements OnInit {
   };
 
   containsUser() {
-    if (this.user.roles.includes('Admin')) {
+    if (this.loggedInUser.roles.includes('Admin')) {
       return true;
     }
     for (var user of this.users) {
-      if (user.username === this.user.username) {
+      if (user.userName === this.loggedInUser.username) {
         return true;
       }
     }

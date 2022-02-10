@@ -1,6 +1,6 @@
 namespace API.DTOs
 {
-    public class EditMemberDto
+    public class EditUserDto
     {
         public string Company { get; set; }
         public string About { get; set; }

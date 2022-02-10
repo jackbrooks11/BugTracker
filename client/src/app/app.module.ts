@@ -8,7 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
-import { MemberDetailComponent } from './members/member-detail/member-detail.component';
+import { UserDetailComponent } from './users/user-detail/user-detail.component';
 import { SharedModule } from './_modules/shared.module';
 import { TestErrorsComponent } from './errors/test-errors/test-errors.component';
 import { ErrorInterceptor } from './_interceptors/error.interceptor';
@@ -18,7 +18,7 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
-import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { UserEditComponent } from './users/user-edit/user-edit.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
@@ -28,11 +28,11 @@ import { HasRoleDirective } from './_directives/has-role.directive';
 import { NotHaveRoleDirective } from './_directives/not-have-role.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
-import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
+import { UserTicketsComponent } from './users/user-tickets/user-tickets.component';
 import { TicketModalComponent } from './modals/ticket-modal/ticket-modal.component';
 import { ProjectListComponent } from './projects/project-list/project-list.component';
 import { ProjectModalComponent } from './modals/project-modal/project-modal.component';
-import { MemberProjectsComponent } from './members/member-projects/member-projects.component';
+import { UserProjectsComponent } from './users/user-projects/user-projects.component';
 import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
 import { ProjectPersonnelComponent } from './projects/project-personnel/project-personnel.component';
 import { ProjectTicketsComponent } from './projects/project-tickets/project-tickets.component';
@@ -40,7 +40,7 @@ import { PersonnelModalComponent } from './modals/personnel-modal/personnel-moda
 import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
 import { TicketCommentsComponent } from './tickets/ticket-comments/ticket-comments.component';
 import { ChartsModule } from 'ng2-charts';
-import { MemberPhotoComponent } from './members/member-photo/member-photo.component';
+import { UserPhotoComponent } from './users/user-photo/user-photo.component';
 import { TypeChartComponent } from './charts/type-chart/type-chart.component';
 import { StatusChartComponent } from './charts/status-chart/status-chart.component';
 import { PriorityChartComponent } from './charts/priority-chart/priority-chart.component';
@@ -55,8 +55,8 @@ import { TicketInfoComponent } from './tickets/ticket-info/ticket-info.component
     NavComponent,
     HomeComponent,
     RegisterComponent,
-    MemberDetailComponent,
-    MemberEditComponent,
+    UserDetailComponent,
+    UserEditComponent,
     TestErrorsComponent,
     NotFoundComponent,
     ServerErrorComponent,
@@ -71,18 +71,18 @@ import { TicketInfoComponent } from './tickets/ticket-info/ticket-info.component
     HasTicketDirective,
     UserManagementComponent,
     RolesModalComponent,
-    MemberTicketsComponent,
+    UserTicketsComponent,
     TicketModalComponent,
     ProjectListComponent,
     ProjectModalComponent,
-    MemberProjectsComponent,
+    UserProjectsComponent,
     ProjectDetailComponent,
     ProjectPersonnelComponent,
     ProjectTicketsComponent,
     PersonnelModalComponent,
     ProjectEditComponent,
     TicketCommentsComponent,
-    MemberPhotoComponent,
+    UserPhotoComponent,
     TypeChartComponent,
     StatusChartComponent,
     PriorityChartComponent,

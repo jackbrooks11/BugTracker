@@ -6,7 +6,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { take } from 'rxjs/operators';
-import { User } from '../_models/user';
+import { LoggedInUser } from '../_models/loggedInUser';
 import { AccountService } from '../_services/account.service';
 
 @Directive({
@@ -14,25 +14,25 @@ import { AccountService } from '../_services/account.service';
 })
 export class HasRoleDirective implements OnInit {
   @Input() appHasRole: string[];
-  user: User;
+  loggedInUser: LoggedInUser;
 
   constructor(
     private viewContainerRef: ViewContainerRef,
     private templateRef: TemplateRef<any>,
     private accountService: AccountService
   ) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.user = user;
+    this.accountService.currentUser$.pipe(take(1)).subscribe((loggedInUser) => {
+      this.loggedInUser = loggedInUser;
     });
   }
   ngOnInit(): void {
     //clear view if no roles
-    if (!this.user?.roles || this.user == null) {
+    if (!this.loggedInUser?.roles || this.loggedInUser == null) {
       this.viewContainerRef.clear();
       return;
     }
 
-    if (this.user?.roles.some((r) => this.appHasRole.includes(r))) {
+    if (this.loggedInUser?.roles.some((r) => this.appHasRole.includes(r))) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     } else {
       this.viewContainerRef.clear();

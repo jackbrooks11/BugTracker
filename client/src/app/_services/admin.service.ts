@@ -3,9 +3,10 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
+import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_models/userParams';
+import { PaginatedUserDto } from '../_models/paginatedUserDto';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +37,7 @@ export class AdminService {
     params = params.append('ascending', userParams.ascending);
     params = params.append('searchMatch', userParams.searchMatch);
 
-    return this.getPaginatedResult<Partial<User[]>>(
+    return this.getPaginatedResult<PaginatedUserDto[]>(
       this.baseUrl + 'admin/users-with-roles',
       params
     ).pipe(

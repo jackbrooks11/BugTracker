@@ -5,10 +5,10 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { TestErrorsComponent } from './errors/test-errors/test-errors.component';
 import { HomeComponent } from './home/home.component';
-import { MemberDetailComponent } from './members/member-detail/member-detail.component';
-import { MemberEditComponent } from './members/member-edit/member-edit.component';
-import { MemberProjectsComponent } from './members/member-projects/member-projects.component';
-import { MemberTicketsComponent } from './members/member-tickets/member-tickets.component';
+import { UserDetailComponent } from './users/user-detail/user-detail.component';
+import { UserEditComponent } from './users/user-edit/user-edit.component';
+import { UserProjectsComponent } from './users/user-projects/user-projects.component';
+import { UserTicketsComponent } from './users/user-tickets/user-tickets.component';
 import { ProjectDetailComponent } from './projects/project-detail/project-detail.component';
 import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
 import { ProjectListComponent } from './projects/project-list/project-list.component';
@@ -27,11 +27,11 @@ const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     children: [
-      {path: 'members/:username', component: MemberDetailComponent},
-      {path: 'member/edit', component: MemberEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
-      {path: 'member/tickets', component: MemberTicketsComponent},
+      {path: 'members/:username', component: UserDetailComponent},
+      {path: 'member/edit', component: UserEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
+      {path: 'member/tickets', component: UserTicketsComponent},
       {path: 'member/projects/:id', component: ProjectDetailComponent},
-      {path: 'member/projects', component: MemberProjectsComponent},
+      {path: 'member/projects', component: UserProjectsComponent},
       {path: 'tickets/:id/edit', component: TicketEditComponent, canActivate: [HasTicketGuard], canDeactivate: [PreventUnsavedChangesGuard]},
       {path: 'tickets/:id', component: TicketDetailComponent},
       {path: 'tickets', component: TicketListComponent},

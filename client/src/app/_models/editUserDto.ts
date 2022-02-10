@@ -1,4 +1,4 @@
-export interface EditMemberDto {
+export interface EditUserDto {
     company: string;
     about: string;
     fullName: string;

@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
 import { Project } from 'src/app/_models/project';
 import { Ticket } from 'src/app/_models/ticket';
-import { User } from 'src/app/_models/user';
+import { LoggedInUser } from 'src/app/_models/loggedInUser';
 import { AccountService } from 'src/app/_services/account.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
@@ -19,7 +19,7 @@ import { TicketsService } from 'src/app/_services/tickets.service';
 })
 export class TicketEditComponent implements OnInit {
   editForm: FormGroup;
-  user: User;
+  loggedInUser: LoggedInUser;
 
   disableSubmit: boolean = false;
 
@@ -58,7 +58,7 @@ export class TicketEditComponent implements OnInit {
   ) {
     this.accountService.currentUser$
       .pipe(take(1))
-      .subscribe((user) => (this.user = user));
+      .subscribe((loggedInUser) => (this.loggedInUser = loggedInUser));
   }
 
   ngOnInit(): void {
@@ -78,14 +78,14 @@ export class TicketEditComponent implements OnInit {
   }
 
   loadProjects() {
-    if (this.user.roles.includes('Admin')) {
+    if (this.loggedInUser.roles.includes('Admin')) {
       this.projectService.getProjects().subscribe((response) => {
         this.projects = response;
         this.filterProjects();
       });
     } else {
       this.projectUserService
-        .getProjectsForUser(this.user.username)
+        .getProjectsForUser(this.loggedInUser.username)
         .subscribe((response) => {
           this.projects = response;
           this.filterProjects();
@@ -147,8 +147,8 @@ export class TicketEditComponent implements OnInit {
 
   loadUsers(projectTitle: string) {
     if (
-      this.user.roles.includes('Admin') ||
-      this.user.roles.includes('Project Manager')
+      this.loggedInUser.roles.includes('Admin') ||
+      this.loggedInUser.roles.includes('Project Manager')
     ) {
       this.projectUserService
         .getUsersForProject(projectTitle)
@@ -157,7 +157,7 @@ export class TicketEditComponent implements OnInit {
           this.filterUsernames();
         });
     } else {
-      this.usernames = [this.user.username];
+      this.usernames = [this.loggedInUser.username];
       this.filterUsernames();
     }
   }

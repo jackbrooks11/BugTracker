@@ -3,28 +3,26 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { EditMemberDto } from '../_models/editMemberDto';
-import { Member } from '../_models/member';
-import { PaginatedResult } from '../_models/pagination';
 import { User } from '../_models/user';
+import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_models/userParams';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MembersService {
+export class UserService {
   baseUrl = environment.apiUrl;
-  members: Member[] = [];
-  memberCache = new Map();
+  users: User[] = [];
+  userCache = new Map();
   userParams: UserParams;
-  paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>();
+  paginatedResult: PaginatedResult<User[]> = new PaginatedResult<User[]>();
 
   constructor(private http: HttpClient) {
     this.userParams = new UserParams();
   }
 
   getMembers(userParams: UserParams) {
-    var response = this.memberCache.get(Object.values(userParams).join('-'));
+    var response = this.userCache.get(Object.values(userParams).join('-'));
     if (response) {
       return of(response);
     }
@@ -32,24 +30,24 @@ export class MembersService {
     let params = new HttpParams();
 
     params = params.append('searchMatch', userParams.searchMatch);
-    return this.getPaginatedResult<Member[]>(
+    return this.getPaginatedResult<User[]>(
       this.baseUrl + 'users',
       params
     ).pipe(
       map((response) => {
-        this.memberCache.set(Object.values(userParams).join('-'), response);
+        this.userCache.set(Object.values(userParams).join('-'), response);
         return response;
       })
     );
   }
 
-  getMember(username: string) {
-    const member = this.members.find((x) => x.userName === username);
+  getUser(username: string) {
+    const member = this.users.find((x) => x.userName === username);
     if (member !== undefined) return of(member);
-    return this.http.get<Member>(this.baseUrl + 'users/' + username);
+    return this.http.get<User>(this.baseUrl + 'users/' + username);
   }
 
-  getMemberRoles(username: string) {
+  getUserRoles(username: string) {
     return this.http.get<Partial<User>>(
       this.baseUrl + 'users/' + username + '/roles'
     );

@@ -16,14 +16,14 @@ namespace API.Controllers
         private readonly IUserService _userService;
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
-        public AccountController(SignInManager<AppUser> signInManager, ITokenService tokenService,
-            IUserService userService, IAccountService accountService, IMapper mapper)
+        public AccountController(IMapper mapper, SignInManager<AppUser> signInManager, ITokenService tokenService,
+            IUserService userService, IAccountService accountService)
         {
+            _mapper = mapper;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _userService = userService;
             _accountService = accountService;
-            _mapper = mapper;
         }
 
         [HttpPost("register")]
@@ -65,7 +65,7 @@ namespace API.Controllers
         }
                 
         [HttpPut]
-        public async Task<ActionResult<AppUser>> UpdateUser(EditMemberDto partialUser)
+        public async Task<ActionResult<AppUser>> UpdateUser(EditUserDto partialUser)
         {
             var user = await _userService.GetUserByUsernameAsync(User.GetUsername());
             _mapper.Map(partialUser, user);

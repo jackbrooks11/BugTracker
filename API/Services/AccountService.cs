@@ -19,7 +19,7 @@ namespace API.Services
             _context = context;
             _userManager = userManager;
         }
-        public async Task<IdentityResult> ChangePassword(AppUser user, EditMemberDto partialUser)
+        public async Task<IdentityResult> ChangePassword(AppUser user, EditUserDto partialUser)
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, token, partialUser.Password);

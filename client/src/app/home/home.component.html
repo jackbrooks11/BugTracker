@@ -1,5 +1,5 @@
 <div class="container mt-3">
-  <div *ngIf="!registerMode && !user" style="text-align: center">
+  <div *ngIf="!registerMode && !loggedInUser" style="text-align: center">
     <h1>Track some bugs!</h1>
     <div class="text-center">
       <button (click)="registerToggle()" class="btn btn-primary btn-lg mr-2">
@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div *ngIf="registerMode && !user" class="row justify-content-center">
+  <div *ngIf="registerMode && !loggedInUser" class="row justify-content-center">
     <div class="col-4">
       <app-register
         (cancelRegister)="cancelRegisterMode($event)"
@@ -17,7 +17,7 @@
     </div>
   </div>
 
-  <div *ngIf="user" class="row">
+  <div *ngIf="loggedInUser" class="row">
     <div class="col-md-4">
       <div class="card">
         <div class="card-body">
@@ -40,7 +40,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="user" class="row mt-3 mb-3">
+  <div *ngIf="loggedInUser" class="row mt-3 mb-3">
     <div class="col">
       <div class="card">
         <div class="card-body">

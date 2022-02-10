@@ -1,6 +1,6 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { take } from 'rxjs/operators';
-import { User } from '../_models/user';
+import { LoggedInUser } from '../_models/loggedInUser';
 import { AccountService } from '../_services/account.service';
 
 @Directive({
@@ -8,23 +8,23 @@ import { AccountService } from '../_services/account.service';
 })
 export class NotHaveRoleDirective implements OnInit{
   @Input() appNotHaveRole: string[];
-  user: User;
+  loggedInUser: LoggedInUser;
 
   constructor(private viewContainerRef: ViewContainerRef, private templateRef: TemplateRef<any>, 
     private accountService: AccountService) {
-      this.accountService.currentUser$.pipe(take(1)).subscribe(user => {
-        this.user = user;
+      this.accountService.currentUser$.pipe(take(1)).subscribe(loggedInUser => {
+        this.loggedInUser = loggedInUser;
       })
      }
   ngOnInit(): void {
     //clear view if no roles
-    if (!this.user?.roles || this.user == null) {
+    if (!this.loggedInUser?.roles || this.loggedInUser == null) {
       console.log("Cleared");
       this.viewContainerRef.clear();
       return;
     }
 
-    if (this.user?.roles.some(r => this.appNotHaveRole.includes(r))) {
+    if (this.loggedInUser?.roles.some(r => this.appNotHaveRole.includes(r))) {
       this.viewContainerRef.clear();
     }
     else {

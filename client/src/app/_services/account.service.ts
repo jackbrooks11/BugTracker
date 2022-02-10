@@ -1,28 +1,28 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
-import {map} from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { EditMemberDto } from '../_models/editMemberDto';
-import { Member } from '../_models/member';
+import { EditUserDto } from '../_models/editUserDto';
 import { User } from '../_models/user';
+import { LoggedInUser } from '../_models/loggedInUser';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
-  private currentUserSource = new ReplaySubject<User>(1);
+  private currentUserSource = new ReplaySubject<LoggedInUser>(1);
   currentUser$ = this.currentUserSource.asObservable();
 
   constructor(private http: HttpClient) { }
 
   login(model: any) {
     return this.http.post(this.baseUrl + 'account/login', model).pipe(
-      map((response: User) => {
-        const user = response;
-        if (user) {
-          this.setCurrentUser(user);
+      map((response: LoggedInUser) => {
+        const loggedInUser = response;
+        if (loggedInUser) {
+          this.setCurrentUser(loggedInUser);
         }
       })
     )
@@ -30,27 +30,27 @@ export class AccountService {
 
   register(model: any) {
     return this.http.post(this.baseUrl + 'account/register', model).pipe(
-      map((user: User) => {
-        if (user) {
-          this.setCurrentUser(user);
+      map((loggedInUser: LoggedInUser) => {
+        if (loggedInUser) {
+          this.setCurrentUser(loggedInUser);
         }
       })
     )
   }
 
 
-  setCurrentUser(user: User) {
-    user.roles = [];
-    const roles = this.getDecodedToken(user.token).role;
-    Array.isArray(roles) ? user.roles = roles : user.roles.push(roles);
-    localStorage.setItem('user', JSON.stringify(user));
-    this.currentUserSource.next(user);
+  setCurrentUser(loggedInUser: LoggedInUser) {
+    loggedInUser.roles = [];
+    const roles = this.getDecodedToken(loggedInUser.token).role;
+    Array.isArray(roles) ? loggedInUser.roles = roles : loggedInUser.roles.push(roles);
+    localStorage.setItem('user', JSON.stringify(loggedInUser));
+    this.currentUserSource.next(loggedInUser);
   }
 
-  updateUser(editMember: EditMemberDto) {
-    return this.http.put(this.baseUrl + 'account', editMember).pipe(
-      map((member: Member) => {
-        return member;
+  updateUser(editUser: EditUserDto) {
+    return this.http.put(this.baseUrl + 'account', editUser).pipe(
+      map((user: User) => {
+        return user;
       })
     );
   }

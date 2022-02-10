@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { take } from 'rxjs/operators';
 import { TicketComment } from 'src/app/_models/ticketComment';
-import { User } from 'src/app/_models/user';
+import { LoggedInUser } from 'src/app/_models/loggedInUser';
 import { AccountService } from 'src/app/_services/account.service';
 import { TicketCommentsService } from 'src/app/_services/ticketComments.service';
 import { TicketsService } from 'src/app/_services/tickets.service';
@@ -20,7 +20,7 @@ export class TicketCommentsComponent implements OnInit {
   comments: TicketComment[];
   commentIdsToDelete: number[] = [];
   message: string = '';
-  user: User;
+  loggedInUser: LoggedInUser;
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
     $event: any
   ) {
@@ -38,7 +38,7 @@ export class TicketCommentsComponent implements OnInit {
   ) {
     this.accountService.currentUser$
       .pipe(take(1))
-      .subscribe((user) => (this.user = user));
+      .subscribe((loggedInUser) => (this.loggedInUser = loggedInUser));
   }
 
   initializeForm() {
@@ -65,8 +65,8 @@ export class TicketCommentsComponent implements OnInit {
     var comment: TicketComment = Object();
     comment.message = this.commentForm.controls.message.value;
     comment.ticketId = this.ticketId;
-    comment.submittedBy = this.user.username;
-    comment.roles = this.user.roles.flat().toString();
+    comment.submittedBy = this.loggedInUser.username;
+    comment.roles = this.loggedInUser.roles.flat().toString();
     this.ticketCommentService
       .addCommentToTicket(comment, this.ticketId)
       .subscribe(() => {

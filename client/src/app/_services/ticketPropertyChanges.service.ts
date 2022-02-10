@@ -60,7 +60,7 @@ export class TicketPropertyChangesService {
     ).pipe(
       map((response) => {
         this.changeCache.set(
-          Object.values(ticketPropertyChangeParams).join('-'),
+          Object.values(ticketPropertyChangeParams).join('-') + ticketId,
           response
         );
         return response;

@@ -8,7 +8,7 @@ namespace API.Interfaces
 {
     public interface IAccountService
     {
-        Task<IdentityResult> ChangePassword(AppUser user, EditMemberDto partialUser);
+        Task<IdentityResult> ChangePassword(AppUser user, EditUserDto partialUser);
         Task<bool> UserExists(string username);
         Task<IEnumerable<IdentityError>> CreateUser(AppUser user, string password);
     }

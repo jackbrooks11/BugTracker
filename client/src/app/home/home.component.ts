@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { User } from '../_models/user';
+import { LoggedInUser } from '../_models/loggedInUser';
 import { AccountService } from '../_services/account.service';
 
 @Component({
@@ -9,11 +9,11 @@ import { AccountService } from '../_services/account.service';
 })
 export class HomeComponent implements OnInit {
   registerMode = false;
-  user: User;
+  loggedInUser: LoggedInUser;
 
   constructor(private accountService: AccountService) { 
     accountService.currentUser$.subscribe(val => {
-      this.user = val;
+      this.loggedInUser = val;
     });
   }
 

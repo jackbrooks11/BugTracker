@@ -14,16 +14,12 @@ namespace API.Controllers
 {
     public class ProjectUsersController : BaseApiController
     {
-        private readonly DataContext _context;
-        private readonly UserManager<AppUser> __userManager;
         private readonly IProjectUserService _projectUserService;
         private readonly IProjectService _projectService;
         private readonly IUserService _userService;
-        public ProjectUsersController(DataContext context, UserManager<AppUser> _userManager, IProjectUserService projectUserService, IProjectService projectService,
+        public ProjectUsersController(IProjectUserService projectUserService, IProjectService projectService,
         IUserService userService)
         {
-            _context = context;
-            __userManager = _userManager;
             _projectUserService = projectUserService;
             _projectService = projectService;
             _userService = userService;

@@ -47,7 +47,7 @@ export class PersonnelModalComponent implements OnInit {
     this.searchMatch = this.searchMatch.toLowerCase();
     this.disableLoadMoreUsers = false;
     this.projectUsersService
-      .getMembersNotInProject(projectTitle)
+      .getUsersNotInProject(projectTitle)
       .subscribe((response) => {
         this.usernames = response;
         this.filterUsernames();

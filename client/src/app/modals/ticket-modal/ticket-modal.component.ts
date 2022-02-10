@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { take } from 'rxjs/operators';
 import { Project } from 'src/app/_models/project';
-import { User } from 'src/app/_models/user';
+import { LoggedInUser } from 'src/app/_models/loggedInUser';
 import { AccountService } from 'src/app/_services/account.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
@@ -17,7 +17,7 @@ export class TicketModalComponent implements OnInit {
   createTicketForm: FormGroup;
   validationErrors: string[] = [];
 
-  user: User;
+  loggedInUser: LoggedInUser;
 
   disableSubmit: boolean = true;
 
@@ -47,7 +47,7 @@ export class TicketModalComponent implements OnInit {
   ) {
     this.accountService.currentUser$
       .pipe(take(1))
-      .subscribe((user) => (this.user = user));
+      .subscribe((loggedInUser) => (this.loggedInUser = loggedInUser));
   }
 
   ngOnInit(): void {
@@ -61,7 +61,7 @@ export class TicketModalComponent implements OnInit {
       description: ['', Validators.required],
       project: [''],
       assignee: [''],
-      submitter: [this.user.username],
+      submitter: [this.loggedInUser.username],
       priority: ['Medium'],
       type: ['Bug'],
     });
@@ -71,7 +71,7 @@ export class TicketModalComponent implements OnInit {
     this.hideProjects = false;
     this.projectsSearchMatch = this.projectsSearchMatch.toLowerCase();
     this.disableLoadMoreProjects = false;
-    if (this.user.roles.includes('Admin')) {
+    if (this.loggedInUser.roles.includes('Admin')) {
       this.projectService.getProjects().subscribe((response) => {
         this.projects = response;
         this.filterProjects();
@@ -79,7 +79,7 @@ export class TicketModalComponent implements OnInit {
       });
     } else {
       this.projectUserService
-        .getProjectsForUser(this.user.username)
+        .getProjectsForUser(this.loggedInUser.username)
         .subscribe((response) => {
           this.projects = response;
           this.filterProjects();
@@ -131,8 +131,8 @@ export class TicketModalComponent implements OnInit {
 
   loadUsers(projectTitle: string) {
     if (
-      this.user.roles.includes('Admin') ||
-      this.user.roles.includes('Project Manager')
+      this.loggedInUser.roles.includes('Admin') ||
+      this.loggedInUser.roles.includes('Project Manager')
     ) {
       this.projectUserService
         .getUsersForProject(projectTitle)
@@ -141,7 +141,7 @@ export class TicketModalComponent implements OnInit {
           this.filterUsernames();
         });
     } else {
-      this.usernames = [this.user.username];
+      this.usernames = [this.loggedInUser.username];
       this.filterUsernames();
     }
   }
