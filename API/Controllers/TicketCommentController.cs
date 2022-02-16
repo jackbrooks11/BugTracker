@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class TicketCommentsController : BaseApiController
+    public class TicketCommentController : BaseApiController
     {
         private readonly ITicketService _ticketService;
         private readonly ITicketCommentService _ticketCommentService;
 
-        public TicketCommentsController(ITicketService ticketService, ITicketCommentService ticketCommentService)
+        public TicketCommentController(ITicketService ticketService, ITicketCommentService ticketCommentService)
         {
             _ticketService = ticketService;
             _ticketCommentService = ticketCommentService;

@@ -95,11 +95,9 @@ export class TicketModalComponent implements OnInit {
     this.disableSubmit = true;
     this.createTicketForm.controls['project'].setValue('');
     var filteredProjects = [];
-    var lenFilteredProjects = 0;
     this.projects.forEach((project) => {
       if (project.title.toLowerCase().includes(this.projectsSearchMatch.toLowerCase())) {
         filteredProjects.push(project.title);
-        lenFilteredProjects += 1;
       }
     });
     this.displayProjects = filteredProjects.slice(0, this.projectListSize);

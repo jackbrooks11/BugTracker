@@ -1,23 +1,21 @@
-using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    public class ProjectUsersController : BaseApiController
+    public class ProjectUserController : BaseApiController
     {
         private readonly IProjectUserService _projectUserService;
         private readonly IProjectService _projectService;
         private readonly IUserService _userService;
-        public ProjectUsersController(IProjectUserService projectUserService, IProjectService projectService,
+        public ProjectUserController(IProjectUserService projectUserService, IProjectService projectService,
         IUserService userService)
         {
             _projectUserService = projectUserService;

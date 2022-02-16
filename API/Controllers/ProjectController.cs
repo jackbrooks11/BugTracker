@@ -12,11 +12,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class ProjectsController : BaseApiController
+    public class ProjectController : BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly IProjectService _projectService;
-        public ProjectsController(IMapper mapper, IProjectService projectService)
+        public ProjectController(IMapper mapper, IProjectService projectService)
         {
             _mapper = mapper;
             _projectService = projectService;

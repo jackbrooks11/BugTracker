@@ -10,11 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class TicketPropertyChangesController : BaseApiController
+    public class TicketPropertyChangeController : BaseApiController
     {
         private readonly ITicketPropertyChangeService _ticketPropertyChangeService;
 
-        public TicketPropertyChangesController(ITicketPropertyChangeService ticketPropertyChangeService)
+        public TicketPropertyChangeController(ITicketPropertyChangeService ticketPropertyChangeService)
         {
             _ticketPropertyChangeService = ticketPropertyChangeService;
         }

@@ -7,9 +7,9 @@
   <main
     role="main"
     [ngClass]="{
-      'sidebar-show col-lg-12 pt-3 px-4 mr-0':
+      'sidebar-show col-12 pt-3 px-4 mr-0':
         (accountService.currentUser$ | async) && showSidebar,
-      'col-lg-12 pt-3 px-4 mr-0':
+      'col-12 pt-3 px-4 mr-0':
         (accountService.currentUser$ | async) && showSidebar == false,
       'logged-out': !(accountService.currentUser$ | async)
     }"

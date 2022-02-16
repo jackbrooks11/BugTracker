@@ -14,7 +14,6 @@ namespace API.Services
     public class TicketPropertyChangeService : ITicketPropertyChangeService
     {
         private readonly DataContext _context;
-        private readonly UserManager<AppUser> _userManager;
         public TicketPropertyChangeService(IConfiguration config, DataContext context)
         {
             _context = context;

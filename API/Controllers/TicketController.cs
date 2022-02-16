@@ -11,12 +11,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Authorize]
-    public class TicketsController : BaseApiController
+    public class TicketController : BaseApiController
     {
         private readonly ITicketService _ticketService;
         private readonly IProjectService _projectService;
         private readonly IUserService _userService;
-        public TicketsController(ITicketService ticketService, IProjectService projectService, IUserService userService)
+        public TicketController(ITicketService ticketService, IProjectService projectService, IUserService userService)
         {
             _ticketService = ticketService;
             _projectService = projectService;
