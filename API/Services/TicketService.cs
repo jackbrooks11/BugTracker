@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
+using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -23,28 +25,62 @@ namespace API.Services
         }
         public async Task<Ticket> GetTicket(int id)
         {
-            return await _context.Tickets.Include(x => x.Comments).Include(c => c.Changes).FirstOrDefaultAsync(y => y.Id == id);
+            return await _context.Tickets
+                .Include(p => p.Project)
+                .Include(a => a.Assignee)
+                .Include(x => x.Comments)
+                .Include(c => c.Changes)
+                .FirstOrDefaultAsync(y => y.Id == id);
         }
-        public IEnumerable<Ticket> GetTickets()
+        public async Task<TicketDto> GetTicketAsDto(int id)
         {
-            return _context.Tickets.Include(c => c.Changes).AsNoTracking();
+            var ticket = await _context.Tickets.AsNoTracking()
+                .Include(p => p.Project)
+                .Include(a => a.Assignee)
+                .Include(x => x.Comments)
+                .Include(c => c.Changes)
+                .FirstOrDefaultAsync(y => y.Id == id);
+            var ticketDto = new TicketDto();
+            _mapper.Map(ticket, ticketDto);
+            return ticketDto;
         }
-        public async Task<PagedList<Ticket>> GetTicketsPaginated(TicketParams ticketParams)
+        public IEnumerable<TicketDto> GetTicketsAsDtos()
+        {
+            var tickets = _context.Tickets.AsNoTracking()
+                .Include(p => p.Project)
+                .Include(a => a.Assignee)
+                .Include(x => x.Comments)
+                .Include(c => c.Changes);
+            IList<TicketDto> ticketDtos = new List<TicketDto>();
+            foreach (var ticket in tickets) {
+                var ticketDto = new TicketDto();
+                _mapper.Map(ticket, ticketDto);
+                ticketDtos.Add(ticketDto);   
+            }
+            return ticketDtos;
+        }
+        public async Task<PagedList<TicketDto>> GetTicketsPaginated(TicketParams ticketParams)
         {
             var query = GetTicketQuery(ticketParams);
-            return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
+            var testing = query
+                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);    
+            return await PagedList<TicketDto>.CreateAsync(testing, ticketParams.PageNumber, ticketParams.PageSize);
         }
-        public async Task<PagedList<Ticket>> GetTicketsForUser(TicketParams ticketParams, string username)
+        public async Task<PagedList<TicketDto>> GetTicketsForUser(TicketParams ticketParams, string username)
         {
             var query = GetTicketQuery(ticketParams);
-            query = query.Where(t => t.Assignee.ToLower() == username.ToLower());
-            return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
+            query = query.Where(t => t.Assignee.UserName.ToLower() == username.ToLower());
+            var testing = query
+                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);   
+            return await PagedList<TicketDto>.CreateAsync(testing, ticketParams.PageNumber, ticketParams.PageSize);
         }
-        public async Task<PagedList<Ticket>> GetTicketsForProject(TicketParams ticketParams, string projectTitle)
+        public async Task<PagedList<TicketDto>> GetTicketsForProject(TicketParams ticketParams, string projectTitle)
         {
             var query = GetTicketQuery(ticketParams);
-            query = query.Where(t => t.Project.ToLower() == projectTitle.ToLower());
-            return await PagedList<Ticket>.CreateAsync(query, ticketParams.PageNumber, ticketParams.PageSize);
+            query = query.Where(t => t.Project.Title.ToLower() == projectTitle.ToLower());
+            var testing = query
+                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);   
+            return await PagedList<TicketDto>.CreateAsync(testing, ticketParams.PageNumber, ticketParams.PageSize);
         }
         public void DeleteTickets(int[] ticketIdsToDelete) {
             var ticketsToDelete = GetTicketsToDelete(ticketIdsToDelete);
@@ -53,116 +89,120 @@ namespace API.Services
                 _context.Remove(ticket);
             };
         }
-        public async Task<string> ValidateTicket(Ticket ticket, Project project)
+        public async Task<string> ValidateTicket(TicketDto ticketDto, Project project)
         {
-            if (ticket.Project == "")
-            {
-                return "Project field can not be empty";
-            }
             if (project == null)
             {
 
-                return "Project does not exist";
+                return "Project does not exist.";
             }
-            var assigneeCheck = await _context.ProjectUsers.AsNoTracking().AnyAsync(pu => pu.ProjectId == project.Id && pu.User.UserName.ToLower() == ticket.Assignee.ToLower());
+            if (ticketDto.Project == "")
+            {
+                return "Project field can not be empty.";
+            }
+            var userBelongsToProject = await _context.ProjectUsers.AsNoTracking().AnyAsync(pu => pu.ProjectId == project.Id && pu.User.UserName.ToLower() == ticketDto.Assignee.ToLower());
 
-            if (!assigneeCheck && ticket.Assignee != "Unassigned")
+            var userExists = await _context.Users.AsNoTracking().AnyAsync(x => x.UserName == ticketDto.Assignee);
+            if (!userBelongsToProject && userExists && ticketDto.Assignee != "")
             {
-                return "User assigned to ticket does not belong to project";
+                return "User assigned to ticket does not belong to project.";
             }
 
-            if (await _context.Users
-                .Include(t => t.Tickets)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.UserName == ticket.Assignee) == null && ticket.Assignee != "Unassigned")
+            if (!userBelongsToProject && !userExists && ticketDto.Assignee != "")
             {
-                return "User assigned to ticket does not exist";
+                return "User assigned to ticket does not exist.";
             }
-            if (ticket.Title.Length == 0)
+            if (ticketDto.Title.Length == 0)
             {
-                return "Ticket must have a title";
+                return "Ticket must have a title.";
+            }
+            if (ticketDto.Description.Length == 0)
+            {
+                return "Ticket must have a description.";
             }
             return "";
         }
-        public void AddChangesToTicket(Ticket ticket, Ticket newTicket)
+        public TicketDto AddChangesToTicket(TicketDto existingTicketDto, TicketDto newTicketDto)
         {
-            if (ticket.Title != newTicket.Title)
+            if (existingTicketDto.Title != newTicketDto.Title)
             {
-                AddChangeToTicket(ticket, newTicket, "Title");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Title");
             }
-            if (ticket.Description != newTicket.Description)
+            if (existingTicketDto.Description != newTicketDto.Description)
             {
-                AddChangeToTicket(ticket, newTicket, "Description");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Description");
             }
-            if (ticket.Type != newTicket.Type)
+            if (existingTicketDto.Type != newTicketDto.Type)
             {
-                AddChangeToTicket(ticket, newTicket, "Type");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Type");
             }
-            if (ticket.Project != newTicket.Project)
+            if (existingTicketDto.Project != newTicketDto.Project)
             {
-                AddChangeToTicket(ticket, newTicket, "Project");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Project");
             }
-            if (ticket.Priority != newTicket.Priority)
+            if (existingTicketDto.Priority != newTicketDto.Priority)
             {
-                AddChangeToTicket(ticket, newTicket, "Priority");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Priority");
             }
-            if (ticket.State != newTicket.State)
+            if (existingTicketDto.State != newTicketDto.State)
             {
-                AddChangeToTicket(ticket, newTicket, "State");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "State");
             }
-            if (ticket.Assignee != newTicket.Assignee)
+            if (existingTicketDto.Assignee != newTicketDto.Assignee)
             {
-                AddChangeToTicket(ticket, newTicket, "Assignee");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Assignee");
             }
-            _mapper.Map(newTicket, ticket);
-            ticket.LastEdited = DateTime.Now;
+            _mapper.Map(newTicketDto, existingTicketDto);
+            existingTicketDto.LastEdited = DateTime.Now;
+            return existingTicketDto;
         }
-        public void AddChangeToTicket(Ticket ticket, Ticket newTicket, string property)
+        public TicketDto AddChangeToTicket(TicketDto existingTicketDto, TicketDto newTicketDto, string property)
         {
             TicketPropertyChange change = new TicketPropertyChange();
             change.Property = property;
-            change.Editor = newTicket.Submitter;
+            change.Editor = newTicketDto.Submitter;
             change.Changed = DateTime.Now;
             if (property == "Title")
             {
-                change.OldValue = ticket.Title;
-                change.NewValue = newTicket.Title;
+                change.OldValue = existingTicketDto.Title;
+                change.NewValue = newTicketDto.Title;
             }
             else if (property == "Description")
             {
-                change.OldValue = ticket.Description;
-                change.NewValue = newTicket.Description;
+                change.OldValue = existingTicketDto.Description;
+                change.NewValue = newTicketDto.Description;
             }
             else if (property == "Type")
             {
-                change.OldValue = ticket.Type;
-                change.NewValue = newTicket.Type;
+                change.OldValue = existingTicketDto.Type;
+                change.NewValue = newTicketDto.Type;
             }
             else if (property == "Project")
             {
-                change.OldValue = ticket.Project;
-                change.NewValue = newTicket.Project;
+                change.OldValue = existingTicketDto.Project;
+                change.NewValue = newTicketDto.Project;
             }
             else if (property == "Priority")
             {
-                change.OldValue = ticket.Priority;
-                change.NewValue = newTicket.Priority;
+                change.OldValue = existingTicketDto.Priority;
+                change.NewValue = newTicketDto.Priority;
             }
             else if (property == "State")
             {
-                change.OldValue = ticket.State;
-                change.NewValue = newTicket.State;
+                change.OldValue = existingTicketDto.State;
+                change.NewValue = newTicketDto.State;
             }
             else if (property == "Assignee")
             {
-                change.OldValue = ticket.Assignee;
-                change.NewValue = newTicket.Assignee;
+                change.OldValue = existingTicketDto.Assignee;
+                change.NewValue = newTicketDto.Assignee;
             }
-            newTicket.Changes.Add(change);
+            newTicketDto.Changes.Add(change);
+            return newTicketDto;
         }
         private IEnumerable<Ticket> GetTicketsToDelete(int[] ticketIdsToDelete)
         {
-            return _context.Tickets.Where(t => ticketIdsToDelete.Contains(t.Id));
+            return _context.Tickets.Where(t => ticketIdsToDelete.Contains(t.Id)).AsNoTracking();
         }
        private IQueryable<Ticket> GetTicketQuery(TicketParams ticketParams) {
             var query = _context.Tickets
@@ -173,7 +213,7 @@ namespace API.Services
             {
                 query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
                 t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
-                t.Assignee.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
+                t.Assignee.UserName.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
             }
             if (!ticketParams.Ascending)
             {
@@ -209,6 +249,15 @@ namespace API.Services
         } 
         public void MarkTicketAsModified(Ticket ticket) {
             _context.Entry(ticket).State = EntityState.Modified;
+        }
+        public void AddTicket(Ticket ticket) {
+            _context.Tickets.Add(ticket);
+            _context.Entry(ticket).State = EntityState.Added;
+        }
+
+        public Ticket MapTicket(TicketDto ticketDto, Ticket ticket) {
+            _mapper.Map(ticketDto, ticket);
+            return ticket;
         }
         public async Task<bool> SaveAllAsync()
         {

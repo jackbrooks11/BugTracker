@@ -1,6 +1,6 @@
 export class UserParams {
     pageNumber: number = 1;
-    pageSize: number = 5;
+    pageSize: number = 10;
     orderBy: string = 'username';
     ascending: boolean = true;
     searchMatch: string = "";

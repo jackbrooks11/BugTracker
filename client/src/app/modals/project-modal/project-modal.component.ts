@@ -13,7 +13,7 @@ export class ProjectModalComponent implements OnInit {
   @Input() submitted = new EventEmitter();
   hide: boolean = true;
 
-  constructor( private fb: FormBuilder, public bsModalRef: BsModalRef,) { }
+  constructor(private fb: FormBuilder, public bsModalRef: BsModalRef) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -21,7 +21,7 @@ export class ProjectModalComponent implements OnInit {
 
   initializeForm() {
     this.createProjectForm = this.fb.group({
-      title: ['', Validators.required],
+      title: ['', Validators.compose([Validators.pattern('[a-zA-Z]+[a-zA-Z ]*'), Validators.required])],
       description: ['', Validators.required]
     })
   }

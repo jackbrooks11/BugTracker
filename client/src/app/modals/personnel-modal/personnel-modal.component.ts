@@ -59,11 +59,9 @@ export class PersonnelModalComponent implements OnInit {
     this.hide = false;
     this.assignUserForm.controls['username'].setValue('');
     var filteredUsernames = [];
-    var lenFilteredUsernames = 0;
-    this.usernames.forEach(element => {
-      if (element.includes(this.searchMatch)) {
-        filteredUsernames.push(element);
-        lenFilteredUsernames += 1;
+    this.usernames.forEach(username => {
+      if (username.includes(this.searchMatch)) {
+        filteredUsernames.push(this.toTitleCase(username));
       }
     })
     this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
@@ -88,5 +86,11 @@ export class PersonnelModalComponent implements OnInit {
     this.hide = true;
     this.searchMatch = userName;
     this.assignUserForm.controls['username'].setValue(userName);
+  }
+
+  toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
   }
 }

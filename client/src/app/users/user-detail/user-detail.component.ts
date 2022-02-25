@@ -13,7 +13,7 @@ import { UserService } from 'src/app/_services/user.service';
 })
 export class UserDetailComponent implements OnInit {
   user: User;
-  roles: Partial<LoggedInUser>;
+  roles: string[];
   loggedInUser: LoggedInUser;
   editConfig: boolean[] = [false, false, false, false];
 
@@ -42,7 +42,7 @@ export class UserDetailComponent implements OnInit {
             this.router.navigateByUrl('/not-found');
           }
           if (user.userName == this.loggedInUser.username) {
-            this.router.navigateByUrl('/member/edit');
+            this.router.navigateByUrl('/user/edit');
           }
           this.user = user;
         },
@@ -55,9 +55,8 @@ export class UserDetailComponent implements OnInit {
   getUserWithRoles() {
     this.userService
       .getUserRoles(this.route.snapshot.paramMap.get('username'))
-      .subscribe((roles) => {
+      .subscribe((roles: string[]) => {
         this.roles = roles;
-        console.log(roles);
       });
   }
 

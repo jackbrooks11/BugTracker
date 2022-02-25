@@ -32,7 +32,9 @@
                   </div>
                 </div>
                 <div class="text-center text-sm-right">
-                  <span class="badge badge-secondary">{{ loggedInUser.roles }}</span>
+                  <div *ngFor="let role of loggedInUser.roles">
+                    <span class="badge badge-secondary">{{ role }}</span>
+                  </div>
                   <div class="text-muted">
                     <small *ngIf="user"
                       >Joined {{ user.created | date }}</small

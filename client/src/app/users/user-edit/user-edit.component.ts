@@ -43,7 +43,7 @@ export class UserEditComponent implements OnInit {
   ) {
     this.accountService.currentUser$
       .pipe(take(1))
-      .subscribe((loggedInUser) => (this.loggedInUser = loggedInUser));
+      .subscribe((loggedInUser) => {this.loggedInUser = loggedInUser; console.log(this.loggedInUser);});
   }
 
   initializeForm() {
@@ -59,7 +59,7 @@ export class UserEditComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-    this.loadMember();
+    this.loadUser();
   }
 
   matchValues(matchTo: string): ValidatorFn {
@@ -70,7 +70,7 @@ export class UserEditComponent implements OnInit {
     };
   }
 
-  loadMember() {
+  loadUser() {
     this.userService.getUser(this.loggedInUser.username).subscribe((user) => {
       this.user = user;
       this.initializeForm();

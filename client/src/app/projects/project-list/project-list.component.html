@@ -125,7 +125,7 @@
           </td>
           <td>
             <a href="#" routerLink="/projects/{{ project.id }}">{{
-              project.title
+              project.title | titlecase
             }}</a>
           </td>
           <td>{{ project.description }}</td>

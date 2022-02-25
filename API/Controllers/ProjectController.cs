@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Entities;
@@ -25,7 +26,11 @@ namespace API.Controllers
         [HttpGet("{id}", Name = "GetProject")]
         public async Task<ActionResult<Project>> GetProject(int id)
         {
-            return await _projectService.GetProjectById(id);
+            var project = await _projectService.GetProjectById(id);
+            if (project == null) {
+                return NotFound("Project could not be found.");
+            }
+            return Ok(project);
         }
 
         [HttpGet]
@@ -36,14 +41,20 @@ namespace API.Controllers
         [HttpGet("paginated")]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjectsPaginated([FromQuery] ProjectParams projectParams)
         {
+            if (projectParams == null) {
+                return BadRequest("Project parameters not provided.");
+            }
             var projects = await _projectService.GetProjectsPaginated(projectParams);
             Response.AddPaginationHeader(projects.CurrentPage, projects.PageSize, projects.TotalCount, projects.TotalPages);
             return Ok(projects);
         }
 
-        [HttpGet("member/projects")]
+        [HttpGet("user/projects")]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjectsForUser([FromQuery] ProjectParams projectParams)
         {
+            if (projectParams == null) {
+                return BadRequest("Project parameters not provided.");
+            }
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var projects = await _projectService.GetProjectsForUser(projectParams, int.Parse(userId));
             Response.AddPaginationHeader(projects.CurrentPage, projects.PageSize, projects.TotalCount, projects.TotalPages);
@@ -64,7 +75,7 @@ namespace API.Controllers
         public async Task<ActionResult> UpdateProject(Project projectUpdated)
         {
             var project = await _projectService.GetProjectById(projectUpdated.Id);
-            var errorMessage = await _projectService.ValidateProject(project, projectUpdated);
+            var errorMessage = await _projectService.ValidateProject(projectUpdated);
             if (errorMessage != "")
             {
                 return BadRequest(errorMessage);
@@ -79,12 +90,12 @@ namespace API.Controllers
         [HttpPost("create")]
         public async Task<ActionResult> CreateProject(Project project)
         {
-            var errorMessage = await _projectService.ValidateProject(null, project);
+            var errorMessage = await _projectService.ValidateProject(project);
             if (errorMessage != "")
             {
                 return BadRequest(errorMessage);
             }
-            _projectService.AddProject(project);
+            _projectService.CreateProject(project);
             if (await _projectService.SaveAllAsync()) return NoContent();
             return BadRequest("Failed to create project");
         }

@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
@@ -20,8 +20,6 @@ import { TicketsService } from 'src/app/_services/tickets.service';
 export class TicketEditComponent implements OnInit {
   editForm: FormGroup;
   loggedInUser: LoggedInUser;
-
-  disableSubmit: boolean = false;
 
   usernameListSize: number = 10;
   usernames: string[] = [];
@@ -67,8 +65,8 @@ export class TicketEditComponent implements OnInit {
 
   initializeForm() {
     this.editForm = this.fb.group({
-      title: [this.ticket.title],
-      description: [this.ticket.description],
+      title: [this.ticket.title, Validators.compose([Validators.pattern('[a-zA-Z]+[a-zA-Z ]*'), Validators.required])],
+      description: [this.ticket.description, Validators.required],
       project: [this.ticket.project],
       assignee: [this.ticket.assignee],
       priority: [this.ticket.priority],
@@ -97,17 +95,14 @@ export class TicketEditComponent implements OnInit {
     this.hideProjects = false;
     this.hideUsers = true;
     this.disableUsers = true;
-    this.disableSubmit = true;
-    this.onChange();
     this.filterProjects();
   }
 
   filterProjects() {
-    this.editForm.controls['project'].setValue('');
     var filteredProjects = [];
     this.projects.forEach((project) => {
       if (project.title.toLowerCase().includes(this.ticket.project.toLowerCase())) {
-        filteredProjects.push(project.title);
+        filteredProjects.push(this.toTitleCase(project.title));
       }
     });
     this.displayProjects = filteredProjects.slice(0, this.projectListSize);
@@ -127,11 +122,8 @@ export class TicketEditComponent implements OnInit {
   updateProject(title: string) {
     this.hideProjects = true;
     this.disableUsers = false;
-    this.disableSubmit = false;
     this.ticket.project = title;
     this.ticket.assignee = '';
-    this.editForm.controls['project'].setValue(title);
-    this.editForm.controls['assignee'].setValue('');
     this.loadUsers(title);
   }
 
@@ -141,7 +133,6 @@ export class TicketEditComponent implements OnInit {
 
   userInput() {
     this.hideUsers = false;
-    this.onChange();
     this.filterUsernames();
   }
 
@@ -163,13 +154,11 @@ export class TicketEditComponent implements OnInit {
   }
 
   filterUsernames() {
-    this.disableSubmit = true;
-    this.editForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     var lenFilteredUsernames = 0;
     this.usernames.forEach((username) => {
       if (username.toLowerCase().includes(this.ticket.assignee.toLowerCase())) {
-        filteredUsernames.push(username);
+        filteredUsernames.push(this.toTitleCase(username));
         lenFilteredUsernames += 1;
       }
     });
@@ -193,14 +182,7 @@ export class TicketEditComponent implements OnInit {
   updateDeveloper(userName: string) {
     this.hideUsers = true;
     this.ticket.assignee = userName;
-    this.disableSubmit = false;
     this.editForm.markAsDirty();
-    if (userName == 'Unassigned') {
-      this.editForm.controls['assignee'].setValue('');
-      console.log("HI");
-    } else {
-      this.editForm.controls['assignee'].setValue(userName);
-    }
   }
 
   loadTicket() {
@@ -208,27 +190,60 @@ export class TicketEditComponent implements OnInit {
       .getTicket(Number(this.route.snapshot.paramMap.get('id')))
       .subscribe((ticket) => {
         this.ticket = ticket;
+        this.initializeTicket();
         this.initializeForm();
         this.loadUsers(ticket.project);
         this.loadProjects();
       });
   }
   updateTicket() {
-    this.ticketService.updateTicket(this.ticket).subscribe(() => {
+    var ticket = this.finalizeTicket();
+    this.ticketService.updateTicket(ticket).subscribe(() => {
       this.toastr.success('Ticket updated successfully');
+      this.ticket = ticket;
+      this.initializeTicket();
       this.editForm.reset(this.ticket);
       this.ticketPropertyChangeService.changeCache.clear();
       this.onUpdate();
     });
   }
 
-  onChange() {
+  markDirty() {
     this.editForm.markAsDirty();
   }
 
   onUpdate() {
-    this.editForm.markAsPristine();
-    this.editForm.markAsUntouched();
     this.hideUsers = true;
+  }
+
+  initializeTicket() {
+    this.ticket.title = this.toTitleCase(this.ticket.title);
+    this.ticket.project = this.toTitleCase(this.ticket.project);
+    if (![null, ''].includes(this.ticket.assignee)) {
+      this.ticket.assignee = this.toTitleCase(this.ticket.assignee);
+    }
+    else {
+      this.ticket.assignee = 'Unassigned';
+    }
+  }
+
+  finalizeTicket() {
+    var ticket = Object.assign({}, this.ticket);
+    ticket.title = this.editForm.value.title.toLowerCase();
+    ticket.description = this.editForm.value.description;
+    ticket.project = this.ticket.project.toLowerCase();
+    if (this.ticket.assignee == 'Unassigned') {
+      ticket.assignee = '';
+    }
+    else {
+      ticket.assignee = this.ticket.assignee.toLowerCase();
+    }
+    return ticket;
+  }
+
+  toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
   }
 }

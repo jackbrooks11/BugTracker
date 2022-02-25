@@ -66,7 +66,7 @@ namespace API.Controllers
         [HttpGet("{projectTitle}/users")]
         public ActionResult<IEnumerable<string>> GetUsersForProject(string projectTitle)
         {
-            return Ok(_projectUserService.GetUsersForProject(projectTitle));
+            return Ok(_projectUserService.GetUsersForProject(projectTitle.ToLower()));
         }
     }
 }

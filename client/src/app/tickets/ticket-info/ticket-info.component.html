@@ -27,7 +27,7 @@
                       <div class="col">
                         <div class="form-group">
                           <label class="font-weight-bold">Title</label>
-                          <p>{{ ticket.title }}</p>
+                          <p>{{ ticket.title | titlecase }}</p>
                         </div>
                       </div>
                     </div>
@@ -35,7 +35,9 @@
                       <div class="col">
                         <div class="form-group">
                           <label class="font-weight-bold">Description</label>
-                          <p *ngIf="ticket">{{ ticket.description }}</p>
+                          <p *ngIf="ticket">
+                            {{ ticket.description }}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -60,7 +62,7 @@
                       <div class="col mb-3">
                         <div class="form-group">
                           <label class="font-weight-bold">Project</label>
-                          <p>{{ ticket.project }}</p>
+                          <p>{{ ticket.project | titlecase }}</p>
                         </div>
                       </div>
                       <div class="col mb-3">

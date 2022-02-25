@@ -1,6 +1,6 @@
 export class TicketPropertyChangeParams {
     pageNumber: number = 1;
-    pageSize: number = 5;
+    pageSize: number = 10;
     orderBy: string = 'changed';
     ascending: boolean = false;
     searchMatch: string = "";

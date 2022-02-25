@@ -13,8 +13,9 @@ namespace API.Interfaces
         Task<PagedList<Project>> GetProjectsPaginated(ProjectParams projectParams);
         Task<PagedList<Project>> GetProjectsForUser(ProjectParams projectParams, int userId);
         void DeleteProjects(int[] projectIdsToDelete);
-        void AddProject(Project project);
-        Task<string> ValidateProject(Project project, Project projectUpdated);
+        void CreateProject(Project project);
+        Task<string> ValidateProject(Project newProject);
+
         void MarkProjectAsModified(Project project);
         Task<bool> SaveAllAsync();
     }

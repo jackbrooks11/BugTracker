@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Route("api/[controller]")]
     public class AccountController : BaseApiController
     {
         private readonly SignInManager<AppUser> _signInManager;
@@ -33,7 +34,6 @@ namespace API.Controllers
 
             var user = _mapper.Map<AppUser>(registerDto);
             user.UserName = registerDto.Username.ToLower();
-
             var result = await _accountService.CreateUser(user, registerDto.Password);
             if (result != null) {
                 return BadRequest(result);

@@ -15,7 +15,6 @@ import { ProjectsService } from 'src/app/_services/projects.service';
 })
 export class TicketModalComponent implements OnInit {
   createTicketForm: FormGroup;
-  validationErrors: string[] = [];
 
   loggedInUser: LoggedInUser;
 
@@ -57,7 +56,7 @@ export class TicketModalComponent implements OnInit {
 
   initializeForm() {
     this.createTicketForm = this.fb.group({
-      title: ['', Validators.required],
+      title: ['', Validators.compose([Validators.pattern('[a-zA-Z]+[a-zA-Z ]*'), Validators.required])],
       description: ['', Validators.required],
       project: [''],
       assignee: [''],
@@ -97,7 +96,7 @@ export class TicketModalComponent implements OnInit {
     var filteredProjects = [];
     this.projects.forEach((project) => {
       if (project.title.toLowerCase().includes(this.projectsSearchMatch.toLowerCase())) {
-        filteredProjects.push(project.title);
+        filteredProjects.push(this.toTitleCase(this.toTitleCase(project.title)));
       }
     });
     this.displayProjects = filteredProjects.slice(0, this.projectListSize);
@@ -135,6 +134,7 @@ export class TicketModalComponent implements OnInit {
       this.projectUserService
         .getUsersForProject(projectTitle)
         .subscribe((users) => {
+          console.log(users);
           this.usernames = users;
           this.filterUsernames();
         });
@@ -151,7 +151,7 @@ export class TicketModalComponent implements OnInit {
     var filteredUsernames = [];
     this.usernames.forEach((username) => {
       if (username.toLowerCase().includes(this.usersSearchMatch.toLowerCase())) {
-        filteredUsernames.push(username);
+        filteredUsernames.push(this.toTitleCase(username));
       }
     });
     this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
@@ -185,5 +185,11 @@ export class TicketModalComponent implements OnInit {
   createTicket() {
     this.submitted.emit(true);
     this.bsModalRef.hide();
+  }
+
+  toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
   }
 }

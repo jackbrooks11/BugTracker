@@ -1,14 +1,33 @@
 <div class="container mt-3">
-  <div *ngIf="!registerMode && !loggedInUser" style="text-align: center">
-    <h1>Track some bugs!</h1>
-    <div class="text-center">
-      <button (click)="registerToggle()" class="btn btn-primary btn-lg mr-2">
-        Register
-      </button>
-      <button class="btn btn-info btn-lg">Learn more</button>
-    </div>
-  </div>
+  <div *ngIf="!registerMode && !loggedInUser">
+    <section class="vh-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col card-wrapper">
+          <div class="card" style="border-radius: 1rem">
+            <div class="row g-0">
+              <div class="col d-flex align-items-center">
+                <div class="card-body p-4 text-black">
+                  <app-login></app-login>
+                  <a class="small text-muted" href="#!">Forgot password?</a>
+                  <p class="mb-4 pb-lg-2">
+                    Don't have an account?
+                    <a href="#" (click)="registerToggle()">Register here</a>
+                  </p>
+                  <div class="divider d-flex align-items-center my-4">
+                    <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
+                  </div>
 
+                  <a class="btn btn-light btn-lg btn-block" href="#!">
+                    Sign in as Demo User
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
   <div *ngIf="registerMode && !loggedInUser" class="row justify-content-center">
     <div class="col-4">
       <app-register
@@ -16,7 +35,6 @@
       ></app-register>
     </div>
   </div>
-
   <div *ngIf="loggedInUser" class="row">
     <div class="col-lg-4 chart">
       <div class="card">
@@ -41,14 +59,16 @@
     </div>
   </div>
   <div *ngIf="loggedInUser" class="row mt-3 mb-3">
-    <div class="col-lg-6 chart">
+    <div class="chart">
       <div class="card">
         <div class="card-body">
           <app-status-line-chart></app-status-line-chart>
         </div>
       </div>
     </div>
-    <div class="col-lg-6 chart">
+  </div>
+  <div *ngIf="loggedInUser" class="row mt-3 mb-3">
+    <div class="chart">
       <div class="card">
         <div class="card-body">
           <app-user-count-chart></app-user-count-chart>

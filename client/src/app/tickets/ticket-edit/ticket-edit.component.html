@@ -35,13 +35,10 @@
                         <div class="col">
                           <div class="form-group">
                             <label class="font-weight-bold">Title</label>
-                            <input
-                              class="form-control"
-                              [(ngModel)]="ticket.title"
-                              type="text"
-                              name="title"
-                              (input)="onChange()"
-                            />
+                            <app-text-input
+                              [formControl]="editForm.controls['title']"
+                              [label]="'title'"
+                            ></app-text-input>
                           </div>
                         </div>
                       </div>
@@ -49,14 +46,10 @@
                         <div class="col">
                           <div class="form-group">
                             <label class="font-weight-bold">Description</label>
-                            <textarea
-                              class="form-control"
-                              [(ngModel)]="ticket.description"
-                              type="text"
-                              name="description"
-                              (input)="onChange()"
-                            >
-                            </textarea>
+                            <app-text-input
+                              [formControl]="editForm.controls['description']"
+                              [label]="'description'"
+                            ></app-text-input>
                           </div>
                         </div>
                       </div>
@@ -91,7 +84,7 @@
                                 (click)="updateProject(project)"
                                 style="cursor: pointer"
                               >
-                                {{ project }}
+                                {{ project | titlecase }}
                               </div>
                               <div
                                 class="dropdown-item"
@@ -176,7 +169,7 @@
                               id="priority"
                               class="form-control"
                               [(ngModel)]="ticket.priority"
-                              (change)="onChange()"
+                              (change)="markDirty()"
                             >
                               <option>Low</option>
                               <option>Medium</option>
@@ -192,7 +185,7 @@
                               name="state"
                               id="state"
                               class="form-control"
-                              (change)="onChange()"
+                              (change)="markDirty()"
                             >
                               <option>Open</option>
                               <option>In Progress</option>
@@ -212,7 +205,7 @@
                               name="type"
                               id="type"
                               class="form-control"
-                              (change)="onChange()"
+                              (change)="markDirty()"
                             >
                               <option>Bug</option>
                               <option>Feature Request</option>
@@ -226,7 +219,7 @@
                       <div class="row">
                         <div class="col d-flex justify-content-end">
                           <button
-                            [disabled]="!editForm.dirty || disableSubmit"
+                            [disabled]="!editForm.dirty || !editForm.valid"
                             class="btn btn-primary"
                             type="submit"
                           >

@@ -20,15 +20,11 @@ namespace API.Services
         public async Task<Project> GetProject(string name)
         {
          return await _context.Projects
-            .Include(t => t.Tickets)
-            .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Title == name);
         }
         public async Task<Project> GetProjectById(int id)
         {
          return await _context.Projects
-            .Include(t => t.Tickets)
-            .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
         }
         public IEnumerable<Project> GetProjects()
@@ -60,34 +56,20 @@ namespace API.Services
                 _context.Remove(project);
             }
         }
-        public void AddProject(Project project) {
+        public void CreateProject(Project project) {
+            project.Title = project.Title.ToLower();
             _context.Projects.Add(project);
         }
-        public async Task<string> ValidateProject(Project project, Project projectUpdated) {
-            if (await _context.Projects.AnyAsync(x => x.Title.ToLower() == projectUpdated.Title.ToLower())) {
-                if (project != null) {
-                    if (projectUpdated.Title != project.Title) {
-                        return "Project title already taken.";
-                    }
-                    return "";
-                }
-                else {
-                   return "Project title already taken."; 
-                } 
+        public async Task<string> ValidateProject(Project newProject) {
+            if (await _context.Projects.AnyAsync(x => (x.Id != newProject.Id) && (x.Title == newProject.Title))) {
+                return "Project title already taken.";
             }
             return "";
-        }
-        public void MarkProjectAsModified(Project project) {
-            foreach (Ticket ticket in project.Tickets) {
-                ticket.Project = project.Title;
-                _context.Entry(ticket).State = EntityState.Modified;
-            }
-            _context.Entry(project).State = EntityState.Modified;   
         }
         private IEnumerable<Project> GetProjectsToDelete(int[] projectIdsToDelete)
         {
             return _context.Projects.Where(p => projectIdsToDelete.Contains(p.Id))
-                .Include(t => t.Tickets);
+                .Include(t => t.Tickets).AsNoTracking();
         }
         private IQueryable<Project> GetProjectQuery(ProjectParams projectParams) {
             var query = _context.Projects
@@ -118,6 +100,10 @@ namespace API.Services
                 };
             } 
             return query;
+        }
+
+        public void MarkProjectAsModified(Project project) {
+            _context.Entry(project).State = EntityState.Modified;
         }
         public async Task<bool> SaveAllAsync()
         {

@@ -59,25 +59,24 @@ export class UserCountChartComponent implements OnInit {
     }
     var topFiveUsers = Object.entries(userTicketCounts).sort(
       function(a, b) {
-        console.log(a, b);
-        if (a[0] > b[0]) {
-          return 1;
-        } 
-        else if (a[0] < b[0]) { 
+        if (a[1] > b[1]) {
           return -1;
+        } 
+        else if (a[1] < b[1]) { 
+          return 1;
         }
         // Else go to the 2nd item
-        if (a[1] > b[1]) { 
+        if (a[0] > b[0]) { 
           return 1;
         } 
-        else if (a[1] < b[1]) {
+        else if (a[0] < b[0]) {
           return -1;
         } 
         else { // nothing to split them
           return 0;
         }
       });
-    topFiveUsers.splice(5);
+    console.log(topFiveUsers);
     for (let i = 0; i < topFiveUsers.length; ++i) {
       this.barChartLabels.push(topFiveUsers[i][0]);
       this.barChartData[0]['data'].push(topFiveUsers[i][1]);

@@ -111,7 +111,7 @@ export class ProjectPersonnelComponent implements OnInit {
     this.projectUsersService
       .addUserToProject(
         this.project.id,
-        this.bsModalRef.content.assignUserForm.value.username
+        this.bsModalRef.content.assignUserForm.value.username.toLowerCase()
       )
       .subscribe(() => {
         this.loadUsers();

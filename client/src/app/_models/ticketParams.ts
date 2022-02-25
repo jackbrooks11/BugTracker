@@ -1,6 +1,6 @@
 export class TicketParams {
     pageNumber: number = 1;
-    pageSize: number = 5;
+    pageSize: number = 10;
     orderBy: string = 'created';
     ascending: boolean = false;
     searchMatch: string = "";

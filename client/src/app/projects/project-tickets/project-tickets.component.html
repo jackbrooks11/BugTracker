@@ -48,7 +48,7 @@
       <tr *ngFor="let ticket of tickets">
         <td>
           <a href="#" routerLink="/tickets/{{ ticket.id }}">{{
-            ticket.title
+            ticket.title | titlecase
           }}</a>
         </td>
         <td>
@@ -56,7 +56,7 @@
             *ngIf="ticket.assignee"
             style="color: #777"
             href="#"
-            routerLink="/members/{{ ticket.assignee }}"
+            routerLink="/users/{{ ticket.assignee }}"
             >{{ ticket.assignee | titlecase }}</a
           >
           <div *ngIf="!ticket.assignee">Unassigned</div>

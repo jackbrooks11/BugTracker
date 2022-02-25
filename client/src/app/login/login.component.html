@@ -1,0 +1,39 @@
+<form #loginForm="ngForm" (ngSubmit)="login()">
+  <div class="d-flex align-items-center text-primary mb-3 pb-1">
+    <i class="fas fa-bug fa-2x me-3"></i>
+    <span class="h1 fw-bold mb-0">BugTracker</span>
+  </div>
+
+  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px">
+    Sign into your account
+  </h5>
+
+  <div class="form-outline mb-4">
+    <input
+      name="username"
+      [(ngModel)]="model.username"
+      class="form-control me-2"
+      type="text"
+      placeholder="Username"
+    />
+  </div>
+  <div class="form-outline mb-4">
+    <input
+      name="password"
+      [(ngModel)]="model.password"
+      class="form-control me-2"
+      type="password"
+      placeholder="Password"
+    />
+  </div>
+
+  <div class="pt-1 mb-4">
+    <button
+      [disabled]="!model.username || !model.password"
+      class="btn btn-dark btn-lg btn-block"
+      type="submit"
+    >
+      Log In
+    </button>
+  </div>
+</form>

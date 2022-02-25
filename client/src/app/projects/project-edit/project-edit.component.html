@@ -7,7 +7,7 @@
             <div class="tab-content pt-3">
               <div class="tab-pane active">
                 <form
-                  #editForm="ngForm"
+                  [formGroup]="editForm"
                   (ngSubmit)="updateProject()"
                   *ngIf="project"
                   class="form"
@@ -34,12 +34,12 @@
                         <div class="col">
                           <div class="form-group">
                             <label class="font-weight-bold">Title</label>
-                            <input
-                              class="form-control"
-                              [(ngModel)]="project.title"
-                              type="text"
-                              name="title"
-                            />
+                            <app-text-input
+                            [formControl]="
+                              editForm.controls['title']
+                            "
+                            [label]="'title'"
+                          ></app-text-input>
                           </div>
                         </div>
                       </div>
@@ -47,20 +47,19 @@
                         <div class="col">
                           <div class="form-group">
                             <label class="font-weight-bold">Description</label>
-                            <textarea
-                              class="form-control"
-                              [(ngModel)]="project.description"
-                              type="text"
-                              name="description"
-                            >
-                            </textarea>
+                            <app-text-input
+                            [formControl]="
+                              editForm.controls['description']
+                            "
+                            [label]="'description'"
+                          ></app-text-input>
                           </div>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col d-flex justify-content-end">
                           <button
-                            [disabled]="!editForm.dirty"
+                            [disabled]="!editForm.dirty || !editForm.valid"
                             class="btn btn-primary"
                             type="submit"
                           >

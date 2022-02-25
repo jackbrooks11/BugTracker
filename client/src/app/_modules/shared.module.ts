@@ -13,7 +13,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
     CommonModule,
     BsDropdownModule.forRoot(),
     ToastrModule.forRoot({
-      positionClass: 'toast-bottom-right'
+      positionClass: 'toast-bottom-right',
+      
     }),
     ModalModule.forRoot(),
     PaginationModule.forRoot(),

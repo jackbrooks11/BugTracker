@@ -11,6 +11,7 @@ export class UserPhotoComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.roles);
   }
 
 }

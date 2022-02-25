@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211227213139_DeleteOnCascade")]
-    partial class DeleteOnCascade
+    [Migration("20220223032010_OneToManyRelationshipsAdded")]
+    partial class OneToManyRelationshipsAdded
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -184,11 +184,8 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AppUserId")
+                    b.Property<int?>("AssigneeId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Assignee")
-                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
@@ -200,9 +197,6 @@ namespace API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Priority")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Project")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ProjectId")
@@ -222,7 +216,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppUserId");
+                    b.HasIndex("AssigneeId");
 
                     b.HasIndex("ProjectId");
 
@@ -412,13 +406,17 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Ticket", b =>
                 {
-                    b.HasOne("API.Entities.AppUser", null)
+                    b.HasOne("API.Entities.AppUser", "Assignee")
                         .WithMany("Tickets")
-                        .HasForeignKey("AppUserId");
+                        .HasForeignKey("AssigneeId");
 
-                    b.HasOne("API.Entities.Project", null)
+                    b.HasOne("API.Entities.Project", "Project")
                         .WithMany("Tickets")
                         .HasForeignKey("ProjectId");
+
+                    b.Navigation("Assignee");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("API.Entities.TicketComment", b =>

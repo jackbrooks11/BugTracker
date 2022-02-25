@@ -58,6 +58,7 @@ export class TicketListComponent implements OnInit {
     this.updateTable(toggle, index);
     this.ticketService.getTicketsPaginated(this.ticketParams).subscribe((response) => {
       this.tickets = response.result;
+      console.log(this.tickets);
       this.pagination = response.pagination;
       if (this.checkAll) {
         this.ticketIdsToDelete = [];
@@ -98,6 +99,7 @@ export class TicketListComponent implements OnInit {
   }
 
   createTicket() {
+    this.finalizeChanges();
     this.ticketService
       .createTicket(this.bsModalRef.content.createTicketForm.value)
       .subscribe(response => {
@@ -134,4 +136,8 @@ export class TicketListComponent implements OnInit {
     }
   }
 
+  finalizeChanges() {
+    this.bsModalRef.content.createTicketForm.value.project = this.bsModalRef.content.createTicketForm.value.project.toLowerCase();
+    this.bsModalRef.content.createTicketForm.value.assignee = this.bsModalRef.content.createTicketForm.value.assignee.toLowerCase();
+  }
 }

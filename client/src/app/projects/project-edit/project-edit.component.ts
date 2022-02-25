@@ -1,5 +1,5 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Project } from 'src/app/_models/project';
@@ -12,7 +12,7 @@ import { ProjectsService } from 'src/app/_services/projects.service';
 })
 export class ProjectEditComponent implements OnInit {
   project: Project;
-  @ViewChild('editForm') editForm: NgForm;
+  editForm: FormGroup;
   @HostListener('window:beforeunload', ['$event']) unloadNotifcation(
     $event: any
   ) {
@@ -23,11 +23,19 @@ export class ProjectEditComponent implements OnInit {
   constructor(
     private projectService: ProjectsService,
     private route: ActivatedRoute,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private fb: FormBuilder,
   ) {}
 
   ngOnInit(): void {
     this.loadProject();
+  }
+
+  initializeForm() {
+    this.editForm = this.fb.group({
+      title: [this.project.title, Validators.compose([Validators.pattern('[a-zA-Z]+[a-zA-Z ]*'), Validators.required])],
+      description: [this.project.description, Validators.required]
+    })
   }
 
   loadProject() {
@@ -35,13 +43,28 @@ export class ProjectEditComponent implements OnInit {
       .getProjectById(Number(this.route.snapshot.paramMap.get('id')))
       .subscribe((project) => {
         this.project = project;
+        this.project.title = this.toTitleCase(this.project.title);
+        this.initializeForm();
       });
   }
 
   updateProject() {
+    this.finalizeProject();
     this.projectService.updateProject(this.project).subscribe(() => {
       this.toastr.success('Project updated successfully');
+      this.project.title = this.toTitleCase(this.project.title);
       this.editForm.reset(this.project);
+    });
+  }
+
+  finalizeProject() {
+    this.project.title = this.editForm.value.title.toLowerCase();
+    this.project.description = this.editForm.value.description;
+  }
+
+  toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt){
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   }
 }

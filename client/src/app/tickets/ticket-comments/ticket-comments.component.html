@@ -11,7 +11,7 @@
             <div class="col-xs-12">
               <div class="form-group">
                 <textarea
-                  class="form-input"
+                  class="form-input comment"
                   name="message"
                   [formControl]="commentForm.controls['message']"
                   required=""
@@ -70,14 +70,14 @@
                 />
               </div>
               <div class="be-img-comment">
-                <app-member-photo
+                <app-user-photo
                   style="font-size: 40px"
                   [roles]="comment.roles"
-                ></app-member-photo>
+                ></app-user-photo>
               </div>
               <div class="be-comment-content">
                 <span class="be-comment-name">
-                  <a routerLink="/members/{{ comment.submittedBy }}">{{
+                  <a routerLink="/users/{{ comment.submittedBy }}">{{
                     comment.submittedBy | titlecase
                   }}</a>
                   <span class="be-comment-time" style="padding-left: 10px">

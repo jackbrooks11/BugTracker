@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
@@ -24,19 +25,19 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Ticket>> GetTicket(int id)
+        public async Task<ActionResult<TicketDto>> GetTicket(int id)
         {
-            return await _ticketService.GetTicket(id);
+            return await _ticketService.GetTicketAsDto(id);
         }
 
         [HttpGet]
-         public IEnumerable<Ticket> GetTickets()
+         public IEnumerable<TicketDto> GetTickets()
         {
-            return _ticketService.GetTickets();
+            return _ticketService.GetTicketsAsDtos();
         }
 
         [HttpGet("paginated")]
-        public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsPaginated([FromQuery] TicketParams ticketParams)
+        public async Task<ActionResult<IEnumerable<TicketDto>>> GetTicketsPaginated([FromQuery] TicketParams ticketParams)
         {
             var tickets = await _ticketService.GetTicketsPaginated(ticketParams);
 
@@ -45,7 +46,7 @@ namespace API.Controllers
             return Ok(tickets);
         }
 
-        [HttpGet("member/tickets")]
+        [HttpGet("user/tickets")]
         public async Task<ActionResult<IEnumerable<Ticket>>> GetTicketsForUser([FromQuery] TicketParams ticketParams)
         {
             var username = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -78,33 +79,39 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> UpdateTicket(Ticket newTicket)
+        public async Task<ActionResult> UpdateTicket(TicketDto newTicketDto)
         {
-            var project = await _projectService.GetProject(newTicket.Project);
-            var errorMessage = await _ticketService.ValidateTicket(newTicket, project);
+            var project = await _projectService.GetProject(newTicketDto.Project);
+            var errorMessage = await _ticketService.ValidateTicket(newTicketDto, project);
             if (errorMessage != "")
             {
                 return BadRequest(errorMessage);
             }
-            var ticket = await _ticketService.GetTicket(newTicket.Id);
-            _ticketService.AddChangesToTicket(ticket, newTicket);
-            project.Tickets.Add(ticket);
+            var existingTicketDto = await _ticketService.GetTicketAsDto(newTicketDto.Id);
+            existingTicketDto = _ticketService.AddChangesToTicket(existingTicketDto, newTicketDto);
+            var existingTicket = await _ticketService.GetTicket(existingTicketDto.Id);
+            existingTicket = await GenerateTicket(existingTicketDto, existingTicket);
+            _ticketService.MarkTicketAsModified(existingTicket);
             if (await _ticketService.SaveAllAsync()) return NoContent();
             return BadRequest("Failed to update ticket");
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult> CreateTicket(Ticket ticket)
+        public async Task<ActionResult> CreateTicket(TicketDto ticketDto)
         {
-            var project = await _projectService.GetProject(ticket.Project);
-            if (ticket.Assignee.Length > 0)
-            {
-                var user = await _userService.GetUserByUsernameAsync(ticket.Assignee);
-                user.Tickets.Add(ticket);
-            }
-            project.Tickets.Add(ticket);
+            var ticket = new Ticket();
+            ticket = await GenerateTicket(ticketDto, ticket);
+            _ticketService.AddTicket(ticket);
             if (await _ticketService.SaveAllAsync()) return NoContent();
             return BadRequest("Failed to create ticket");
         }
+
+        private async Task<Ticket> GenerateTicket(TicketDto ticketDto, Ticket ticket) {
+            ticket = _ticketService.MapTicket(ticketDto, ticket);
+            ticket.Assignee = await _userService.GetUserByUsernameAsync(ticketDto.Assignee);
+            ticket.Project = await _projectService.GetProject(ticketDto.Project);
+            return ticket;
+        }
+
     }
 }

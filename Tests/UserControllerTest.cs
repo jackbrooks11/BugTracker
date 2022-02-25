@@ -5,13 +5,14 @@ using API.Interfaces;
 using API.Controllers;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace Tests
 {
     public class UserControllerTest
     {
         [Fact]
-        public async Task GetUser_WithNullUser_ReturnNull()
+        public async Task GetUser_WithNullUsername_ReturnNotFound()
         {
             //Arrange
             var userServiceStub = new Mock<IUserService>();
@@ -20,15 +21,15 @@ namespace Tests
             var controller = new UserController(userServiceStub.Object);
 
             //Act
-            var result = await controller.GetUser(null);
+            var response = await controller.GetUser(null);
 
             //Assert
-            Assert.IsAssignableFrom<NotFoundObjectResult>(result.Result);
+            Assert.IsAssignableFrom<NotFoundObjectResult>(response.Result);
 
         }
 
         [Fact]
-        public async Task GetUser_WithNonexistingUser_ReturnNull()
+        public async Task GetUser_WithNonexistingUsername_ReturnNotFound()
         {
             //Arrange
             var username = "";
@@ -38,14 +39,14 @@ namespace Tests
             var controller = new UserController(userServiceStub.Object);
 
             //Act
-            var result = await controller.GetUser(username);
+            var response = await controller.GetUser(username);
 
             //Assert
-            Assert.IsAssignableFrom<NotFoundObjectResult>(result.Result);
+            Assert.IsAssignableFrom<NotFoundObjectResult>(response.Result);
         }
 
         [Fact]
-        public async Task GetUser_WithExistingUser_ReturnUser()
+        public async Task GetUser_WithExistingUsername_ReturnUser()
         {
             //Arrange
             var username = "admin";
@@ -63,5 +64,55 @@ namespace Tests
 
         }
 
+        [Fact]
+        public async Task GetUserRoles_WithNullUsername_ReturnNull()
+        {
+            //Arrange
+            var userServiceStub = new Mock<IUserService>();
+            userServiceStub.Setup(userService => userService.GetRoles(null))
+                .ReturnsAsync((List<string>)null);
+            var controller = new UserController(userServiceStub.Object);
+
+            //Act
+            var response = await controller.GetUserRoles(null);
+
+            //Assert
+            Assert.IsAssignableFrom<NotFoundObjectResult>(response.Result);
+        }
+
+        [Fact]
+        public async Task GetUserRoles_WithNonexistingUsername_ReturnNull()
+        {
+            //Arrange
+            var username = "";
+            var userServiceStub = new Mock<IUserService>();
+            userServiceStub.Setup(userService => userService.GetRoles(username))
+                .ReturnsAsync((List<string>)null);
+            var controller = new UserController(userServiceStub.Object);
+
+            //Act
+            var response = await controller.GetUserRoles(username);
+
+            //Assert
+            Assert.IsAssignableFrom<NotFoundObjectResult>(response.Result);
+        }
+
+        [Fact]
+        public async Task GetUserRoles_WithExistingUsername_ReturnRoles()
+        {
+            //Arrange
+            var username = "admin";
+            var userServiceStub = new Mock<IUserService>();
+            userServiceStub.Setup(userService => userService.GetRoles(username))
+                .ReturnsAsync(new List<string> {"Admin"});
+            var controller = new UserController(userServiceStub.Object);
+
+            //Act
+            var response = await controller.GetUserRoles(username);
+
+            //Assert
+            var result = Assert.IsAssignableFrom<OkObjectResult>(response.Result);
+            Assert.IsType<List<string>>(result.Value);
+        }
     }
 }

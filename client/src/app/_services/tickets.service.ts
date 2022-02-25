@@ -78,7 +78,7 @@ export class TicketsService {
     params = params.append('searchMatch', ticketParams.searchMatch);
 
     return this.getPaginatedResult<Ticket[]>(
-      this.baseUrl + 'tickets/member/tickets',
+      this.baseUrl + 'tickets/user/tickets',
       params
     ).pipe(
       map((response) => {
@@ -139,7 +139,6 @@ export class TicketsService {
   }
 
   updateTicket(ticket: Ticket) {
-    console.log(ticket);
     return this.http.put(this.baseUrl + 'tickets', ticket).pipe(
       map(() => {
         this.ticketCache.clear();

@@ -98,7 +98,7 @@ export class ProjectsService {
     params = params.append('searchMatch', projectParams.searchMatch);
 
     return this.getPaginatedResult<Project[]>(
-      this.baseUrl + 'projects/member/projects',
+      this.baseUrl + 'projects/user/projects',
       params
     ).pipe(
       map((response) => {

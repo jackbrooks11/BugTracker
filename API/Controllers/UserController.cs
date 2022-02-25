@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Entities;
 using API.Interfaces;
@@ -26,9 +27,13 @@ namespace API.Controllers
         }
 
         [HttpGet("{username}/roles")]
-        public async Task<ActionResult> GetUserRoles(string username)
+        public async Task<ActionResult<List<string>>> GetUserRoles(string username)
         {
-            return Ok(await _userService.GetRoles(username));
+            var roles = await _userService.GetRoles(username);
+            if (roles == null) {
+                return NotFound("Roles for user could not be found.");
+            }
+            return Ok(roles);
         }
     }
 }

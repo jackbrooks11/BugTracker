@@ -5,8 +5,8 @@
           <div class="card-body">
             <div class="e-profile">
               <div class="row" *ngIf="roles">
-                <div class="col-12 col-sm-auto mb-3">
-                  <app-user-photo style="font-size: 70px;" [roles]="roles.roles"></app-user-photo>
+                <div class="col-12 col-sm-auto mb-3" *ngIf="roles">
+                  <app-user-photo style="font-size: 70px;" [roles]="roles"></app-user-photo>
                 </div>
                 <div
                   class="
@@ -26,7 +26,9 @@
                     </div>
                   </div>
                   <div class="text-center text-sm-right">
-                    <span class="badge badge-secondary">{{roles.roles}}</span>
+                    <div *ngFor="let role of roles">
+                      <span class="badge badge-secondary">{{role}}</span>
+                    </div>
                     <div class="text-muted">
                       <small *ngIf="user">Joined {{user.created | date}}</small>
                     </div>

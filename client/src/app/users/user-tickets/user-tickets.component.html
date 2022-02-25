@@ -53,15 +53,15 @@
         <tr *ngFor="let ticket of tickets">
           <td>
             <a href="#" routerLink="/tickets/{{ ticket.id }}">{{
-              ticket.title
+              ticket.title | titlecase
             }}</a>
           </td>
-          <td>{{ ticket.project }}</td>
+          <td>{{ ticket.project | titlecase }}</td>
           <td>
             <a
               style="color: #777"
               href="#"
-              routerLink="/members/{{ ticket.assignee }}"
+              routerLink="/users/{{ ticket.assignee }}"
               >{{ ticket.assignee | titlecase }}</a
             >
           </td>

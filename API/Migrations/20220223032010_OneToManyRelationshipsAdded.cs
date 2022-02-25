@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class DeleteOnCascade : Migration
+    public partial class OneToManyRelationshipsAdded : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -206,24 +206,22 @@ namespace API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: true),
-                    Project = table.Column<string>(type: "TEXT", nullable: true),
+                    ProjectId = table.Column<int>(type: "INTEGER", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Submitter = table.Column<string>(type: "TEXT", nullable: true),
-                    Assignee = table.Column<string>(type: "TEXT", nullable: true),
+                    AssigneeId = table.Column<int>(type: "INTEGER", nullable: true),
                     Priority = table.Column<string>(type: "TEXT", nullable: true),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
                     State = table.Column<string>(type: "TEXT", nullable: true),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    LastEdited = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    AppUserId = table.Column<int>(type: "INTEGER", nullable: true),
-                    ProjectId = table.Column<int>(type: "INTEGER", nullable: true)
+                    LastEdited = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tickets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tickets_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
+                        name: "FK_Tickets_AspNetUsers_AssigneeId",
+                        column: x => x.AssigneeId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -335,9 +333,9 @@ namespace API.Migrations
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_AppUserId",
+                name: "IX_Tickets_AssigneeId",
                 table: "Tickets",
-                column: "AppUserId");
+                column: "AssigneeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tickets_ProjectId",

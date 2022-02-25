@@ -2,18 +2,17 @@
   <h3>Loading...</h3>
 </ngx-spinner>
 <app-nav></app-nav>
-<div class="container-fluid" style="padding: 0">
-  <app-sidebar (onToggleShow)="setShowSidebar($event)"></app-sidebar>
-  <main
-    role="main"
-    [ngClass]="{
-      'sidebar-show col-12 pt-3 px-4 mr-0':
-        (accountService.currentUser$ | async) && showSidebar,
-      'col-12 pt-3 px-4 mr-0':
-        (accountService.currentUser$ | async) && showSidebar == false,
-      'logged-out': !(accountService.currentUser$ | async)
-    }"
-  >
-    <router-outlet></router-outlet>
-  </main>
-</div>
+
+<app-sidebar (onToggleShow)="setShowSidebar($event)"></app-sidebar>
+<main
+  role="main"
+  [ngClass]="{
+    'sidebar-show col-12 pt-3 px-4 mr-0':
+      (accountService.currentUser$ | async) && showSidebar,
+    'col-12 pt-3 px-4 mr-0':
+      (accountService.currentUser$ | async) && showSidebar == false,
+    'logged-out': !(accountService.currentUser$ | async)
+  }"
+>
+  <router-outlet></router-outlet>
+</main>

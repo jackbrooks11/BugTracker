@@ -27,7 +27,6 @@ namespace API.Services
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
             return await _context.Users
-                .Include(t => t.Tickets)
                 .SingleOrDefaultAsync(x => x.UserName == username);
         }
         public async Task<List<string>> GetRoles(string username)
@@ -40,6 +39,7 @@ namespace API.Services
                     u.UserRoles.Select(r => r.Role.Name).ToList()
                 )
                 .ToListAsync();
+            if (roles == null || roles.Count == 0) return null;
             return roles[0];
         }
 
