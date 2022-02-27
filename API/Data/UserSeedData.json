@@ -1,17 +1,17 @@
 [
     {
       "UserName": "jack",
-      "Company": "Lakeside Software",
+      "Email": "jackbrooks11@gmail.com",
       "About": "I am Jack."
     },
     {
       "UserName": "bob",
-      "Company": "Detroit Fire",
+      "Email": "rgb20fdisFHxj@gmail.com",
       "About": "I am Bob."
     },
     {
       "UserName": "justin",
-      "Company": "WePay",
+      "Email": "jmSJSJ2334dk@gmail.com",
       "About": "I am Justin."
     }
 ]

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220223032010_OneToManyRelationshipsAdded")]
-    partial class OneToManyRelationshipsAdded
+    [Migration("20220226213014_UserEntityAltered")]
+    partial class UserEntityAltered
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -56,9 +56,6 @@ namespace API.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Company")
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()

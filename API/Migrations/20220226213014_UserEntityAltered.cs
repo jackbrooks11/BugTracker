@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class OneToManyRelationshipsAdded : Migration
+    public partial class UserEntityAltered : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,7 +29,6 @@ namespace API.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     FullName = table.Column<string>(type: "TEXT", nullable: true),
-                    Company = table.Column<string>(type: "TEXT", nullable: true),
                     About = table.Column<string>(type: "TEXT", nullable: true),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     LastActive = table.Column<DateTime>(type: "TEXT", nullable: false),

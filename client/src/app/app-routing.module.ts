@@ -19,36 +19,55 @@ import { AdminGuard } from './_guards/admin.guard';
 import { AuthGuard } from './_guards/auth.guard';
 import { HasTicketGuard } from './_guards/has-ticket.guard';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 const routes: Routes = [
-  {path: '', component: HomeComponent},
+  { path: '', component: HomeComponent },
+  { path: 'resetPassword', component: ResetPasswordComponent },
   {
     path: '',
     runGuardsAndResolvers: 'always',
     canActivate: [AuthGuard],
     children: [
-      {path: 'users/:username', component: UserDetailComponent},
-      {path: 'user/edit', component: UserEditComponent, canDeactivate: [PreventUnsavedChangesGuard]},
-      {path: 'user/tickets', component: UserTicketsComponent},
-      {path: 'user/projects/:id', component: ProjectDetailComponent},
-      {path: 'user/projects', component: UserProjectsComponent},
-      {path: 'tickets/:id/edit', component: TicketEditComponent, canActivate: [HasTicketGuard], canDeactivate: [PreventUnsavedChangesGuard]},
-      {path: 'tickets/:id', component: TicketDetailComponent},
-      {path: 'tickets', component: TicketListComponent},
-      {path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard]},
-      {path: 'projects/:id/edit', component: ProjectEditComponent, canActivate: [AdminGuard]},
-      {path: 'projects/:id', component: ProjectDetailComponent},
-      {path: 'projects', component: ProjectListComponent}
-    ]
+      { path: 'users/:username', component: UserDetailComponent },
+      {
+        path: 'user/edit',
+        component: UserEditComponent,
+        canDeactivate: [PreventUnsavedChangesGuard],
+      },
+      { path: 'user/tickets', component: UserTicketsComponent },
+      { path: 'user/projects/:id', component: ProjectDetailComponent },
+      { path: 'user/projects', component: UserProjectsComponent },
+      {
+        path: 'tickets/:id/edit',
+        component: TicketEditComponent,
+        canActivate: [HasTicketGuard],
+        canDeactivate: [PreventUnsavedChangesGuard],
+      },
+      { path: 'tickets/:id', component: TicketDetailComponent },
+      { path: 'tickets', component: TicketListComponent },
+      {
+        path: 'admin',
+        component: AdminPanelComponent,
+        canActivate: [AdminGuard],
+      },
+      {
+        path: 'projects/:id/edit',
+        component: ProjectEditComponent,
+        canActivate: [AdminGuard],
+      },
+      { path: 'projects/:id', component: ProjectDetailComponent },
+      { path: 'projects', component: ProjectListComponent },
+    ],
   },
-  {path: 'errors', component: TestErrorsComponent},
-  {path: 'not-found', component: NotFoundComponent},
-  {path: 'server-error', component: ServerErrorComponent},
-  {path: '**', component: NotFoundComponent, pathMatch: 'full'}
+  { path: 'errors', component: TestErrorsComponent },
+  { path: 'not-found', component: NotFoundComponent },
+  { path: 'server-error', component: ServerErrorComponent },
+  { path: '**', component: NotFoundComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

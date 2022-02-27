@@ -9,6 +9,7 @@ import { AccountService } from '../_services/account.service';
 })
 export class HomeComponent implements OnInit {
   registerMode = false;
+  forgotPasswordMode = false;
   loggedInUser: LoggedInUser;
 
   constructor(private accountService: AccountService) { 
@@ -26,6 +27,14 @@ export class HomeComponent implements OnInit {
 
   cancelRegisterMode(event: boolean) {
     this.registerMode = event;
+  }
+
+  forgotPasswordToggle() {
+    this.forgotPasswordMode = !this.forgotPasswordMode;
+  }
+
+  cancelForgotPasswordMode(event: boolean) {
+    this.forgotPasswordMode = event;
   }
 
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using API.Data;
 using API.Entities;
@@ -39,6 +40,8 @@ namespace API.Extensions
             services.AddAuthorization(opt => {
                 opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
             });
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            opt.TokenLifespan = TimeSpan.FromHours(2));
             return services; 
         }
     }

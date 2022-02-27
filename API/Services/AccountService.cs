@@ -4,6 +4,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -19,10 +20,11 @@ namespace API.Services
             _context = context;
             _userManager = userManager;
         }
-        public async Task<IdentityResult> ChangePassword(AppUser user, EditUserDto partialUser)
+        [Authorize]
+        public async Task<IdentityResult> ChangePassword(AppUser user, EditUserDto editUserDto)
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, token, partialUser.Password);
+            var result = await _userManager.ResetPasswordAsync(user, token, editUserDto.Password);
             return result;
         }
 

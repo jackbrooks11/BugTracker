@@ -20,10 +20,13 @@
     [formControl]="ngControl.control"
   ></textarea>
   <div *ngIf="ngControl.control.errors?.required" class="invalid-feedback">
-    Please enter a {{ label }}
+    {{ label | titlecase }} required
   </div>
   <div *ngIf="ngControl.control.errors?.pattern" class="invalid-feedback">
     {{ label | titlecase }} can not have numbers/symbols, and can not start with a space.
+  </div>
+  <div *ngIf="ngControl.control.errors?.email" class="invalid-feedback">
+    {{ label | titlecase }} entered is not valid
   </div>
   <div *ngIf="ngControl.control.errors?.minlength" class="invalid-feedback">
     {{ label }} must be at least

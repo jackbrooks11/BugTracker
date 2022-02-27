@@ -1,5 +1,5 @@
 export interface EditUserDto {
-    company: string;
+    email: string;
     about: string;
     fullName: string;
     password: string;

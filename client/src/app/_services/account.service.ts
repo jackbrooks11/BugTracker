@@ -6,6 +6,8 @@ import { environment } from 'src/environments/environment';
 import { EditUserDto } from '../_models/editUserDto';
 import { User } from '../_models/user';
 import { LoggedInUser } from '../_models/loggedInUser';
+import { ForgotPasswordDto } from '../_models/forgotPasswordDto';
+import { ResetPasswordDto } from '../_models/resetPasswordDto';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +40,13 @@ export class AccountService {
     )
   }
 
+  forgotPassword(model: ForgotPasswordDto) {
+    return this.http.post(this.baseUrl + 'account/forgotPassword', model);
+  }
+
+  resetPassword(model: ResetPasswordDto) {
+    return this.http.post(this.baseUrl + 'account/resetPassword', model);
+  }
 
   setCurrentUser(loggedInUser: LoggedInUser) {
     loggedInUser.roles = [];

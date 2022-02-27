@@ -50,6 +50,9 @@ import { UserCountChartComponent } from './charts/user-count-chart/user-count-ch
 import { HasTicketDirective } from './_directives/has-ticket.directive';
 import { TicketInfoComponent } from './tickets/ticket-info/ticket-info.component';
 import { LoginComponent } from './login/login.component';
+import { ChartCollectionComponent } from './chart-collection/chart-collection.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -91,7 +94,10 @@ import { LoginComponent } from './login/login.component';
     StatusLineChartComponent,
     UserCountChartComponent,
     TicketInfoComponent,
-    LoginComponent
+    LoginComponent,
+    ChartCollectionComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,

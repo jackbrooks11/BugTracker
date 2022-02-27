@@ -1,4 +1,5 @@
 using API.Data;
+using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using API.Services;
@@ -21,6 +22,11 @@ namespace API.Extensions
             services.AddScoped<ITicketCommentService, TicketCommentService>();
             services.AddScoped<IProjectUserService, ProjectUserService>();
             services.AddScoped<IAdminService, AdminService>();
+            var emailConfig = config
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddDbContext<DataContext>(options => {

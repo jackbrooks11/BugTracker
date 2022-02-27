@@ -8,7 +8,7 @@ namespace API.DTOs
         public string Username { get; set; }
 
         [Required]
-        public string Company { get; set; }
+        public string Email { get; set; }
 
         [Required]
         [StringLength(8, MinimumLength = 4)]

@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entities;
@@ -6,6 +10,7 @@ using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace API.Controllers
 {
@@ -13,18 +18,22 @@ namespace API.Controllers
     public class AccountController : BaseApiController
     {
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IUserService _userService;
         private readonly IAccountService _accountService;
+        private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
-        public AccountController(IMapper mapper, SignInManager<AppUser> signInManager, ITokenService tokenService,
-            IUserService userService, IAccountService accountService)
+        public AccountController(IMapper mapper, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, 
+        ITokenService tokenService, IUserService userService, IAccountService accountService, IEmailService emailService)
         {
             _mapper = mapper;
             _signInManager = signInManager;
+            _userManager = userManager;
             _tokenService = tokenService;
             _userService = userService;
             _accountService = accountService;
+            _emailService = emailService;
         }
 
         [HttpPost("register")]
@@ -41,7 +50,7 @@ namespace API.Controllers
             return new UserDto
             {
                 Username = user.UserName,
-                Company = user.Company,
+                Email = user.Email,
                 Token = await _tokenService.CreateToken(user)
             };
         }
@@ -59,9 +68,47 @@ namespace API.Controllers
             return new UserDto
             {
                 Username = user.UserName,
-                Company = user.Company,
+                Email = user.Email,
                 Token = await _tokenService.CreateToken(user)
             };
+        }
+        
+        [HttpPost("forgotPassword")]
+        public async Task<ActionResult<ForgotPasswordDto>> ForgotPassword([Required]ForgotPasswordDto forgotPasswordDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Invalid request.");
+            var email = forgotPasswordDto.Email;
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Ok();
+ 
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var param = new Dictionary<string, string>
+            {
+                {"token", token },
+                {"email", forgotPasswordDto.Email }
+            };
+            var callback = QueryHelpers.AddQueryString(forgotPasswordDto.ClientURI, param);
+            _emailService.SendEmail(email, callback);
+            return Ok();
+        }
+        
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody]ResetPasswordDto resetPasswordDto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            if (user == null)
+                return BadRequest("Invalid Request");
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.Password);
+            if (!resetPassResult.Succeeded)
+            {
+                var errors = resetPassResult.Errors.Select(e => e.Description);
+                return BadRequest(new { Errors = errors });
+            }
+            return Ok();
         }
                 
         [HttpPut]

@@ -50,7 +50,7 @@ export class UserEditComponent implements OnInit {
     this.editForm = this.fb.group({
       fullName: [this.user.fullName],
       about: [this.user.about],
-      company: [this.user.company],
+      email: [this.user.email],
       password: ['', [Validators.minLength(6), Validators.maxLength(25)]],
       confirmPassword: ['', [this.matchValues('password')]],
     });
@@ -79,7 +79,7 @@ export class UserEditComponent implements OnInit {
 
   updateUser() {
     this.editUser.fullName = this.editForm.controls.fullName.value;
-    this.editUser.company = this.editForm.controls.company.value;
+    this.editUser.email = this.editForm.controls.company.value;
     this.editUser.about = this.editForm.controls.about.value;
     this.editUser.password = this.editForm.controls.password.value;
     this.accountService.updateUser(this.editUser).subscribe((user) => {
