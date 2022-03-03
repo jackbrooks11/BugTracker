@@ -1,8 +1,22 @@
-a {text-decoration: none;}
-a:hover {text-decoration: underline;}
-.ordering {background-color: Transparent;
-background-repeat:no-repeat;
-border: none;
-cursor:pointer;
-overflow: hidden;
-outline:none;}
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+.ordering {
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+}
+.user-action-btn {
+  display: inline-block;
+  margin-left: 5px;
+}
+.user-action-wrapper {
+  display: flex;
+  float: right;
+}

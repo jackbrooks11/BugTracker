@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { User } from 'src/app/_models/user';
+import { PaginatedUserDto } from 'src/app/_models/paginatedUserDto';
 
 @Component({
   selector: 'app-roles-modal',
@@ -9,7 +9,7 @@ import { User } from 'src/app/_models/user';
 })
 export class RolesModalComponent implements OnInit {
   @Input() updateSelectedRoles = new EventEmitter();
-  user: Partial<User>;
+  user: PaginatedUserDto;
   roles: any[];
 
   constructor(public bsModalRef: BsModalRef) { }

@@ -53,6 +53,9 @@ import { LoginComponent } from './login/login.component';
 import { ChartCollectionComponent } from './chart-collection/chart-collection.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
+import { ResetPasswordModalComponent } from './modals/reset-password-modal/reset-password-modal.component';
+import { ResetEmailModalComponent } from './modals/reset-email-modal/reset-email-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -97,7 +100,10 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     LoginComponent,
     ChartCollectionComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    ConfirmEmailComponent,
+    ResetPasswordModalComponent,
+    ResetEmailModalComponent
   ],
   imports: [
     BrowserModule,

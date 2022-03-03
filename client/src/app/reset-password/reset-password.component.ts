@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ResetPasswordDto } from '../_models/resetPasswordDto';
@@ -16,13 +22,11 @@ export class ResetPasswordComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private toastr: ToastrService,
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
-  ) {
-    console.log('HEY');
-  }
+    private route: ActivatedRoute,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -63,12 +67,16 @@ export class ResetPasswordComponent implements OnInit {
       email: this.route.snapshot.queryParams['email'],
       token: this.route.snapshot.queryParams['token'],
     };
+    if (resetPasswordDto.email == null || resetPasswordDto.token == null) {
+      this.toastr.error("Email or token missing");
+    }
     this.accountService.resetPassword(resetPasswordDto).subscribe(
       (response) => {
         this.router.navigateByUrl('/');
+        this.toastr.success("Password succesfully reset");
       },
       (error) => {
-        this.validationErrors = error;
+        console.log(error);
       }
     );
   }

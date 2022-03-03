@@ -13,5 +13,7 @@ namespace API.DTOs
         [Required]
         [StringLength(8, MinimumLength = 4)]
         public string Password { get; set; }
+        [Required]
+        public string ClientURI { get; set; } = "https://localhost:4200/confirmEmail";
     }
 }

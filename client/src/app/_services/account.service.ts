@@ -8,6 +8,8 @@ import { User } from '../_models/user';
 import { LoggedInUser } from '../_models/loggedInUser';
 import { ForgotPasswordDto } from '../_models/forgotPasswordDto';
 import { ResetPasswordDto } from '../_models/resetPasswordDto';
+import { RegisterDto } from '../_models/registerDto';
+import { ConfirmEmailDto } from '../_models/confirmEmailDto';
 
 @Injectable({
   providedIn: 'root'
@@ -30,14 +32,8 @@ export class AccountService {
     )
   }
 
-  register(model: any) {
-    return this.http.post(this.baseUrl + 'account/register', model).pipe(
-      map((loggedInUser: LoggedInUser) => {
-        if (loggedInUser) {
-          this.setCurrentUser(loggedInUser);
-        }
-      })
-    )
+  register(model: RegisterDto) {
+    return this.http.post(this.baseUrl + 'account/register', model);
   }
 
   forgotPassword(model: ForgotPasswordDto) {
@@ -46,6 +42,11 @@ export class AccountService {
 
   resetPassword(model: ResetPasswordDto) {
     return this.http.post(this.baseUrl + 'account/resetPassword', model);
+  }
+
+  confirmEmail(model: ConfirmEmailDto) {
+    console.log(model);
+    return this.http.post(this.baseUrl + 'account/confirmEmail', model);
   }
 
   setCurrentUser(loggedInUser: LoggedInUser) {

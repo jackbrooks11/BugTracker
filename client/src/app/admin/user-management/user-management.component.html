@@ -23,12 +23,11 @@
   />
 </div>
 
-
 <div class="table-responsive margin-bottom-2x">
   <table class="table margin-bottom-none">
     <thead>
       <tr>
-        <th style="width: 40%">
+        <th>
           Username
           <button
             type="button"
@@ -43,23 +42,57 @@
             <i class="fas fa-sort-down" *ngIf="userParams.icons[0] == 2"></i>
           </button>
         </th>
-        <th style="width: 40%">Active Roles
+        <th>
+          Email Address
+          <button
+            type="button"
+            class="ordering"
+            name="orderBy"
+            (click)="loadUsers(true, 1)"
+            btnRadio="email"
+            [(ngModel)]="userParams.orderBy"
+          >
+            <i class="fas fa-sort" *ngIf="userParams.icons[1] == 0"></i>
+            <i class="fas fa-sort-up" *ngIf="userParams.icons[1] == 1"></i>
+            <i class="fas fa-sort-down" *ngIf="userParams.icons[1] == 2"></i>
+          </button>
         </th>
-        <th style="width: 20%"></th>
+        <th>Active Roles</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let user of users">
         <td>{{ user.username | titlecase }}</td>
-        <td>{{ user.roles}}</td>
+        <td>{{ user.email | titlecase }}</td>
+        <td>{{ user.roles }}</td>
         <td>
-          <button
-            (click)="openRolesModal(user)"
-            class="btn btn-info"
-            style="float: right"
-          >
-            Edit Roles
-          </button>
+          <div class="user-action-wrapper">
+            <button
+              (click)="openRolesModal(user)"
+              class="btn btn-info user-action-btn"
+            >
+              Edit Roles
+            </button>
+            <button
+              (click)="openResetPasswordModal(user)"
+              class="btn btn-info user-action-btn"
+            >
+              Reset Password
+            </button>
+            <button
+              (click)="openResetEmailModal(user)"
+              class="btn btn-info user-action-btn"
+            >
+              Reset Email
+            </button>
+            <button
+              (click)="(user)"
+              class="btn btn-info user-action-btn"
+            >
+              Reset Email
+            </button>
+          </div>
         </td>
       </tr>
     </tbody>

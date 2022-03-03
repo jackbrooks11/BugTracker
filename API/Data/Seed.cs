@@ -31,25 +31,26 @@ namespace API.Data
                 await roleManager.CreateAsync(role);
             }
 
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 user.UserName = user.UserName.ToLower();
                 await userManager.CreateAsync(user, "Pa$$w0rd");
-                await userManager.AddToRoleAsync(user, "Developer");
-            } 
-            
-            var admin = new AppUser 
-            {
-                UserName = "admin"
-            };
-            var result = await userManager.CreateAsync(admin, "Pa$$w0rd");
-            await userManager.AddToRolesAsync(admin, new[] {"Admin", "Project Manager"});
-            
+                if (user.UserName == "admin")
+                {
+                    await userManager.AddToRoleAsync(user, "Admin");
+                }
+                else
+                {
+                    await userManager.AddToRoleAsync(user, "Developer");
+                }
+                user.EmailConfirmed = true;
+            }
+
         }
-       /* public static async Task SeedProjects(DataContext context)
-        {
-            if (await context.Projects.AnyAsync()) return;
-        }
-        */
+        /* public static async Task SeedProjects(DataContext context)
+         {
+             if (await context.Projects.AnyAsync()) return;
+         }
+         */
     }
 }

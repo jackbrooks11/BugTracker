@@ -79,7 +79,6 @@ export class UserEditComponent implements OnInit {
 
   updateUser() {
     this.editUser.fullName = this.editForm.controls.fullName.value;
-    this.editUser.email = this.editForm.controls.company.value;
     this.editUser.about = this.editForm.controls.about.value;
     this.editUser.password = this.editForm.controls.password.value;
     this.accountService.updateUser(this.editUser).subscribe((user) => {

@@ -4,6 +4,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace API.Services
     public class AccountService : IAccountService
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
         private readonly UserManager<AppUser> _userManager;
-        public AccountService(IConfiguration config, DataContext context,  UserManager<AppUser> userManager)
+        public AccountService(IConfiguration config, DataContext context, IMapper mapper, UserManager<AppUser> userManager)
         {
             _context = context;
+            _mapper = mapper;
             _userManager = userManager;
         }
         [Authorize]
@@ -28,9 +31,11 @@ namespace API.Services
             return result;
         }
 
-        public async Task<IEnumerable<IdentityError>> CreateUser(AppUser user, string password)
+        public async Task<IEnumerable<IdentityError>> CreateUser(RegisterDto registerDto)
         {
-            var result = await _userManager.CreateAsync(user, password);
+            var user = _mapper.Map<AppUser>(registerDto);
+            user.UserName = registerDto.Username.ToLower();
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (!result.Succeeded) return result.Errors;
 
@@ -41,9 +46,17 @@ namespace API.Services
             return null;
         }
 
-        public async Task<bool> UserExists(string username)
+        public async Task<string> UserExists(RegisterDto registerDto)
         {
-            return await _userManager.Users.AnyAsync(x => x.UserName == username.ToLower());
+            if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username.ToLower()))
+            {
+                return "Username already in use.";
+            }
+            if (await _userManager.FindByEmailAsync(registerDto.Email) != null)
+            {
+                return "Email address already in use.";
+            }
+            return "";
         }
-    }
-}    
+    } 
+}   

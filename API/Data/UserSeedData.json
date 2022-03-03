@@ -1,17 +1,17 @@
 [
-    {
-      "UserName": "jack",
-      "Email": "jackbrooks11@gmail.com",
-      "About": "I am Jack."
-    },
-    {
-      "UserName": "bob",
-      "Email": "rgb20fdisFHxj@gmail.com",
-      "About": "I am Bob."
-    },
-    {
-      "UserName": "justin",
-      "Email": "jmSJSJ2334dk@gmail.com",
-      "About": "I am Justin."
-    }
+  {
+    "UserName": "admin",
+    "Email": "admin@gmail.com",
+    "About": "I am the admin."
+  },
+  {
+    "UserName": "jack",
+    "Email": "johnnyboy1399@gmail.com",
+    "About": "I am Jack."
+  },
+  {
+    "UserName": "bob",
+    "Email": "rgb20fdisFHxj@gmail.com",
+    "About": "I am Bob."
+  }
 ]

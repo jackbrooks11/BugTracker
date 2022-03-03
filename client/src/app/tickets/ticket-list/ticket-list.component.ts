@@ -58,7 +58,6 @@ export class TicketListComponent implements OnInit {
     this.updateTable(toggle, index);
     this.ticketService.getTicketsPaginated(this.ticketParams).subscribe((response) => {
       this.tickets = response.result;
-      console.log(this.tickets);
       this.pagination = response.pagination;
       if (this.checkAll) {
         this.ticketIdsToDelete = [];

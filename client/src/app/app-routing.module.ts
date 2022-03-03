@@ -20,10 +20,12 @@ import { AuthGuard } from './_guards/auth.guard';
 import { HasTicketGuard } from './_guards/has-ticket.guard';
 import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'resetPassword', component: ResetPasswordComponent },
+  { path: 'confirmEmail', component: ConfirmEmailComponent },
   {
     path: '',
     runGuardsAndResolvers: 'always',

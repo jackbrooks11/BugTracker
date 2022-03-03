@@ -4,8 +4,12 @@ import { RolesModalComponent } from 'src/app/modals/roles-modal/roles-modal.comp
 import { Pagination } from 'src/app/_models/pagination';
 import { UserParams } from 'src/app/_models/userParams';
 import { AdminService } from 'src/app/_services/admin.service';
-import { User } from 'src/app/_models/user';
 import { PaginatedUserDto } from 'src/app/_models/paginatedUserDto';
+import { ResetPasswordModalComponent } from 'src/app/modals/reset-password-modal/reset-password-modal.component';
+import { ResetPasswordDto } from 'src/app/_models/resetPasswordDto';
+import { ResetEmailDto } from 'src/app/_models/resetEmailDto';
+import { ToastrService } from 'ngx-toastr';
+import { ResetEmailModalComponent } from 'src/app/modals/reset-email-modal/reset-email-modal.component';
 
 @Component({
   selector: 'app-user-management',
@@ -20,7 +24,8 @@ export class UserManagementComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private toastr: ToastrService
   ) {
     this.userParams = new UserParams();
   }
@@ -55,10 +60,12 @@ export class UserManagementComponent implements OnInit {
   }
 
   getUsersWithRoles() {
-    this.adminService.getUsersWithRoles(this.userParams).subscribe((response) => {
-      this.users = response.result;
-      this.pagination = response.pagination;
-    });
+    this.adminService
+      .getUsersWithRoles(this.userParams)
+      .subscribe((response) => {
+        this.users = response.result;
+        this.pagination = response.pagination;
+      });
   }
 
   openRolesModal(user: PaginatedUserDto) {
@@ -84,6 +91,78 @@ export class UserManagementComponent implements OnInit {
           });
       }
     });
+  }
+
+  openResetPasswordModal(user: PaginatedUserDto) {
+    const config = {
+      class: 'modal-dialog-centered',
+      initialState: {
+        user,
+      },
+    };
+    this.bsModalRef = this.modalService.show(
+      ResetPasswordModalComponent,
+      config
+    );
+    this.bsModalRef.content.submitted.subscribe((value) => {
+      const submitted = value;
+      if (submitted) {
+        this.resetPassword();
+      }
+    });
+  }
+
+  openResetEmailModal(user: PaginatedUserDto) {
+    const config = {
+      class: 'modal-dialog-centered',
+      initialState: {
+        user,
+      },
+    };
+    this.bsModalRef = this.modalService.show(ResetEmailModalComponent, config);
+    this.bsModalRef.content.submitted.subscribe((value) => {
+      const submitted = value;
+      if (submitted) {
+        this.resetEmail();
+      }
+    });
+  }
+
+  resetPassword() {
+    const resetPasswordDto: ResetPasswordDto = {
+      password: this.bsModalRef.content?.resetPasswordForm.value.password,
+      confirmPassword:
+        this.bsModalRef.content?.resetPasswordForm.value.confirmPassword,
+      email: this.bsModalRef.content?.user.email,
+      token: 'mock token',
+    };
+    this.adminService.resetPassword(resetPasswordDto).subscribe(
+      (response) => {
+        this.toastr.success('Password succesfully reset');
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  resetEmail() {
+    const resetEmailDto: ResetEmailDto = {
+      email: this.bsModalRef.content?.resetEmailForm.value.email,
+      username: this.bsModalRef.content?.user.username,
+    };
+    this.adminService.resetEmail(resetEmailDto).subscribe(
+      (response) => {
+        this.toastr.success('Email succesfully reset');
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  sendConfirmationEmail(user: PaginatedUserDto) {
+    
   }
 
   private getRolesArray(user) {

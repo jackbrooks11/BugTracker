@@ -30,16 +30,25 @@ namespace API.Services
             if (userParams.SearchMatch != null)
             {
                 users = users.Where(u => u.UserRoles.Any(r => r.Role.Name.ToLower().Contains(userParams.SearchMatch))
-                || u.UserName.ToLower().Contains(userParams.SearchMatch));
+                || u.UserName.ToLower().Contains(userParams.SearchMatch)
+                || u.Email.ToLower().Contains(userParams.SearchMatch));
             }
             var userLength = users.Count();
             if (!userParams.Ascending)
             {
-                users = users.OrderByDescending(u => u.UserName);
+                users = userParams.OrderBy switch
+                {
+                    "email" => users.OrderByDescending(u => u.Email),
+                    _ => users.OrderByDescending(u => u.UserName)
+                };
             }
             else
             {
-                users = users.OrderBy(u => u.UserName);
+                users = userParams.OrderBy switch
+                {
+                    "email" => users.OrderBy(u => u.Email),
+                    _ => users.OrderBy(u => u.UserName)
+                };
             }
             users = users
                 .Skip((userParams.PageNumber - 1) * userParams.PageSize)
@@ -49,12 +58,13 @@ namespace API.Services
             {
                 u.Id,
                 Username = u.UserName,
+                Email = u.Email,
                 Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
             }).ToListAsync();
             var usersReformatted = new List<PaginatedUserDto>();
             foreach (var user in userList)
             {
-                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles));
+                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles, user.Email));
             }
             return new PagedList<PaginatedUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
         }

@@ -89,10 +89,13 @@
                         </div>
                         <div class="col">
                           <div class="form-group">
-                            <label class="font-weight-bold">Email</label>
-                            <app-text-input
+                            <label class="font-weight-bold">Email Address</label>
+                            <input
                               [formControl]="editForm.controls['email']"
-                            ></app-text-input>
+                              class="form-control"
+                              type="text"
+                              disabled
+                            />
                           </div>
                         </div>
                       </div>

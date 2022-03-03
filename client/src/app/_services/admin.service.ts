@@ -7,6 +7,9 @@ import { User } from '../_models/user';
 import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_models/userParams';
 import { PaginatedUserDto } from '../_models/paginatedUserDto';
+import { ResetPasswordDto } from '../_models/resetPasswordDto';
+import { ConfirmEmailDto } from '../_models/confirmEmailDto';
+import { ResetEmailDto } from '../_models/resetEmailDto';
 
 @Injectable({
   providedIn: 'root',
@@ -56,6 +59,14 @@ export class AdminService {
       this.baseUrl + 'admin/edit-roles/' + username + '?roles=' + roles,
       {}
     );
+  }
+  
+  resetPassword(model: ResetPasswordDto) {
+    return this.http.post(this.baseUrl + 'admin/resetPassword', model);
+  }
+
+  resetEmail(model: ResetEmailDto) {
+    return this.http.post(this.baseUrl + 'admin/resetEmail', model);
   }
 
   private getPaginatedResult<T>(url, params) {

@@ -1,0 +1,63 @@
+<div class="row flex-lg-nowrap">
+  <div class="col">
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <div>
+              <div class="tab-content pt-3">
+                <div class="tab-pane active">
+                  <form
+                    [formGroup]="resetEmailForm"
+                    (ngSubmit)="resetEmailForm.valid && resetEmail()"
+                    class="form"
+                    novalidate=""
+                    autocomplete="off"
+                  >
+                    <div class="row">
+                      <div class="col">
+                        <div class="form-group" *ngIf="user">
+                          <h4>
+                            Reset email for {{ user.username | titlecase }}
+                          </h4>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <div class="form-group">
+                              <app-text-input
+                                [formControl]="resetEmailForm.controls['email']"
+                                [label]="'Email'"
+                              ></app-text-input>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col d-flex justify-content-end">
+                            <button
+                              type="button"
+                              class="btn btn-default"
+                              (click)="bsModalRef.hide()"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              [disabled]="!resetEmailForm.valid"
+                              type="submit"
+                              class="btn btn-default"
+                            >
+                              Submit
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

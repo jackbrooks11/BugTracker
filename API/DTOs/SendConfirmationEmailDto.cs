@@ -1,0 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace API.DTOs
+{
+    public class SendConfirmationEmailDto
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+        [Required]
+        public string ClientURI { get; set; } = "https://localhost:4200/confirmEmail";
+    }
+}

@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using API.CustomTokenProviders;
 using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,11 +16,19 @@ namespace API.Extensions
         public static IServiceCollection AddIdentityServices(this IServiceCollection services,
         IConfiguration config)
         {
-            services.AddIdentityCore<AppUser>(opt => {
+            services.AddIdentityCore<AppUser>(opt =>
+            {
                 opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequiredLength = 6;
+                opt.User.RequireUniqueEmail = true;
+                opt.SignIn.RequireConfirmedEmail = true;
+                opt.Tokens.EmailConfirmationTokenProvider = "emailconfirmation";
+                opt.Tokens.PasswordResetTokenProvider = "passwordreset";
             })
                 .AddRoles<AppRole>()
                 .AddDefaultTokenProviders()
+                .AddTokenProvider<EmailConfirmationTokenProvider<AppUser>>("emailconfirmation")
+                .AddTokenProvider<PasswordResetTokenProvider<AppUser>>("passwordreset")
                 .AddRoleManager<RoleManager<AppRole>>()
                 .AddSignInManager<SignInManager<AppUser>>()
                 .AddRoleValidator<RoleValidator<AppRole>>()
@@ -37,12 +46,15 @@ namespace API.Extensions
 
             });
 
-            services.AddAuthorization(opt => {
+            services.AddAuthorization(opt =>
+            {
                 opt.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
             });
-            services.Configure<DataProtectionTokenProviderOptions>(opt =>
-            opt.TokenLifespan = TimeSpan.FromHours(2));
-            return services; 
+            services.Configure<EmailConfirmationTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromDays(2));
+            services.Configure<PasswordResetTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromHours(2));
+            return services;
         }
     }
 }

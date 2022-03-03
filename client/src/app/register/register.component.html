@@ -7,7 +7,7 @@
   ></app-text-input>
   <app-text-input
     [formControl]="registerForm.controls['email']"
-    [label]="'Email'"
+    [label]="'Email Address'"
   ></app-text-input>
   <app-text-input
     [formControl]="registerForm.controls['password']"
@@ -33,3 +33,4 @@
     </button>
   </div>
 </form>
+<h4 *ngIf="confirmationEmailSent">A confirmation link has been sent to the email provided.</h4>

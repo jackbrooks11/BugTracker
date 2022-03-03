@@ -1,5 +1,11 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { ForgotPasswordDto } from '../_models/forgotPasswordDto';
 import { AccountService } from '../_services/account.service';
@@ -7,7 +13,7 @@ import { AccountService } from '../_services/account.service';
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.css']
+  styleUrls: ['./forgot-password.component.css'],
 })
 export class ForgotPasswordComponent implements OnInit {
   @Output() cancelForgotPassword = new EventEmitter();
@@ -15,7 +21,10 @@ export class ForgotPasswordComponent implements OnInit {
   validationErrors: string[] = [];
   passwordResetSent: boolean = false;
 
-  constructor(private accountService: AccountService, private fb: FormBuilder, private router: Router) { }
+  constructor(
+    private accountService: AccountService,
+    private fb: FormBuilder,
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -23,24 +32,26 @@ export class ForgotPasswordComponent implements OnInit {
 
   initializeForm() {
     this.forgotPasswordForm = this.fb.group({
-      email: ['', Validators.compose([Validators.email, Validators.required])]
-    })
+      email: ['', Validators.compose([Validators.email, Validators.required])],
+    });
   }
 
   sendPasswordReset() {
     const forgotPasswordDto: ForgotPasswordDto = {
       email: this.forgotPasswordForm.value.email,
-      clientURI: 'https://localhost:4200/resetPassword'
-    }
-    this.accountService.forgotPassword(forgotPasswordDto).subscribe(response => {
-      this.passwordResetSent = true;
-    }, error => {
-      this.validationErrors = error;
-    });
+      clientURI: 'https://localhost:4200/resetPassword',
+    };
+    this.accountService.forgotPassword(forgotPasswordDto).subscribe(
+      (response) => {
+        this.passwordResetSent = true;
+      },
+      (error) => {
+        this.validationErrors = error;
+      }
+    );
   }
 
   cancel() {
     this.cancelForgotPassword.emit(false);
   }
-
 }

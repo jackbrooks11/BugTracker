@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using API.Entities;
 
 namespace API.Interfaces
 {
     public interface IEmailService
     {
-        bool SendEmail(string email, string link);
+        Task<Mail> CreateEmail(string clientURI, string email, AppUser user);
+        bool SendEmail(Mail mail);
     }
 }

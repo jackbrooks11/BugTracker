@@ -11,11 +11,7 @@ import { AccountService } from '../_services/account.service';
 export class LoginComponent implements OnInit {
   model: any = {};
 
-  constructor(
-    private accountService: AccountService,
-    private router: Router,
-    private toastr: ToastrService
-  ) {}
+  constructor(private accountService: AccountService, private router: Router) {}
 
   ngOnInit(): void {}
 

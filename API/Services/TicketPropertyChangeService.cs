@@ -5,7 +5,6 @@ using API.Data;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
