@@ -202,7 +202,14 @@ namespace API.Services
             {
                 change.OldValue = existingTicketDto.Assignee;
                 change.NewValue = newTicketDto.Assignee;
+                if (change.OldValue == "" || change.OldValue == null) {
+                    change.OldValue = "Unassigned";
+                }
+                 if (change.NewValue == "" || change.NewValue == null) {
+                    change.NewValue = "Unassigned";
+                }
             }
+            change.TicketId = existingTicketDto.Id;
             newTicketDto.Changes.Add(change);
             return newTicketDto;
         }

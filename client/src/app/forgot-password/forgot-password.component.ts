@@ -39,7 +39,7 @@ export class ForgotPasswordComponent implements OnInit {
   sendPasswordReset() {
     const forgotPasswordDto: ForgotPasswordDto = {
       email: this.forgotPasswordForm.value.email,
-      clientURI: 'https://localhost:4200/resetPassword',
+      clientURI: 'https://localhost:5001/resetPassword',
     };
     this.accountService.forgotPassword(forgotPasswordDto).subscribe(
       (response) => {

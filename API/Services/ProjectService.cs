@@ -22,17 +22,16 @@ namespace API.Services
         public async Task<Project> GetProject(string name)
         {
             return await _context.Projects
-               .SingleOrDefaultAsync(x => x.Title == name);
+                .SingleOrDefaultAsync(x => x.Title == name);
         }
         public async Task<Project> GetProjectById(int id)
         {
             return await _context.Projects
-               .SingleOrDefaultAsync(x => x.Id == id);
+                .SingleOrDefaultAsync(x => x.Id == id);
         }
         public IEnumerable<Project> GetProjects()
         {
-            return _context.Projects
-                .Include(p => p.Tickets);
+            return _context.Projects;
         }
         public async Task<PagedList<Project>> GetProjectsPaginated(ProjectParams projectParams)
         {
@@ -73,7 +72,6 @@ namespace API.Services
         private IQueryable<Project> GetProjectQuery(ProjectParams projectParams)
         {
             var query = _context.Projects
-                .Include(t => t.Tickets)
                 .AsNoTracking();
             if (projectParams.SearchMatch != null)
             {

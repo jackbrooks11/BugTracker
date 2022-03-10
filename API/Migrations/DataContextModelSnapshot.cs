@@ -179,7 +179,7 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AssigneeId")
+                    b.Property<int?>("AssigneeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Created")
@@ -403,9 +403,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Entities.AppUser", "Assignee")
                         .WithMany("Tickets")
-                        .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssigneeId");
 
                     b.HasOne("API.Entities.Project", "Project")
                         .WithMany("Tickets")

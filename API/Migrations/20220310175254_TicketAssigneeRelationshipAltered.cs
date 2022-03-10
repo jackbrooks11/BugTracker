@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class TicketCascadeDelete : Migration
+    public partial class TicketAssigneeRelationshipAltered : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -208,7 +208,7 @@ namespace API.Migrations
                     ProjectId = table.Column<int>(type: "INTEGER", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     Submitter = table.Column<string>(type: "TEXT", nullable: true),
-                    AssigneeId = table.Column<int>(type: "INTEGER", nullable: false),
+                    AssigneeId = table.Column<int>(type: "INTEGER", nullable: true),
                     Priority = table.Column<string>(type: "TEXT", nullable: true),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
                     State = table.Column<string>(type: "TEXT", nullable: true),
@@ -223,7 +223,7 @@ namespace API.Migrations
                         column: x => x.AssigneeId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Tickets_Projects_ProjectId",
                         column: x => x.ProjectId,

@@ -89,7 +89,6 @@ export class TicketHistoryComponent implements OnInit {
   }
 
   pageChanged(event: any) {
-    console.log("HI");
     this.ticketPropertyChangeParams.pageNumber = event.page;
     this.ticketPropertyChangeService.setTicketPropertyChangeParams(
       this.ticketPropertyChangeParams

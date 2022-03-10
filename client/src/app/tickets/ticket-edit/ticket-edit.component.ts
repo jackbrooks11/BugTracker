@@ -199,12 +199,10 @@ export class TicketEditComponent implements OnInit {
   updateTicket() {
     var ticket = this.finalizeTicket();
     this.ticketService.updateTicket(ticket).subscribe(() => {
-      this.toastr.success('Ticket updated successfully');
-      this.ticket = ticket;
-      this.initializeTicket();
-      this.editForm.reset(this.ticket);
-      this.ticketPropertyChangeService.changeCache.clear();
+      this.clearCaches();
+      this.loadTicket();
       this.onUpdate();
+      this.toastr.success('Ticket updated successfully');
     });
   }
 
@@ -214,6 +212,15 @@ export class TicketEditComponent implements OnInit {
 
   onUpdate() {
     this.hideUsers = true;
+  }
+
+  clearCaches() {
+    this.ticketPropertyChangeService.changeCache.clear();
+    this.projectService.projectCache.clear();
+    this.projectService.projectForUserCache.clear();
+    this.ticketService.ticketForProjectCache.clear();
+    this.ticketService.ticketCache.clear();
+    this.ticketService.ticketForUserCache.clear();
   }
 
   initializeTicket() {

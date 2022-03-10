@@ -139,18 +139,13 @@ export class TicketsService {
   }
 
   updateTicket(ticket: Ticket) {
-    return this.http.put(this.baseUrl + 'tickets', ticket).pipe(
-      map(() => {
-        this.ticketCache.clear();
-      })
-    );
+    return this.http.put(this.baseUrl + 'tickets', ticket);
   }
 
   createTicket(model: any) {
     return this.http.post(this.baseUrl + 'tickets/create', model).pipe(
       map(() => {
-        this.ticketCache.clear();
-        this.ticketForUserCache.clear();
+        this.clearCache();
       })
     );
   }
@@ -160,8 +155,7 @@ export class TicketsService {
       .post(this.baseUrl + 'tickets/delete', ticketIdsToDelete)
       .pipe(
         map(() => {
-          this.ticketCache.clear();
-          this.ticketForUserCache.clear();
+          this.clearCache();
         })
       );
   }
@@ -211,5 +205,11 @@ export class TicketsService {
 
   setTicketForProjectParams(params: TicketParams) {
     this.ticketForProjectParams = params;
+  }
+
+  clearCache() {
+    this.ticketCache.clear();
+    this.ticketForProjectCache.clear();
+    this.ticketForUserCache.clear();
   }
 }

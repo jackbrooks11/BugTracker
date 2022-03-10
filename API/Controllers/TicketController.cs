@@ -31,7 +31,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-         public IEnumerable<TicketDto> GetTickets()
+        public IEnumerable<TicketDto> GetTickets()
         {
             return _ticketService.GetTicketsAsDtos();
         }
@@ -91,7 +91,6 @@ namespace API.Controllers
             existingTicketDto = _ticketService.AddChangesToTicket(existingTicketDto, newTicketDto, User.FindFirst(ClaimTypes.Name)?.Value);
             var existingTicket = await _ticketService.GetTicket(existingTicketDto.Id);
             existingTicket = await GenerateTicket(existingTicketDto, existingTicket);
-            _ticketService.MarkTicketAsModified(existingTicket);
             if (await _ticketService.SaveAllAsync()) return NoContent();
             return BadRequest("Failed to update ticket");
         }
@@ -106,7 +105,8 @@ namespace API.Controllers
             return BadRequest("Failed to create ticket");
         }
 
-        private async Task<Ticket> GenerateTicket(TicketDto ticketDto, Ticket ticket) {
+        private async Task<Ticket> GenerateTicket(TicketDto ticketDto, Ticket ticket)
+        {
             ticket = _ticketService.MapTicket(ticketDto, ticket);
             ticket.Assignee = await _userService.GetUserByUsernameAsync(ticketDto.Assignee);
             ticket.Project = await _projectService.GetProject(ticketDto.Project);

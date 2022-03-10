@@ -77,6 +77,7 @@ export class ProjectsService {
     if (project) {
       return of(project);
     }
+    console.log("3");
     return this.http.get<Project>(this.baseUrl + 'projects/' + id);
   }
 

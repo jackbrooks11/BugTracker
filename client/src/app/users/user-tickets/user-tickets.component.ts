@@ -51,6 +51,7 @@ export class UserTicketsComponent implements OnInit {
     this.ticketService
       .getTicketsForUser(this.ticketParams)
       .subscribe((response) => {
+        console.log("AY");
         this.tickets = response.result;
         this.pagination = response.pagination;
       });

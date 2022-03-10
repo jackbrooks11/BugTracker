@@ -13,8 +13,8 @@ namespace API.Helpers
             CreateMap<Ticket, Ticket>();
             CreateMap<TicketDto, TicketDto>();
             CreateMap<TicketDto, Ticket>()
-                .ForMember(x => x.Assignee, opt => opt.Ignore())
-                .ForMember(x => x.Project, opt => opt.Ignore());
+                .ForMember(t => t.Assignee, opt => opt.Ignore())
+                .ForMember(t => t.Project, opt => opt.Ignore());
             CreateMap<Ticket, TicketDto>()
                 .ForMember(dto => dto.Project, conf => conf.MapFrom(ol => ol.Project.Title))
                 .ForMember(dto => dto.Assignee, conf => conf.MapFrom(ol => ol.Assignee.UserName));

@@ -41,10 +41,10 @@ namespace API.Services
             {
                 query = propChangeParams.OrderBy switch
                 {
-                    "editor" => query.OrderByDescending(c => c.Editor),
-                    "property" => query.OrderByDescending(c => c.Property),
-                    "oldValue" => query.OrderByDescending(c => c.OldValue),
-                    "newValue" => query.OrderByDescending(c => c.NewValue),
+                    "editor" => query.OrderByDescending(c => c.Editor.ToLower()),
+                    "property" => query.OrderByDescending(c => c.Property.ToLower()),
+                    "oldValue" => query.OrderByDescending(c => c.OldValue.ToLower()),
+                    "newValue" => query.OrderByDescending(c => c.NewValue.ToLower()),
                     _ => query.OrderByDescending(c => c.Changed)
                 };
             }
@@ -52,10 +52,10 @@ namespace API.Services
             {
                 query = propChangeParams.OrderBy switch
                 {
-                    "editor" => query.OrderBy(c => c.Editor),
-                    "property" => query.OrderBy(c => c.Property),
-                    "oldValue" => query.OrderBy(c => c.OldValue),
-                    "newValue" => query.OrderBy(c => c.NewValue),
+                    "editor" => query.OrderBy(c => c.Editor.ToLower()),
+                    "property" => query.OrderBy(c => c.Property.ToLower()),
+                    "oldValue" => query.OrderBy(c => c.OldValue.ToLower()),
+                    "newValue" => query.OrderBy(c => c.NewValue.ToLower()),
                     _ => query.OrderBy(c => c.Changed)
                 };
             }

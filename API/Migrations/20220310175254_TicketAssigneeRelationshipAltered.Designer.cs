@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220309180132_TicketCascadeDelete")]
-    partial class TicketCascadeDelete
+    [Migration("20220310175254_TicketAssigneeRelationshipAltered")]
+    partial class TicketAssigneeRelationshipAltered
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -181,7 +181,7 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AssigneeId")
+                    b.Property<int?>("AssigneeId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Created")
@@ -405,9 +405,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Entities.AppUser", "Assignee")
                         .WithMany("Tickets")
-                        .HasForeignKey("AssigneeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AssigneeId");
 
                     b.HasOne("API.Entities.Project", "Project")
                         .WithMany("Tickets")

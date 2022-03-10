@@ -28,6 +28,7 @@ export class TicketListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log("HI");
     this.loadTickets();
   }
 
@@ -58,7 +59,6 @@ export class TicketListComponent implements OnInit {
     this.updateTable(toggle, index);
     this.ticketService.getTicketsPaginated(this.ticketParams).subscribe((response) => {
       this.tickets = response.result;
-      console.log(response);
       this.pagination = response.pagination;
       if (this.checkAll) {
         this.ticketIdsToDelete = [];
