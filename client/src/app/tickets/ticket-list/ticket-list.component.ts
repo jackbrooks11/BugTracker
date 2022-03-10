@@ -18,7 +18,7 @@ export class TicketListComponent implements OnInit {
   bsModalRef: BsModalRef;
   checkAll: boolean = false;
   ticketIdsToDelete: number[] = [];
-  headers: string[] = ["Title", "Project Name", "Assignee", "Priority", "State", "Type", "Created"];
+  headers: string[] = ["Title", "Project", "Assignee", "Priority", "State", "Type", "Created"];
 
   constructor(
     private ticketService: TicketsService,
@@ -58,6 +58,7 @@ export class TicketListComponent implements OnInit {
     this.updateTable(toggle, index);
     this.ticketService.getTicketsPaginated(this.ticketParams).subscribe((response) => {
       this.tickets = response.result;
+      console.log(response);
       this.pagination = response.pagination;
       if (this.checkAll) {
         this.ticketIdsToDelete = [];
@@ -112,7 +113,6 @@ export class TicketListComponent implements OnInit {
       .deleteTickets(this.ticketIdsToDelete)
       .subscribe(response => {
         this.ticketIdsToDelete = [];
-        this.ticketService.ticketForUserCache.clear();
         this.loadTickets();
       });
     }
@@ -136,6 +136,7 @@ export class TicketListComponent implements OnInit {
   }
 
   finalizeChanges() {
+    this.bsModalRef.content.createTicketForm.value.title = this.bsModalRef.content.createTicketForm.value.title.toLowerCase();
     this.bsModalRef.content.createTicketForm.value.project = this.bsModalRef.content.createTicketForm.value.project.toLowerCase();
     this.bsModalRef.content.createTicketForm.value.assignee = this.bsModalRef.content.createTicketForm.value.assignee.toLowerCase();
   }

@@ -18,7 +18,7 @@ namespace API.Services
     {
         private readonly DataContext _context;
         private readonly IMapper _mapper;
-        public TicketService(IConfiguration config, IMapper mapper, DataContext context)
+        public TicketService(IMapper mapper, DataContext context)
         {
             _context = context;
             _mapper = mapper;
@@ -42,6 +42,10 @@ namespace API.Services
                 .FirstOrDefaultAsync(y => y.Id == id);
             var ticketDto = new TicketDto();
             _mapper.Map(ticket, ticketDto);
+            if (ticketDto.Assignee == null)
+            {
+                ticketDto.Assignee = "";
+            }
             return ticketDto;
         }
         public IEnumerable<TicketDto> GetTicketsAsDtos()
@@ -52,26 +56,27 @@ namespace API.Services
                 .Include(x => x.Comments)
                 .Include(c => c.Changes);
             IList<TicketDto> ticketDtos = new List<TicketDto>();
-            foreach (var ticket in tickets) {
+            foreach (var ticket in tickets)
+            {
                 var ticketDto = new TicketDto();
                 _mapper.Map(ticket, ticketDto);
-                ticketDtos.Add(ticketDto);   
+                ticketDtos.Add(ticketDto);
             }
             return ticketDtos;
         }
         public async Task<PagedList<TicketDto>> GetTicketsPaginated(TicketParams ticketParams)
         {
-            var query = GetTicketQuery(ticketParams);
-            var testing = query
-                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);    
-            return await PagedList<TicketDto>.CreateAsync(testing, ticketParams.PageNumber, ticketParams.PageSize);
+            IQueryable<Ticket> ticketQuery = GetTicketQuery(ticketParams);
+            IQueryable<TicketDto> ticketDtoQuery = ticketQuery
+                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);
+            return await PagedList<TicketDto>.CreateAsync(ticketDtoQuery, ticketParams.PageNumber, ticketParams.PageSize);
         }
         public async Task<PagedList<TicketDto>> GetTicketsForUser(TicketParams ticketParams, string username)
         {
             var query = GetTicketQuery(ticketParams);
             query = query.Where(t => t.Assignee.UserName.ToLower() == username.ToLower());
             var testing = query
-                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);   
+                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);
             return await PagedList<TicketDto>.CreateAsync(testing, ticketParams.PageNumber, ticketParams.PageSize);
         }
         public async Task<PagedList<TicketDto>> GetTicketsForProject(TicketParams ticketParams, string projectTitle)
@@ -79,10 +84,11 @@ namespace API.Services
             var query = GetTicketQuery(ticketParams);
             query = query.Where(t => t.Project.Title.ToLower() == projectTitle.ToLower());
             var testing = query
-                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);   
+                .ProjectTo<TicketDto>(_mapper.ConfigurationProvider);
             return await PagedList<TicketDto>.CreateAsync(testing, ticketParams.PageNumber, ticketParams.PageSize);
         }
-        public void DeleteTickets(int[] ticketIdsToDelete) {
+        public void DeleteTickets(int[] ticketIdsToDelete)
+        {
             var ticketsToDelete = GetTicketsToDelete(ticketIdsToDelete);
             foreach (var ticket in ticketsToDelete)
             {
@@ -122,45 +128,45 @@ namespace API.Services
             }
             return "";
         }
-        public TicketDto AddChangesToTicket(TicketDto existingTicketDto, TicketDto newTicketDto)
+        public TicketDto AddChangesToTicket(TicketDto existingTicketDto, TicketDto newTicketDto, string editor)
         {
-            if (existingTicketDto.Title != newTicketDto.Title)
+            if (existingTicketDto.Title.ToLower() != newTicketDto.Title.ToLower())
             {
-                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Title");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Title", editor);
             }
             if (existingTicketDto.Description != newTicketDto.Description)
             {
-                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Description");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Description", editor);
             }
             if (existingTicketDto.Type != newTicketDto.Type)
             {
-                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Type");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Type", editor);
             }
             if (existingTicketDto.Project != newTicketDto.Project)
             {
-                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Project");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Project", editor);
             }
             if (existingTicketDto.Priority != newTicketDto.Priority)
             {
-                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Priority");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Priority", editor);
             }
             if (existingTicketDto.State != newTicketDto.State)
             {
-                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "State");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "State", editor);
             }
             if (existingTicketDto.Assignee != newTicketDto.Assignee)
             {
-                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Assignee");
+                newTicketDto = AddChangeToTicket(existingTicketDto, newTicketDto, "Assignee", editor);
             }
             _mapper.Map(newTicketDto, existingTicketDto);
             existingTicketDto.LastEdited = DateTime.Now;
             return existingTicketDto;
         }
-        public TicketDto AddChangeToTicket(TicketDto existingTicketDto, TicketDto newTicketDto, string property)
+        public TicketDto AddChangeToTicket(TicketDto existingTicketDto, TicketDto newTicketDto, string property, string editor)
         {
             TicketPropertyChange change = new TicketPropertyChange();
             change.Property = property;
-            change.Editor = newTicketDto.Submitter;
+            change.Editor = editor;
             change.Changed = DateTime.Now;
             if (property == "Title")
             {
@@ -204,8 +210,11 @@ namespace API.Services
         {
             return _context.Tickets.Where(t => ticketIdsToDelete.Contains(t.Id)).AsNoTracking();
         }
-       private IQueryable<Ticket> GetTicketQuery(TicketParams ticketParams) {
+        private IQueryable<Ticket> GetTicketQuery(TicketParams ticketParams)
+        {
             var query = _context.Tickets
+                .Include(p => p.Project)
+                .Include(a => a.Assignee)
                 .Include(t => t.Comments)
                 .Include(x => x.Changes)
                 .AsNoTracking();
@@ -220,8 +229,8 @@ namespace API.Services
                 query = ticketParams.OrderBy switch
                 {
                     "title" => query.OrderByDescending(t => t.Title),
-                    "project" => query.OrderByDescending(t => t.Project),
-                    "assignee" => query.OrderByDescending(t => t.Assignee),
+                    "project" => query.OrderByDescending(t => t.Project.Title),
+                    "assignee" => query.OrderByDescending(t => t.Assignee.UserName),
                     "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
                     t.Priority == "Medium" ? 2 :
                     1)),
@@ -235,8 +244,8 @@ namespace API.Services
                 query = ticketParams.OrderBy switch
                 {
                     "title" => query.OrderBy(t => t.Title),
-                    "project" => query.OrderBy(t => t.Project),
-                    "assignee" => query.OrderBy(t => t.Assignee),
+                    "project" => query.OrderBy(t => t.Project.Title),
+                    "assignee" => query.OrderBy(t => t.Assignee.UserName),
                     "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
                     t.Priority == "Medium" ? 2 :
                     1)),
@@ -246,16 +255,19 @@ namespace API.Services
                 };
             }
             return query;
-        } 
-        public void MarkTicketAsModified(Ticket ticket) {
+        }
+        public void MarkTicketAsModified(Ticket ticket)
+        {
             _context.Entry(ticket).State = EntityState.Modified;
         }
-        public void AddTicket(Ticket ticket) {
+        public void AddTicket(Ticket ticket)
+        {
             _context.Tickets.Add(ticket);
             _context.Entry(ticket).State = EntityState.Added;
         }
 
-        public Ticket MapTicket(TicketDto ticketDto, Ticket ticket) {
+        public Ticket MapTicket(TicketDto ticketDto, Ticket ticket)
+        {
             _mapper.Map(ticketDto, ticket);
             return ticket;
         }

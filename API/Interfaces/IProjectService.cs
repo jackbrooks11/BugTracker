@@ -17,6 +17,8 @@ namespace API.Interfaces
         Task<string> ValidateProject(Project newProject);
 
         void MarkProjectAsModified(Project project);
+        Project MapProject(Project projectUpdated, Project project);
+
         Task<bool> SaveAllAsync();
     }
 }

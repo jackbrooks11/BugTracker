@@ -8,7 +8,7 @@ namespace API.Interfaces
 {
     public interface IProjectUserService
     {
-        Task<PagedList<PaginatedUserDto>> GetUsersForProjectPaginated(UserParams userParams, string projectTitle);
+        Task<PagedList<PaginatedProjectUserDto>> GetUsersForProjectPaginated(UserParams userParams, string projectTitle);
         IEnumerable<string> GetUsersNotInProject(string projectTitle);
         IEnumerable<Project> GetProjectsForUser(string username);
         IEnumerable<string> GetUsersForProject(string projectTitle);

@@ -21,7 +21,7 @@ namespace API.Services
             _context = context;
             _userManager = userManager;
         }
-        public async Task<PagedList<PaginatedUserDto>> GetUsersForProjectPaginated(UserParams userParams, string projectTitle)
+        public async Task<PagedList<PaginatedProjectUserDto>> GetUsersForProjectPaginated(UserParams userParams, string projectTitle)
         {
             var query = _userManager.Users
                 .Where(pu => pu.ProjectUsers.Any(u => u.Project.Title == projectTitle))
@@ -52,12 +52,12 @@ namespace API.Services
                 Username = u.UserName,
                 Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
             }).ToListAsync();
-            var usersReformatted = new List<PaginatedUserDto>();
+            var usersReformatted = new List<PaginatedProjectUserDto>();
             foreach (var user in userList)
             {
-                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles));
+                usersReformatted.Add(new PaginatedProjectUserDto(user.Id, user.Username, user.Roles));
             }
-            return new PagedList<PaginatedUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
+            return new PagedList<PaginatedProjectUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
         }
         public IEnumerable<string> GetUsersNotInProject(string projectTitle)
         {

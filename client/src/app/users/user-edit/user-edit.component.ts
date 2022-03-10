@@ -41,20 +41,24 @@ export class UserEditComponent implements OnInit {
     private toastr: ToastrService,
     private fb: FormBuilder
   ) {
-    this.accountService.currentUser$
-      .pipe(take(1))
-      .subscribe((loggedInUser) => {this.loggedInUser = loggedInUser; console.log(this.loggedInUser);});
+    this.accountService.currentUser$.pipe(take(1)).subscribe((loggedInUser) => {
+      this.loggedInUser = loggedInUser;
+    });
   }
 
   initializeForm() {
-    this.editForm = this.fb.group({
-      fullName: [this.user.fullName],
-      about: [this.user.about],
-      email: [this.user.email],
-      password: ['', [Validators.minLength(6), Validators.maxLength(25)]],
-      confirmPassword: ['', [this.matchValues('password')]],
-    });
-    this.editForm.controls.password.valueChanges.subscribe(() => {
+    this.editForm = this.fb.group(
+      {
+        fullName: [this.user.fullName],
+        about: [this.user.about],
+        email: [this.user.email],
+        password: ['', [Validators.minLength(6), Validators.maxLength(25)]],
+        newPassword: ['', [Validators.minLength(6), Validators.maxLength(25)]],
+        confirmPassword: ['', [this.matchValues('newPassword')]],
+      },
+      { validators: this.passwordsFilledOutValidator }
+    );
+    this.editForm.controls.newPassword.valueChanges.subscribe(() => {
       this.editForm.controls.confirmPassword.updateValueAndValidity();
     });
   }
@@ -69,7 +73,16 @@ export class UserEditComponent implements OnInit {
         : { isMatching: true };
     };
   }
-
+  passwordsFilledOutValidator = (control: AbstractControl) => {
+    console.log(control);
+    var password = control.get('password');
+    var newPassword = control.get('newPassword');
+    var confirmPassword = control.get('confirmPassword');
+    const values = [password.value, newPassword.value, confirmPassword.value];
+    return values.every((x) => x === '') || values.every((x) => x !== '')
+      ? null
+      : { passwordsFilledOut: true };
+  };
   loadUser() {
     this.userService.getUser(this.loggedInUser.username).subscribe((user) => {
       this.user = user;
@@ -81,6 +94,7 @@ export class UserEditComponent implements OnInit {
     this.editUser.fullName = this.editForm.controls.fullName.value;
     this.editUser.about = this.editForm.controls.about.value;
     this.editUser.password = this.editForm.controls.password.value;
+    this.editUser.newPassword = this.editForm.controls.newPassword.value;
     this.accountService.updateUser(this.editUser).subscribe((user) => {
       this.user = user;
       this.toastr.success('Profile updated successfully');

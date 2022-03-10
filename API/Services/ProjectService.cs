@@ -5,31 +5,34 @@ using API.Data;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace API.Services
 {
     public class ProjectService : IProjectService
     {
+        private readonly IMapper _mapper;
         private readonly DataContext _context;
-        public ProjectService(IConfiguration config, DataContext context)
+        public ProjectService(IMapper mapper, DataContext context)
         {
+            _mapper = mapper;
             _context = context;
         }
         public async Task<Project> GetProject(string name)
         {
-         return await _context.Projects
-            .SingleOrDefaultAsync(x => x.Title == name);
+            return await _context.Projects
+               .SingleOrDefaultAsync(x => x.Title == name);
         }
         public async Task<Project> GetProjectById(int id)
         {
-         return await _context.Projects
-            .SingleOrDefaultAsync(x => x.Id == id);
+            return await _context.Projects
+               .SingleOrDefaultAsync(x => x.Id == id);
         }
         public IEnumerable<Project> GetProjects()
         {
-            return _context.Projects.AsNoTracking();
+            return _context.Projects
+                .Include(p => p.Tickets);
         }
         public async Task<PagedList<Project>> GetProjectsPaginated(ProjectParams projectParams)
         {
@@ -42,36 +45,33 @@ namespace API.Services
             query = query.Where(pu => pu.ProjectUsers.Any(p => p.UserId == userId));
             return await PagedList<Project>.CreateAsync(query, projectParams.PageNumber, projectParams.PageSize);
         }
-        public void DeleteProjects(int[] projectIdsToDelete) {
+        public void DeleteProjects(int[] projectIdsToDelete)
+        {
             var projectsToDelete = GetProjectsToDelete(projectIdsToDelete);
             foreach (var project in projectsToDelete)
             {
-                if (project.Tickets.Count > 0)
-                {
-                    foreach (var ticket in project.Tickets)
-                    {
-                        _context.Remove(ticket);
-                    }
-                }
                 _context.Remove(project);
             }
         }
-        public void CreateProject(Project project) {
+        public void CreateProject(Project project)
+        {
             project.Title = project.Title.ToLower();
             _context.Projects.Add(project);
         }
-        public async Task<string> ValidateProject(Project newProject) {
-            if (await _context.Projects.AnyAsync(x => (x.Id != newProject.Id) && (x.Title == newProject.Title))) {
+        public async Task<string> ValidateProject(Project newProject)
+        {
+            if (await _context.Projects.AnyAsync(x => (x.Id != newProject.Id) && (x.Title == newProject.Title)))
+            {
                 return "Project title already taken.";
             }
             return "";
         }
         private IEnumerable<Project> GetProjectsToDelete(int[] projectIdsToDelete)
         {
-            return _context.Projects.Where(p => projectIdsToDelete.Contains(p.Id))
-                .Include(t => t.Tickets).AsNoTracking();
+            return GetProjects().Where(p => projectIdsToDelete.Contains(p.Id));
         }
-        private IQueryable<Project> GetProjectQuery(ProjectParams projectParams) {
+        private IQueryable<Project> GetProjectQuery(ProjectParams projectParams)
+        {
             var query = _context.Projects
                 .Include(t => t.Tickets)
                 .AsNoTracking();
@@ -98,12 +98,18 @@ namespace API.Services
                     _ => query.OrderBy(t => t.Created)
 
                 };
-            } 
+            }
             return query;
         }
 
-        public void MarkProjectAsModified(Project project) {
+        public void MarkProjectAsModified(Project project)
+        {
             _context.Entry(project).State = EntityState.Modified;
+        }
+        public Project MapProject(Project projectUpdated, Project project)
+        {
+            _mapper.Map(projectUpdated, project);
+            return project;
         }
         public async Task<bool> SaveAllAsync()
         {

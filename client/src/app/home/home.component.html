@@ -9,7 +9,9 @@
                 <div class="card-body p-4 text-black">
                   <app-login></app-login>
                   <div class="mb-2 pb-lg-2">
-                    <a href="#" (click)="forgotPasswordToggle()">Forgot password?</a>
+                    <a href="#" (click)="forgotPasswordToggle()"
+                      >Forgot password?</a
+                    >
                   </div>
                   <div class="mb-2 pb-lg-2">
                     Don't have an account?
@@ -19,7 +21,7 @@
                     <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
                   </div>
 
-                  <a class="btn btn-light btn-lg btn-block" href="#!">
+                  <a class="btn btn-light btn-lg btn-block" href="#!" (click)="loginAsDemo()">
                     Sign in as Demo User
                   </a>
                 </div>
@@ -37,7 +39,10 @@
       ></app-register>
     </div>
   </div>
-  <div *ngIf="!loggedInUser && forgotPasswordMode" class="row justify-content-center">
+  <div
+    *ngIf="!loggedInUser && forgotPasswordMode"
+    class="row justify-content-center"
+  >
     <div class="col-5">
       <app-forgot-password
         (cancelForgotPassword)="cancelForgotPasswordMode($event)"

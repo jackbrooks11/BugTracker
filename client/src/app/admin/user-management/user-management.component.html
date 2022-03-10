@@ -1,4 +1,24 @@
 <div>
+  <div>
+    <button
+      type="button"
+      (click)="openUserModal()"
+      class="btn btn-md btn-outline-primary mb-2"
+      style="flex: left"
+    >
+      New User
+    </button>
+    <button
+      type="button"
+      (click)="deleteUsers()"
+      *appHasRole="['Admin']"
+      class="btn btn-md btn-danger mb-2"
+      style="flex: right"
+      [disabled]="userIdsToDelete.length == 0"
+    >
+      Delete
+    </button>
+  </div>
   <div style="float: left">
     <label>Show</label>
     <select
@@ -23,10 +43,17 @@
   />
 </div>
 
-<div class="table-responsive margin-bottom-2x">
+<div *ngIf="users" class="table-responsive margin-bottom-2x">
   <table class="table margin-bottom-none">
-    <thead>
+    <thead *ngIf="users.length > 0">
       <tr>
+        <th *appHasRole="['Admin']">
+          <input
+            type="checkbox"
+            id="deleteCheck"
+            (click)="toggleCheckAll($event)"
+          />
+        </th>
         <th>
           Username
           <button
@@ -57,44 +84,65 @@
             <i class="fas fa-sort-down" *ngIf="userParams.icons[1] == 2"></i>
           </button>
         </th>
+        <th>Email Confirmed?</th>
         <th>Active Roles</th>
         <th></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="users.length > 0">
       <tr *ngFor="let user of users">
+        <td *appHasRole="['Admin']">
+          <input
+            type="checkbox"
+            id="deleteCheck"
+            *ngIf="!user.roles.includes('Admin')"
+            (change)="checked($event, user.id)"
+            [checked]="checkAll && !user.roles.includes('Admin') ? true : null"
+          />
+        </td>
         <td>{{ user.username | titlecase }}</td>
         <td>{{ user.email | titlecase }}</td>
+        <td *ngIf="user.emailConfirmed">Yes</td>
+        <td *ngIf="!user.emailConfirmed">No</td>
         <td>{{ user.roles }}</td>
         <td>
-          <div class="user-action-wrapper">
-            <button
-              (click)="openRolesModal(user)"
-              class="btn btn-info user-action-btn"
+          <div class="dropdown" dropdown>
+            <btn class="btn btn-sm btn-info dropdown-toggle" dropdownToggle
+              >Action</btn
             >
-              Edit Roles
-            </button>
-            <button
-              (click)="openResetPasswordModal(user)"
-              class="btn btn-info user-action-btn"
-            >
-              Reset Password
-            </button>
-            <button
-              (click)="openResetEmailModal(user)"
-              class="btn btn-info user-action-btn"
-            >
-              Reset Email
-            </button>
-            <button
-              (click)="(user)"
-              class="btn btn-info user-action-btn"
-            >
-              Reset Email
-            </button>
+            <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
+              <button
+                (click)="openRolesModal(user)"
+                class="btn btn-sm btn-info dropdown-item"
+              >
+                Edit Roles
+              </button>
+              <button
+                (click)="openResetPasswordModal(user)"
+                class="btn btn-sm btn-info dropdown-item"
+              >
+                Reset Password
+              </button>
+              <button
+                (click)="openResetEmailModal(user)"
+                class="btn btn-sm btn-info dropdown-item"
+              >
+                Reset Email
+              </button>
+              <button
+                (click)="sendConfirmationEmail(user)"
+                class="btn btn-sm btn-info dropdown-item"
+              >
+                Send Confirmation Email
+              </button>
+            </div>
           </div>
         </td>
       </tr>
+    </tbody>
+    <tbody *ngIf="users.length <= 0" style="text-align: center">
+      <br />
+      <h1>No users to show.</h1>
     </tbody>
   </table>
 </div>

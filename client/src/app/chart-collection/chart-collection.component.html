@@ -1,41 +1,46 @@
-<div class="row">
-  <div class="col-lg-4 chart">
-    <div class="card">
-      <div class="card-body">
-        <app-priority-chart></app-priority-chart>
+<div *ngIf="tickets && tickets.length > 0">
+  <div class="row">
+    <div class="col-lg-4 chart">
+      <div class="card">
+        <div class="card-body">
+          <app-priority-chart></app-priority-chart>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 chart">
+      <div class="card">
+        <div class="card-body">
+          <app-status-chart></app-status-chart>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4 chart">
+      <div class="card">
+        <div class="card-body">
+          <app-type-chart></app-type-chart>
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-lg-4 chart">
-    <div class="card">
-      <div class="card-body">
-        <app-status-chart></app-status-chart>
+  <div class="row mt-3 mb-3">
+    <div class="chart">
+      <div class="card">
+        <div class="card-body">
+          <app-status-line-chart></app-status-line-chart>
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-lg-4 chart">
-    <div class="card">
-      <div class="card-body">
-        <app-type-chart></app-type-chart>
+  <div class="row mt-3 mb-3">
+    <div class="chart">
+      <div class="card">
+        <div class="card-body">
+          <app-user-count-chart></app-user-count-chart>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<div class="row mt-3 mb-3">
-  <div class="chart">
-    <div class="card">
-      <div class="card-body">
-        <app-status-line-chart></app-status-line-chart>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="row mt-3 mb-3">
-  <div class="chart">
-    <div class="card">
-      <div class="card-body">
-        <app-user-count-chart></app-user-count-chart>
-      </div>
-    </div>
-  </div>
-</div>
+<h1 *ngIf="tickets && tickets.length <= 0" style="text-align: center">
+  Dashboard will appear once tickets are added.
+</h1>

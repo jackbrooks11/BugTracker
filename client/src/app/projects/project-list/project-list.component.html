@@ -21,7 +21,7 @@
       Delete
     </button>
   </div>
-  <div *ngIf="projects.length > 0">
+  <div>
     <div style="float: left">
       <label>Show</label>
       <select
@@ -46,9 +46,8 @@
     />
   </div>
   <div class="table-responsive margin-bottom-2x">
-    <h3 *ngIf="projects.length == 0">No projects to show.</h3>
-    <table *ngIf="projects.length > 0" class="table margin-bottom-none">
-      <thead>
+    <table class="table margin-bottom-none">
+      <thead *ngIf="projects.length > 0">
         <tr>
           <th *appHasRole="['Admin']">
             <input
@@ -113,7 +112,7 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="projects.length > 0">
         <tr *ngFor="let project of projects">
           <td *appHasRole="['Admin']">
             <input
@@ -132,9 +131,13 @@
           <td>{{ project.created | date: "medium" }}</td>
         </tr>
       </tbody>
+      <tbody *ngIf="projects.length <= 0" style="text-align: center">
+        <br />
+        <h1>No projects to show.</h1>
+      </tbody>
     </table>
   </div>
-  <div *ngIf="pagination && projects.length > 0">
+  <div *ngIf="pagination">
     <span style="float: left">
       Showing
       {{

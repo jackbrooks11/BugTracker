@@ -45,9 +45,11 @@ namespace API.Data
                 .WithOne(u => u.User)
                 .HasForeignKey(pu => pu.UserId)
                 .IsRequired();
+            builder.Entity<Ticket>()
+            .HasOne(t => t.Project)
+            .WithMany(p => p.Tickets);
             builder.Entity<ProjectUser>()
-                .HasKey(k => new {k.UserId, k.ProjectId});
-                
+                .HasKey(k => new {k.UserId, k.ProjectId});    
         }   
     }
 }

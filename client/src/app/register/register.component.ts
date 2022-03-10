@@ -6,8 +6,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { RegisterDto } from '../_models/registerDto';
 import { AccountService } from '../_services/account.service';
 
@@ -34,7 +32,11 @@ export class RegisterComponent implements OnInit {
   initializeForm() {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', 
+      [
+        Validators.required, 
+        Validators.email]
+      ],
       password: [
         '',
         [
@@ -63,10 +65,10 @@ export class RegisterComponent implements OnInit {
 
   register() {
     const registerDto: RegisterDto = {
-      username: this.registerForm.value.username,
-      email: this.registerForm.value.email,
+      username: this.registerForm.value.username.toLowerCase(),
+      email: this.registerForm.value.email.toLowerCase(),
       password: this.registerForm.value.password,
-      confirmPassword: this.registerForm.value.confirmPassword
+      confirmPassword: this.registerForm.value.confirmPassword,
     };
     this.accountService.register(registerDto).subscribe(
       (response) => {

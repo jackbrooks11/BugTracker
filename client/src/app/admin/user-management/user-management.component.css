@@ -12,11 +12,26 @@ a:hover {
   overflow: hidden;
   outline: none;
 }
-.user-action-btn {
-  display: inline-block;
-  margin-left: 5px;
+.dropdown-toggle,
+.dropdown-item {
+  cursor: pointer;
 }
-.user-action-wrapper {
-  display: flex;
-  float: right;
+
+.dropdown-menu {
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-top: 5px;
+}
+a {
+  text-decoration: none;
+}
+@media (max-width: 767px) {
+  .table-responsive .dropdown-menu {
+    position: static !important;
+  }
+}
+@media (min-width: 768px) {
+  .table-responsive {
+    overflow: inherit;
+  }
 }

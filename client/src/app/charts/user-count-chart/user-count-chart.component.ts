@@ -48,40 +48,38 @@ export class UserCountChartComponent implements OnInit {
   initializeLabelsAndData() {
     var userTicketCounts = [];
     for (var ticket of this.tickets) {
-      var assignee = ticket.assignee
-        ? this.titleCase(ticket.assignee)
-        : 'Unassigned';
-      if (!userTicketCounts[assignee]) {
-        userTicketCounts[assignee] = 1;
-      } else {
-        userTicketCounts[assignee] += 1;
+      if (['Open', 'In Progress'].includes(ticket.state)) {
+        var assignee = ticket.assignee
+          ? this.titleCase(ticket.assignee)
+          : 'Unassigned';
+        if (!userTicketCounts[assignee]) {
+          userTicketCounts[assignee] = 1;
+        } else {
+          userTicketCounts[assignee] += 1;
+        }
       }
     }
-    var topFiveUsers = Object.entries(userTicketCounts).sort(
-      function(a, b) {
-        if (a[1] > b[1]) {
-          return -1;
-        } 
-        else if (a[1] < b[1]) { 
-          return 1;
-        }
-        // Else go to the 2nd item
-        if (a[0] > b[0]) { 
-          return 1;
-        } 
-        else if (a[0] < b[0]) {
-          return -1;
-        } 
-        else { // nothing to split them
-          return 0;
-        }
-      });
-    console.log(topFiveUsers);
+    var topFiveUsers = Object.entries(userTicketCounts).sort(function (a, b) {
+      if (a[1] > b[1]) {
+        return -1;
+      } else if (a[1] < b[1]) {
+        return 1;
+      }
+      // Else go to the 2nd item
+      if (a[0] > b[0]) {
+        return 1;
+      } else if (a[0] < b[0]) {
+        return -1;
+      } else {
+        // nothing to split them
+        return 0;
+      }
+    });
+    topFiveUsers.splice(5);
     for (let i = 0; i < topFiveUsers.length; ++i) {
       this.barChartLabels.push(topFiveUsers[i][0]);
       this.barChartData[0]['data'].push(topFiveUsers[i][1]);
     }
-
   }
 
   titleCase(str: string) {

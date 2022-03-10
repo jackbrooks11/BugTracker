@@ -1,12 +1,7 @@
 .sidebar-show {
-    margin-left: 300px;
+  margin-left: 300px;
 }
 
 .logged-out {
-    justify-content: center;
+  justify-content: center;
 }
-
-html body {
-    background-color: rgba(0,0,0,1.00);
-  
-  }

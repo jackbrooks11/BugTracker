@@ -1,6 +1,6 @@
 <div class="container mt-3">
   <h2>My Tickets</h2>
-  <div *ngIf="tickets.length > 0">
+  <div>
     <div style="float: left">
       <label>Show</label>
       <select
@@ -25,9 +25,8 @@
     />
   </div>
   <div class="table-responsive margin-bottom-2x">
-    <h3 *ngIf="tickets.length == 0"><br>No tickets to show.</h3>
-    <table *ngIf="tickets.length > 0" class="table margin-bottom-none">
-      <thead>
+    <table class="table margin-bottom-none">
+      <thead *ngIf="tickets.length > 0">
         <tr>
           <th *ngFor="let header of headers; index as i">
             {{ header }}
@@ -49,7 +48,7 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody *ngIf="tickets.length > 0">
         <tr *ngFor="let ticket of tickets">
           <td>
             <a href="#" routerLink="/tickets/{{ ticket.id }}">{{
@@ -79,9 +78,13 @@
           <td>{{ ticket.created | date: "medium" }}</td>
         </tr>
       </tbody>
+      <tbody *ngIf="tickets.length <= 0" style="text-align: center">
+        <br />
+        <h1>No tickets to show.</h1>
+      </tbody>
     </table>
   </div>
-  <div *ngIf="pagination && tickets.length > 0">
+  <div *ngIf="pagination">
     <span style="float: left">
       Showing
       {{

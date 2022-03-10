@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,18 +7,20 @@ using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace API.Services
 {
     public class AdminService : IAdminService
     {
+        private readonly IMapper _mapper;
         private readonly DataContext _context;
         private readonly UserManager<AppUser> _userManager;
-        public AdminService(IConfiguration config, DataContext context,  UserManager<AppUser> userManager)
+        public AdminService(IMapper mapper, DataContext context, UserManager<AppUser> userManager)
         {
+            _mapper = mapper;
             _context = context;
             _userManager = userManager;
         }
@@ -59,12 +62,13 @@ namespace API.Services
                 u.Id,
                 Username = u.UserName,
                 Email = u.Email,
+                EmailConfirmed = u.EmailConfirmed,
                 Roles = u.UserRoles.Select(r => r.Role.Name).ToList()
             }).ToListAsync();
             var usersReformatted = new List<PaginatedUserDto>();
             foreach (var user in userList)
             {
-                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles, user.Email));
+                usersReformatted.Add(new PaginatedUserDto(user.Id, user.Username, user.Roles, user.Email, user.EmailConfirmed));
             }
             return new PagedList<PaginatedUserDto>(usersReformatted, userLength, userParams.PageNumber, userParams.PageSize);
         }
@@ -82,10 +86,36 @@ namespace API.Services
 
             return "";
         }
+        public void DeleteUsers(int[] userIdsToDelete)
+        {
+            var usersToDelete = GetUsersToDelete(userIdsToDelete);
+            foreach (var user in usersToDelete)
+            {
+                _context.Remove(user);
+            };
+        }
+        private IEnumerable<AppUser> GetUsersToDelete(int[] userIdsToDelete)
+        {
+            return _context.Users.Where(u => userIdsToDelete.Contains(u.Id)).AsNoTracking();
+        }
 
         public async Task<IList<string>> GetRoles(AppUser user)
         {
-             return await _userManager.GetRolesAsync(user);
+            return await _userManager.GetRolesAsync(user);
+        }
+        public AppUser MapUser(RegisterDto registerDto, AppUser user)
+        {
+            _mapper.Map<RegisterDto, AppUser>(registerDto, user);
+            return user;
+        }
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<IEnumerable<AppUser>> GetAdmins()
+        {
+            return await _context.Users.Where(u => u.UserRoles.Any(r => r.Role.Name == "Admin")).ToListAsync();
         }
     }
-}    
+}

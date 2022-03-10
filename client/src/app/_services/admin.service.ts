@@ -8,8 +8,8 @@ import { PaginatedResult } from '../_models/pagination';
 import { UserParams } from '../_models/userParams';
 import { PaginatedUserDto } from '../_models/paginatedUserDto';
 import { ResetPasswordDto } from '../_models/resetPasswordDto';
-import { ConfirmEmailDto } from '../_models/confirmEmailDto';
 import { ResetEmailDto } from '../_models/resetEmailDto';
+import { SendConfirmationEmailDto } from '../_models/sendConfirmationEmailDto';
 
 @Injectable({
   providedIn: 'root',
@@ -67,6 +67,28 @@ export class AdminService {
 
   resetEmail(model: ResetEmailDto) {
     return this.http.post(this.baseUrl + 'admin/resetEmail', model);
+  }
+
+  sendConfirmationEmail(model: SendConfirmationEmailDto) {
+    return this.http.post(this.baseUrl + 'admin/sendConfirmationEmail', model);
+  }
+
+  createUser(model: any) {
+    return this.http.post(this.baseUrl + 'admin/createUser', model).pipe(
+      map(() => {
+        this.userCache.clear();
+      })
+    );
+  }
+
+  deleteUsers(userIdsToDelete: number[]) {
+    return this.http
+      .post(this.baseUrl + 'admin/deleteUsers', userIdsToDelete)
+      .pipe(
+        map(() => {
+          this.userCache.clear();
+        })
+      );
   }
 
   private getPaginatedResult<T>(url, params) {

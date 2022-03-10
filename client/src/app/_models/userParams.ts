@@ -4,6 +4,6 @@ export class UserParams {
     orderBy: string = 'username';
     ascending: boolean = true;
     searchMatch: string = "";
-    icons: number[] = [1, 0];
+    icons: number[] = [1, 0, 0];
     index: number = 0;
 }

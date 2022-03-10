@@ -14,7 +14,7 @@ namespace API.Helpers
         public string OrderBy { get; set; } = "username";
         public bool Ascending { get; set; } = true;
         public string SearchMatch { get; set; } = "";
-        public int[] Icons { get; set; } = {1, 0};
+        public int[] Icons { get; set; } = {1, 0, 0};
         public int Index { get; set; } = 0;
     }
 }

@@ -48,7 +48,7 @@
 
 <div class="table-responsive margin-bottom-2x">
   <table class="table margin-bottom-none">
-    <thead>
+    <thead *ngIf="users && users.length > 0">
       <tr>
         <th *appHasRole="['Admin']">
           <input
@@ -75,7 +75,7 @@
         <th style="width: 50%">Active Roles</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="users && users.length > 0">
       <tr *ngFor="let user of users">
         <td *appHasRole="['Admin']">
           <input
@@ -88,6 +88,10 @@
         <td>{{ user.username | titlecase }}</td>
         <td>{{ user.roles }}</td>
       </tr>
+    </tbody>
+    <tbody *ngIf="users && users.length <= 0" style="text-align: center">
+      <br />
+      <h4>No users to show.</h4>
     </tbody>
   </table>
 </div>

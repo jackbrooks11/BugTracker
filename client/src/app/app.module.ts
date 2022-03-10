@@ -56,6 +56,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
 import { ResetPasswordModalComponent } from './modals/reset-password-modal/reset-password-modal.component';
 import { ResetEmailModalComponent } from './modals/reset-email-modal/reset-email-modal.component';
+import { UserModalComponent } from './modals/user-modal/user-modal.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -103,7 +104,8 @@ import { ResetEmailModalComponent } from './modals/reset-email-modal/reset-email
     ResetPasswordComponent,
     ConfirmEmailComponent,
     ResetPasswordModalComponent,
-    ResetEmailModalComponent
+    ResetEmailModalComponent,
+    UserModalComponent,
   ],
   imports: [
     BrowserModule,

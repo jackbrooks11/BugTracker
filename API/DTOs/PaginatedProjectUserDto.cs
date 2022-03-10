@@ -2,9 +2,9 @@ using System.Collections.Generic;
 
 namespace API.DTOs
 {
-    public class PaginatedUserDto
+    public class PaginatedProjectUserDto
     {
-        public PaginatedUserDto(int id, string username, List<string> roles, string email, bool emailConfirmed)
+        public PaginatedProjectUserDto(int id, string username, List<string> roles)
         {
             this.Id = id;
             this.Username = username;
@@ -12,18 +12,10 @@ namespace API.DTOs
             {
                 this.Roles.Add(role);
             }
-            this.Email = email;
-            this.EmailConfirmed = emailConfirmed;
         }
-
         public int Id { get; set; }
-
         public string Username { get; set; }
-        public string Email { get; set; }
-        public bool EmailConfirmed { get; set; }
-
         public List<string> Roles { get; set; } = new List<string>();
-
-
+        
     }
 }

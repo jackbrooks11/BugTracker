@@ -161,6 +161,7 @@ export class TicketsService {
       .pipe(
         map(() => {
           this.ticketCache.clear();
+          this.ticketForUserCache.clear();
         })
       );
   }

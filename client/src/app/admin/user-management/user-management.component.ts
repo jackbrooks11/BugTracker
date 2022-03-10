@@ -10,6 +10,9 @@ import { ResetPasswordDto } from 'src/app/_models/resetPasswordDto';
 import { ResetEmailDto } from 'src/app/_models/resetEmailDto';
 import { ToastrService } from 'ngx-toastr';
 import { ResetEmailModalComponent } from 'src/app/modals/reset-email-modal/reset-email-modal.component';
+import { SendConfirmationEmailDto } from 'src/app/_models/sendConfirmationEmailDto';
+import { UserModalComponent } from 'src/app/modals/user-modal/user-modal.component';
+import { RegisterDto } from 'src/app/_models/registerDto';
 
 @Component({
   selector: 'app-user-management',
@@ -18,6 +21,8 @@ import { ResetEmailModalComponent } from 'src/app/modals/reset-email-modal/reset
 })
 export class UserManagementComponent implements OnInit {
   users: PaginatedUserDto[];
+  userIdsToDelete: number[] = [];
+  checkAll: boolean = false;
   bsModalRef: BsModalRef;
   pagination: Pagination;
   userParams: UserParams;
@@ -65,6 +70,14 @@ export class UserManagementComponent implements OnInit {
       .subscribe((response) => {
         this.users = response.result;
         this.pagination = response.pagination;
+        if (this.checkAll) {
+          this.userIdsToDelete = [];
+          this.users.forEach((user) => {
+            if (!user.roles.includes('Admin')) {
+              this.userIdsToDelete.push(user.id);
+            }
+          });
+        }
       });
   }
 
@@ -104,7 +117,7 @@ export class UserManagementComponent implements OnInit {
       ResetPasswordModalComponent,
       config
     );
-    this.bsModalRef.content.submitted.subscribe((value) => {
+    this.bsModalRef.content.submitted.subscribe((value: any) => {
       const submitted = value;
       if (submitted) {
         this.resetPassword();
@@ -120,10 +133,23 @@ export class UserManagementComponent implements OnInit {
       },
     };
     this.bsModalRef = this.modalService.show(ResetEmailModalComponent, config);
-    this.bsModalRef.content.submitted.subscribe((value) => {
+    this.bsModalRef.content.submitted.subscribe((value: any) => {
       const submitted = value;
       if (submitted) {
         this.resetEmail();
+      }
+    });
+  }
+
+  openUserModal() {
+    const config = {
+      class: 'modal-dialog-centered',
+    };
+    this.bsModalRef = this.modalService.show(UserModalComponent, config);
+    this.bsModalRef.content.submitted.subscribe((value) => {
+      const submitted = value;
+      if (submitted) {
+        this.createUser();
       }
     });
   }
@@ -137,7 +163,8 @@ export class UserManagementComponent implements OnInit {
       token: 'mock token',
     };
     this.adminService.resetPassword(resetPasswordDto).subscribe(
-      (response) => {
+      () => {
+        this.reloadUsers();
         this.toastr.success('Password succesfully reset');
       },
       (error) => {
@@ -148,11 +175,12 @@ export class UserManagementComponent implements OnInit {
 
   resetEmail() {
     const resetEmailDto: ResetEmailDto = {
-      email: this.bsModalRef.content?.resetEmailForm.value.email,
+      email: this.bsModalRef.content?.resetEmailForm.value.email.toLowerCase(),
       username: this.bsModalRef.content?.user.username,
     };
     this.adminService.resetEmail(resetEmailDto).subscribe(
-      (response) => {
+      () => {
+        this.reloadUsers();
         this.toastr.success('Email succesfully reset');
       },
       (error) => {
@@ -161,8 +189,56 @@ export class UserManagementComponent implements OnInit {
     );
   }
 
+  createUser() {
+    const registerDto: RegisterDto = {
+      username:
+        this.bsModalRef.content?.createUserForm.value.username.toLowerCase(),
+      email: this.bsModalRef.content?.createUserForm.value.email.toLowerCase(),
+      password: this.bsModalRef.content?.createUserForm.value.password,
+      confirmPassword:
+        this.bsModalRef.content?.createUserForm.value.confirmPassword,
+    };
+    this.adminService.createUser(registerDto).subscribe(
+      () => {
+        this.reloadUsers();
+        this.toastr.success('User succesfully created');
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  deleteUsers() {
+    if (confirm('Are you sure to delete the selected user(s)?')) {
+      this.adminService.deleteUsers(this.userIdsToDelete).subscribe(
+        () => {
+          this.userIdsToDelete = [];
+          this.reloadUsers();
+          this.toastr.success('User(s) have been deleted.');
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
+  }
+
   sendConfirmationEmail(user: PaginatedUserDto) {
-    
+    const sendConfirmationEmailDto: SendConfirmationEmailDto = {
+      email: user.email,
+    };
+    this.adminService.sendConfirmationEmail(sendConfirmationEmailDto).subscribe(
+      () => {
+        this.reloadUsers();
+        this.toastr.success(
+          'A confirmation link has been sent to the email provided.'
+        );
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   private getRolesArray(user) {
@@ -209,4 +285,30 @@ export class UserManagementComponent implements OnInit {
       ++this.userParams.icons[index];
     }
   }
+
+  reloadUsers() {
+    this.adminService.userCache.clear();
+    this.loadUsers();
+  }
+
+  toggleCheckAll = (evt) => {
+    this.checkAll = !this.checkAll;
+    if (evt.target.checked == true) {
+      this.users.forEach((user) => {
+        if (!user.roles.includes('Admin')) {
+          this.userIdsToDelete.push(user.id);
+        }
+      });
+    } else {
+      this.userIdsToDelete.length = 0;
+    }
+  };
+
+  checked = (evt, id: number) => {
+    if (evt.target.checked == true) {
+      this.userIdsToDelete.push(id);
+    } else {
+      this.userIdsToDelete.splice(this.userIdsToDelete.indexOf(id), 1);
+    }
+  };
 }

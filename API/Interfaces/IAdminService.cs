@@ -10,7 +10,10 @@ namespace API.Interfaces
     {
         Task<PagedList<PaginatedUserDto>> GetUsersWithRoles(UserParams userParams);
         Task<string> ChangeRoles(AppUser user, string[] selectedRoles);
-
+        Task<IEnumerable<AppUser>> GetAdmins();
         Task<IList<string>> GetRoles(AppUser user);
+        void DeleteUsers(int[] userIdsToDelete);
+        AppUser MapUser(RegisterDto registerDto, AppUser user);
+        Task<bool> SaveAllAsync();
     }
 }

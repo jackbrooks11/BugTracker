@@ -115,10 +115,9 @@
                           <div class="row">
                             <div class="col">
                               <div class="form-group">
-                                <label>New Password</label>
                                 <app-text-input
                                   [formControl]="editForm.controls['password']"
-                                  [label]="'Password'"
+                                  [label]="'Current Password'"
                                   [type]="'password'"
                                 ></app-text-input>
                               </div>
@@ -127,7 +126,17 @@
                           <div class="row">
                             <div class="col">
                               <div class="form-group">
-                                <label>Confirm Password</label>
+                                <app-text-input
+                                  [formControl]="editForm.controls['newPassword']"
+                                  [label]="'New Password'"
+                                  [type]="'password'"
+                                ></app-text-input>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
                                 <app-text-input
                                   [formControl]="
                                     editForm.controls['confirmPassword']

@@ -25,7 +25,7 @@
 
 <div class="table-responsive margin-bottom-2x">
   <table class="table margin-bottom-none">
-    <thead>
+    <thead *ngIf="tickets && tickets.length > 0">
       <tr>
         <th *ngFor="let header of headers; index as i">
           {{ header }}
@@ -44,7 +44,7 @@
         </th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="tickets && tickets.length > 0">
       <tr *ngFor="let ticket of tickets">
         <td>
           <a href="#" routerLink="/tickets/{{ ticket.id }}">{{
@@ -74,6 +74,10 @@
         <td>{{ ticket.type }}</td>
         <td>{{ ticket.created | date: "short" }}</td>
       </tr>
+    </tbody>
+    <tbody *ngIf="tickets && tickets.length <= 0" style="text-align: center">
+      <br />
+      <h4>No tickets to show.</h4>
     </tbody>
   </table>
 </div>

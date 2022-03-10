@@ -100,6 +100,7 @@ export class TicketModalComponent implements OnInit {
       }
     });
     this.displayProjects = filteredProjects.slice(0, this.projectListSize);
+    this.displayProjects.sort();
     if (this.displayProjects.length < this.projectListSize) {
       this.disableLoadMoreProjects = true;
     } else {
@@ -155,6 +156,7 @@ export class TicketModalComponent implements OnInit {
       }
     });
     this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
+    this.displayUsernames.sort();
     if (this.displayUsernames.length < this.usernameListSize) {
       this.disableLoadMoreUsers = true;
     } else {

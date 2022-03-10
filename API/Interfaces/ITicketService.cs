@@ -16,8 +16,8 @@ namespace API.Interfaces
         Task<PagedList<TicketDto>> GetTicketsForProject(TicketParams ticketParams, string projectTitle);
         void DeleteTickets(int[] ticketIdsToDelete);
         Task<string> ValidateTicket(TicketDto ticketDto, Project project);
-        TicketDto AddChangesToTicket(TicketDto existingTicketDto, TicketDto newTicketDto);
-        TicketDto AddChangeToTicket(TicketDto existingTicketDto, TicketDto newTicketDto, string property);
+        TicketDto AddChangesToTicket(TicketDto existingTicketDto, TicketDto newTicketDto, string editor);
+        TicketDto AddChangeToTicket(TicketDto existingTicketDto, TicketDto newTicketDto, string property, string editor);
         void AddTicket(Ticket ticket);
         void MarkTicketAsModified(Ticket ticket);
         Ticket MapTicket(TicketDto ticketDto, Ticket ticket);

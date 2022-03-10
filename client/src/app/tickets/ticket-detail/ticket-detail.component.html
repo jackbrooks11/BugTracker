@@ -1,5 +1,28 @@
 <div class="container mt-3">
   <app-ticket-info></app-ticket-info>
-  <app-ticket-history></app-ticket-history>
+  <div class="row">
+    <div class="col mb-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="e-profile">
+            <div class="tab-content pt-3">
+              <div class="tab-pane active">
+                <div class="row">
+                  <div class="col">
+                    <div class="form-group">
+                      <h4>Ticket History</h4>
+                    </div>
+                    <div class="p-3">
+                      <app-ticket-history></app-ticket-history>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <app-ticket-comments></app-ticket-comments>
 </div>

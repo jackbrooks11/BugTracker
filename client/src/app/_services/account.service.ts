@@ -32,6 +32,16 @@ export class AccountService {
     )
   }
 
+  loginAsDemo() {
+    return this.http.get(this.baseUrl + 'account/loginAsDemo').pipe(
+      map((response: LoggedInUser) => {
+        const loggedInUser = response;
+        if (loggedInUser) {
+          this.setCurrentUser(loggedInUser);
+        }
+      })
+    )
+  }
   register(model: RegisterDto) {
     return this.http.post(this.baseUrl + 'account/register', model);
   }
@@ -55,6 +65,7 @@ export class AccountService {
     Array.isArray(roles) ? loggedInUser.roles = roles : loggedInUser.roles.push(roles);
     localStorage.setItem('user', JSON.stringify(loggedInUser));
     this.currentUserSource.next(loggedInUser);
+    document.body.style.background = 'rgba(0, 0, 0, 0)';
   }
 
   updateUser(editUser: EditUserDto) {
@@ -68,6 +79,7 @@ export class AccountService {
   logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    document.body.style.background = 'rgba(0, 0, 0, 0.8)';
   }
 
   getDecodedToken(token: any) {

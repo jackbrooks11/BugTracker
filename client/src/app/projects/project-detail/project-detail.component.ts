@@ -18,7 +18,6 @@ export class ProjectDetailComponent implements OnInit {
   loadProject() {
     this.projectService.getProjectById(Number(this.route.snapshot.paramMap.get('id'))).
     subscribe(project => {
-      console.log(project);
       if (project == null) {
         this.router.navigateByUrl('/not-found')
       }

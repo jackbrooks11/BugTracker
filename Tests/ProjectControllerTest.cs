@@ -19,7 +19,7 @@ namespace Tests
             var projectServiceStub = new Mock<IProjectService>();
             projectServiceStub.Setup(projectService => projectService.GetProjectById(id))
                 .ReturnsAsync((Project)null);
-            var controller = new ProjectController(null, projectServiceStub.Object);
+            var controller = new ProjectController(null, projectServiceStub.Object, null, null);
 
             //Act
             var response = await controller.GetProject(id);
@@ -35,8 +35,8 @@ namespace Tests
             var id = 8;
             var projectServiceStub = new Mock<IProjectService>();
             projectServiceStub.Setup(projectService => projectService.GetProjectById(id))
-                .ReturnsAsync(new Project {Id = id});
-            var controller = new ProjectController(null, projectServiceStub.Object);
+                .ReturnsAsync(new Project { Id = id });
+            var controller = new ProjectController(null, projectServiceStub.Object, null, null);
 
             //Act
             var response = await controller.GetProject(id);
@@ -53,7 +53,7 @@ namespace Tests
             var projectServiceStub = new Mock<IProjectService>();
             projectServiceStub.Setup(projectService => projectService.GetProjects())
                 .Returns((IEnumerable<Project>)null);
-            var controller = new ProjectController(null, projectServiceStub.Object);
+            var controller = new ProjectController(null, projectServiceStub.Object, null, null);
 
             //Act
             var response = controller.GetProjects();
@@ -69,7 +69,7 @@ namespace Tests
             var projectServiceStub = new Mock<IProjectService>();
             projectServiceStub.Setup(projectService => projectService.GetProjects())
                 .Returns(new List<Project>());
-            var controller = new ProjectController(null, projectServiceStub.Object);
+            var controller = new ProjectController(null, projectServiceStub.Object, null, null);
 
             //Act
             var response = controller.GetProjects();
@@ -82,7 +82,7 @@ namespace Tests
         public async void GetProjectsPaginated_WithNoProjectParams_ReturnBadRequest()
         {
             //Arrange
-            var controller = new ProjectController(null, null);
+            var controller = new ProjectController(null, null, null, null);
 
             //Act
             var response = await controller.GetProjectsPaginated(null);
@@ -92,14 +92,48 @@ namespace Tests
         }
 
         [Fact]
-        public void GetProjectsPaginated_WithProjectParams_ReturnProjects()
+        public async void DeleteProjects_WithNullProjectIds_ReturnBadRequest()
         {
+            //Arrange
+            var controller = new ProjectController(null, null, null, null);
+
+            //Act
+            var response = await controller.DeleteProjects(null);
+
+            //Assert
+            Assert.IsAssignableFrom<BadRequestObjectResult>(response);
         }
         
         [Fact]
-        public void GetProjectsForUser_WithProjectParams_ReturnProjects()
+        public async void DeleteProjects_WithNoProjectIds_ReturnBadRequest()
         {
+            //Arrange
+            var controller = new ProjectController(null, null, null, null);
+            var projectIdsToDelete = new int[] { };
+
+            //Act
+            var response = await controller.DeleteProjects(projectIdsToDelete);
+
+            //Assert
+            Assert.IsAssignableFrom<BadRequestObjectResult>(response);
         }
 
+        [Fact]
+        public async void DeleteProjects_WithProjectIds_ReturnNoContent()
+        {
+            //Arrange
+            var projectIdsToDelete = new int[] { 0, 2, 8 };
+            var projectServiceStub = new Mock<IProjectService>();
+            projectServiceStub.Setup(projectService => projectService.DeleteProjects(projectIdsToDelete));
+            projectServiceStub.Setup(projectService => projectService.SaveAllAsync())
+                .ReturnsAsync(true);
+            var controller = new ProjectController(null, projectServiceStub.Object, null, null);
+
+            //Act
+            var response = await controller.DeleteProjects(projectIdsToDelete);
+
+            //Assert
+            Assert.IsAssignableFrom<NoContentResult>(response);
+        }
     }
 }

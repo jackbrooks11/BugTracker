@@ -11,7 +11,7 @@ import { AccountService } from 'src/app/_services/account.service';
 import { UserService } from 'src/app/_services/user.service';
 import { ProjectsService } from 'src/app/_services/projects.service';
 import { ProjectUsersService } from 'src/app/_services/projectUsers.service';
-import { User } from 'src/app/_models/user';
+import { PaginatedProjectUserDto } from 'src/app/_models/paginatedProjectUserDto';
 
 @Component({
   selector: 'app-project-personnel',
@@ -20,7 +20,7 @@ import { User } from 'src/app/_models/user';
 })
 export class ProjectPersonnelComponent implements OnInit {
   loggedInUser: LoggedInUser;
-  users: Partial<User>[];
+  users: PaginatedProjectUserDto[];
   pagination: Pagination;
   bsModalRef: BsModalRef;
   userParams: UserParams = new UserParams();
@@ -150,7 +150,7 @@ export class ProjectPersonnelComponent implements OnInit {
   toggleCheckAll = (evt) => {
     this.checkAll = !this.checkAll;
     if (evt.target.checked == true) {
-      this.users.forEach((val) => this.usernamesToDelete.push(val.userName));
+      this.users.forEach((val) => this.usernamesToDelete.push(val.username));
     } else {
       this.usernamesToDelete.length = 0;
     }
@@ -172,7 +172,7 @@ export class ProjectPersonnelComponent implements OnInit {
       return true;
     }
     for (var user of this.users) {
-      if (user.userName === this.loggedInUser.username) {
+      if (user.username === this.loggedInUser.username) {
         return true;
       }
     }

@@ -65,6 +65,19 @@ namespace API.Controllers
                 Token = await _tokenService.CreateToken(user)
             };
         }
+        
+        [HttpGet("loginAsDemo")]
+        public async Task<ActionResult<UserDto>> LoginAsDemo()
+        {
+            var user = await _userService.GetUserByUsernameAsync("admin");
+            if (user == null) return Unauthorized("Invalid username");
+            return new UserDto
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = await _tokenService.CreateToken(user)
+            };
+        }
 
         [HttpPost("forgotPassword")]
         public async Task<ActionResult<ForgotPasswordDto>> ForgotPassword([Required] ForgotPasswordDto forgotPasswordDto)
@@ -107,8 +120,10 @@ namespace API.Controllers
         {
             var user = await _userService.GetUserByUsernameAsync(User.GetUsername());
             /*Update user password*/
-            if (editUserDto.Password != "")
+            if (editUserDto.NewPassword != "")
             {
+                var checkPassword = await _signInManager.CheckPasswordSignInAsync(user, editUserDto.Password, false);
+                if (!checkPassword.Succeeded) return Unauthorized("Invalid password.");
                 var result = await _accountService.ChangePassword(user, editUserDto);
                 if (!result.Succeeded) return BadRequest("Inadequate Password");
             }

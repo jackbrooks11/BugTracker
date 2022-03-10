@@ -1,111 +1,121 @@
-<div class="row">
-  <div class="col mb-3">
-    <div class="card">
-      <div class="card-body">
-        <div class="e-profile">
-          <div class="tab-content pt-3">
-            <div style="float: left">
-              <label>Show</label>
-              <select
-                name="itemsPerPage"
-                [(ngModel)]="ticketPropertyChangeParams.pageSize"
-                (change)="loadChanges()"
-              >
-                <option>5</option>
-                <option>10</option>
-                <option>25</option>
-                <option>50</option>
-              </select>
-              entries
-            </div>
-            <input
-              type="text"
-              name="search"
-              placeholder="Search"
-              [(ngModel)]="ticketPropertyChangeParams.searchMatch"
-              (input)="loadChanges()"
-              style="float: right"
-            />
-          </div>
+<div>
+  <div style="float: left">
+    <label>Show</label>
+    <select
+      name="itemsPerPage"
+      [(ngModel)]="ticketPropertyChangeParams.pageSize"
+      (change)="loadChanges()"
+    >
+      <option>5</option>
+      <option>10</option>
+      <option>25</option>
+      <option>50</option>
+    </select>
+    entries
+  </div>
+  <input
+    type="text"
+    name="search"
+    placeholder="Search"
+    [(ngModel)]="ticketPropertyChangeParams.searchMatch"
+    (input)="loadChanges()"
+    style="float: right"
+  />
+</div>
 
-          <div class="table-responsive margin-bottom-2x">
-            <table class="table margin-bottom-none">
-              <thead>
-                <tr>
-                  <th *ngFor="let header of headers; index as i">
-                    {{ header }}
-                    <button
-                      type="button"
-                      class="ordering"
-                      (click)="loadChanges(true, i)"
-                      btnRadio="{{ camelize(header) }}"
-                      [(ngModel)]="ticketPropertyChangeParams.orderBy"
-                    >
-                      <i
-                        class="fas fa-sort"
-                        *ngIf="ticketPropertyChangeParams.icons[i] == 0"
-                      ></i>
-                      <i
-                        class="fas fa-sort-up"
-                        *ngIf="ticketPropertyChangeParams.icons[i] == 1"
-                      ></i>
-                      <i
-                        class="fas fa-sort-down"
-                        *ngIf="ticketPropertyChangeParams.icons[i] == 2"
-                      ></i>
-                    </button>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let change of ticketPropertyChanges">
-                  <td>{{ change.editor }}</td>
-                  <td>{{ change.property }}</td>
-                  <td>{{ change.oldValue }}</td>
-                  <td>{{ change.newValue }}</td>
-                  <td>{{ change.changed | date: "short" }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div *ngIf="pagination">
-            <span style="float: left">
-              Showing
-              {{
-                pagination.totalItems > 0
-                  ? pagination.itemsPerPage * (pagination.currentPage - 1) + 1
-                  : pagination.itemsPerPage * (pagination.currentPage - 1)
-              }}
-              to
-              {{
-                pagination.itemsPerPage * pagination.currentPage >
-                pagination.totalItems
-                  ? pagination.totalItems
-                  : pagination.itemsPerPage * pagination.currentPage
-              }}
-              of {{ pagination.totalItems }} entries
-            </span>
-            <div
-              class="d-flex justify-content-center"
-              *ngIf="pagination"
-              style="float: right"
-            >
-              <pagination
-                [boundaryLinks]="true"
-                [totalItems]="pagination.totalItems"
-                [itemsPerPage]="pagination.itemsPerPage"
-                [(ngModel)]="pagination.currentPage"
-                (pageChanged)="pageChanged($event)"
-                previousText="&lsaquo;"
-                nextText="&rsaquo;"
-                firstText="&laquo;"
-                lastText="&raquo;"
-              >
-              </pagination>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="table-responsive margin-bottom-2x">
+  <table class="table margin-bottom-none">
+    <thead *ngIf="ticketPropertyChanges && ticketPropertyChanges.length > 0">
+      <tr>
+        <th *ngFor="let header of headers; index as i">
+          {{ header }}
+          <button
+            type="button"
+            class="ordering"
+            (click)="loadChanges(true, i)"
+            btnRadio="{{ camelize(header) }}"
+            [(ngModel)]="ticketPropertyChangeParams.orderBy"
+          >
+            <i
+              class="fas fa-sort"
+              *ngIf="ticketPropertyChangeParams.icons[i] == 0"
+            ></i>
+            <i
+              class="fas fa-sort-up"
+              *ngIf="ticketPropertyChangeParams.icons[i] == 1"
+            ></i>
+            <i
+              class="fas fa-sort-down"
+              *ngIf="ticketPropertyChangeParams.icons[i] == 2"
+            ></i>
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody *ngIf="ticketPropertyChanges && ticketPropertyChanges.length > 0">
+      <tr *ngFor="let change of ticketPropertyChanges">
+        <td>{{ change.editor | titlecase }}</td>
+        <td>{{ change.property | titlecase }}</td>
+        <td *ngIf="change.oldValue && change.property != 'Description'">
+          {{ change.oldValue | titlecase }}
+        </td>
+        <td *ngIf="change.oldValue && change.property == 'Description'">
+          {{ change.oldValue }}
+        </td>
+        <td *ngIf="!change.oldValue && change.property == 'Assignee'">
+          Unassigned
+        </td>
+        <td *ngIf="change.newValue && change.property != 'Description'">
+          {{ change.newValue | titlecase }}
+        </td>
+        <td *ngIf="change.newValue && change.property == 'Description'">
+          {{ change.newValue }}
+        </td>
+
+        <td *ngIf="!change.newValue && change.property == 'Assignee'">
+          Unassigned
+        </td>
+        <td>{{ change.changed | date: "short" }}</td>
+      </tr>
+    </tbody>
+    <tbody *ngIf="ticketPropertyChanges && ticketPropertyChanges.length <= 0" style="text-align: center">
+      <br />
+      <h4>No changes to show.</h4>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="pagination">
+  <span style="float: left">
+    Showing
+    {{
+      pagination.totalItems > 0
+        ? pagination.itemsPerPage * (pagination.currentPage - 1) + 1
+        : pagination.itemsPerPage * (pagination.currentPage - 1)
+    }}
+    to
+    {{
+      pagination.itemsPerPage * pagination.currentPage > pagination.totalItems
+        ? pagination.totalItems
+        : pagination.itemsPerPage * pagination.currentPage
+    }}
+    of {{ pagination.totalItems }} entries
+  </span>
+  <div
+    class="d-flex justify-content-center"
+    *ngIf="pagination"
+    style="float: right"
+  >
+    <pagination
+      [boundaryLinks]="true"
+      [totalItems]="pagination.totalItems"
+      [itemsPerPage]="pagination.itemsPerPage"
+      [(ngModel)]="pagination.currentPage"
+      (pageChanged)="pageChanged($event)"
+      previousText="&lsaquo;"
+      nextText="&rsaquo;"
+      firstText="&laquo;"
+      lastText="&raquo;"
+    >
+    </pagination>
   </div>
 </div>

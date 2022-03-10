@@ -1,0 +1,103 @@
+<div class="row flex-lg-nowrap">
+    <div class="col">
+      <div class="row">
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <div>
+                <div class="tab-content pt-3">
+                  <div class="tab-pane active">
+                    <form
+                      [formGroup]="createUserForm"
+                      (ngSubmit)="createUserForm.valid && createUser()"
+                      class="form"
+                      novalidate=""
+                      autocomplete="off"
+                    >
+                      <div class="row">
+                        <div class="col">
+                          <div class="form-group" *ngIf="loggedInUser">
+                            <h4>
+                              Reset password for {{ loggedInUser.username | titlecase }}
+                            </h4>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <app-text-input
+                                  [formControl]="
+                                    createUserForm.controls['username']
+                                  "
+                                  [label]="'Username'"
+                                ></app-text-input>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <app-text-input
+                                  [formControl]="
+                                    createUserForm.controls['email']
+                                  "
+                                  [label]="'Email'"
+                                ></app-text-input>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <app-text-input
+                                  [formControl]="
+                                    createUserForm.controls['password']
+                                  "
+                                  [label]="'Password'"
+                                  [type]="'password'"
+                                ></app-text-input>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col">
+                              <div class="form-group">
+                                <app-text-input
+                                  [formControl]="
+                                    createUserForm.controls['confirmPassword']
+                                  "
+                                  [label]="'Confirm Password'"
+                                  [type]="'password'"
+                                ></app-text-input>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col d-flex justify-content-end">
+                              <button
+                                type="button"
+                                class="btn btn-default"
+                                (click)="bsModalRef.hide()"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                [disabled]="!createUserForm.valid"
+                                type="submit"
+                                class="btn btn-default"
+                              >
+                                Submit
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

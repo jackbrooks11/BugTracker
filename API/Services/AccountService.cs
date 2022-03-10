@@ -27,7 +27,7 @@ namespace API.Services
         public async Task<IdentityResult> ChangePassword(AppUser user, EditUserDto editUserDto)
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, token, editUserDto.Password);
+            var result = await _userManager.ResetPasswordAsync(user, token, editUserDto.NewPassword);
             return result;
         }
 

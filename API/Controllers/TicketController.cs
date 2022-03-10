@@ -88,7 +88,7 @@ namespace API.Controllers
                 return BadRequest(errorMessage);
             }
             var existingTicketDto = await _ticketService.GetTicketAsDto(newTicketDto.Id);
-            existingTicketDto = _ticketService.AddChangesToTicket(existingTicketDto, newTicketDto);
+            existingTicketDto = _ticketService.AddChangesToTicket(existingTicketDto, newTicketDto, User.FindFirst(ClaimTypes.Name)?.Value);
             var existingTicket = await _ticketService.GetTicket(existingTicketDto.Id);
             existingTicket = await GenerateTicket(existingTicketDto, existingTicket);
             _ticketService.MarkTicketAsModified(existingTicket);
