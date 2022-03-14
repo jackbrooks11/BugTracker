@@ -43,7 +43,6 @@ namespace API.Extensions
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
-
             });
 
             services.AddAuthorization(opt =>

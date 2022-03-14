@@ -1,12 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ForgotPasswordDto } from '../_models/forgotPasswordDto';
 import { AccountService } from '../_services/account.service';
 
@@ -23,7 +16,7 @@ export class ForgotPasswordComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private fb: FormBuilder,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -39,7 +32,7 @@ export class ForgotPasswordComponent implements OnInit {
   sendPasswordReset() {
     const forgotPasswordDto: ForgotPasswordDto = {
       email: this.forgotPasswordForm.value.email,
-      clientURI: 'https://localhost:5001/resetPassword',
+      clientURI: 'https://jacksbugtracker.herokuapp.com/resetPassword',
     };
     this.accountService.forgotPassword(forgotPasswordDto).subscribe(
       (response) => {
