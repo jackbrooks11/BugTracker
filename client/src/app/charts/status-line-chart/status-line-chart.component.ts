@@ -56,10 +56,12 @@ export class StatusLineChartComponent implements OnInit {
 
   initializeLabels() {
     var currentDate = Date.now();
-
+    console.log("currentDate in UTC: ", currentDate);
     for (let i = 29; i >= 0; i--) {
       var oldDate = new Date(currentDate);
       oldDate.setDate(oldDate.getDate() - i);
+      console.log("oldDate in UTC: ", oldDate);
+      console.log("oldDate in current time zone: ", oldDate.toDateString());
       this.barChartLabels.push(oldDate.toDateString());
     }
   }
@@ -68,9 +70,7 @@ export class StatusLineChartComponent implements OnInit {
     for (var ticket of this.tickets) {
       for (var change of ticket.changes) {
         var changeDate = new Date(change.changed);
-        console.log(changeDate);
-        changeDate = new Date(changeDate.getUTCDate());
-        console.log(changeDate);
+        console.log("change date in UTC: ", changeDate);
         var dateIndex = this.barChartLabels.indexOf(changeDate.toDateString());
         if (change.property == 'State' && dateIndex != -1) {
           if (change.newValue == 'Open') {
@@ -81,6 +81,8 @@ export class StatusLineChartComponent implements OnInit {
         }
       }
       var createdDate = new Date(ticket.created);
+      console.log("createdDate in UTC: ", createdDate);
+      console.log("createdDate in curent time zone: ", createdDate.toDateString());
       var dateIndex = this.barChartLabels.indexOf(createdDate.toDateString());
       if (dateIndex != -1) {
         this.barChartData[0]['data'][dateIndex] += 1;
