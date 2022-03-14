@@ -92,7 +92,6 @@ export class TicketModalComponent implements OnInit {
         .getProjectsForUser(this.loggedInUser.username)
         .subscribe((response) => {
           this.projects = response;
-          console.log("HI");
           this.filterProjects();
           this.hideProjects = true;
         });
