@@ -27,11 +27,6 @@ namespace API.Controllers
             _adminService = adminService;
         }
 
-        /// <summary>  
-        /// Gets a specific projects
-        /// </summary>  
-        /// <param name="projectId"></param>   
-        /// <returns>NotFound response if project not found, else Ok response</returns>
         [HttpGet("{projectId}", Name = "GetProject")]
         public async Task<ActionResult<Project>> GetProject(int projectId)
         {
@@ -43,21 +38,12 @@ namespace API.Controllers
             return Ok(project);
         }
 
-        /// <summary>  
-        /// Gets all projects
-        /// </summary>  
-        /// <returns>All projects</returns>
         [HttpGet]
         public IEnumerable<Project> GetProjects()
         {
             return _projectService.GetProjects();
         }
 
-        /// <summary>  
-        /// Gets all projects in paginated format
-        /// </summary>  
-        /// <param name="projectParams"></param>   
-        /// <returns>All projects paginated</returns>
         [HttpGet("paginated")]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjectsPaginated([FromQuery] ProjectParams projectParams)
         {
@@ -70,11 +56,6 @@ namespace API.Controllers
             return Ok(projects);
         }
         
-        /// <summary>  
-        /// Gets all projects for a specific user in paginated format
-        /// </summary>  
-        /// <param name="projectParams"></param>   
-        /// <returns>All projects for a specific user in paginated format</returns>
         [HttpGet("user/projects")]
         public async Task<ActionResult<IEnumerable<Project>>> GetProjectsForUser([FromQuery] ProjectParams projectParams)
         {
@@ -89,11 +70,6 @@ namespace API.Controllers
             return Ok(projects);
         }
 
-        /// <summary>  
-        /// Deletes projects specified by an admin
-        /// </summary>  
-        /// <param name="projectIdsToDelete"></param>   
-        /// <returns>BadRequest response if projects not deleted, else NoContent response</returns>
         [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("delete")]
         public async Task<ActionResult> DeleteProjects(int[] projectIdsToDelete)
@@ -110,11 +86,6 @@ namespace API.Controllers
             return BadRequest("Failed to delete project(s)");
         }
         
-        /// <summary>  
-        /// Updates title and/or description of a project
-        /// </summary>  
-        /// <param name="projectUpdated"></param>   
-        /// <returns>BadRequest response if project not updated, else NoContent response</returns>
         [Authorize(Policy = "RequireAdminRole")]
         [HttpPut]
         public async Task<ActionResult> UpdateProject(Project projectUpdated)
