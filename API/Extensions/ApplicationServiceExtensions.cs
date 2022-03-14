@@ -23,17 +23,28 @@ namespace API.Extensions
             services.AddScoped<ITicketCommentService, TicketCommentService>();
             services.AddScoped<IProjectUserService, ProjectUserService>();
             services.AddScoped<IAdminService, AdminService>();
-            var emailConfig = config
-                .GetSection("EmailConfiguration")
-                .Get<EmailConfiguration>();
+            EmailConfiguration emailConfig = new EmailConfiguration();
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (env == "Development") 
+            {
+                emailConfig = config
+                    .GetSection("EmailConfiguration")
+                    .Get<EmailConfiguration>();
+            }
+            else
+            {
+                emailConfig.From = Environment.GetEnvironmentVariable("EmailFrom");
+                emailConfig.SmtpServer = Environment.GetEnvironmentVariable("SmtpServer");
+                emailConfig.Port = int.Parse(Environment.GetEnvironmentVariable("EmailPort"));
+                emailConfig.Username = Environment.GetEnvironmentVariable("EmailUsername");
+                emailConfig.Password = Environment.GetEnvironmentVariable("EmailPassword");
+            }
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<LogUserActivity>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddDbContext<DataContext>(options =>
             {
-                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
                 string connStr;
 
                 // Depending on if in development or production, use either Heroku-provided
