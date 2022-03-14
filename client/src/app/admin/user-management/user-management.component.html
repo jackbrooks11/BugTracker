@@ -119,12 +119,14 @@
               </button>
               <button
                 (click)="openResetPasswordModal(user)"
+                *ngIf="!user.roles.includes('Admin') || user.username == loggedInUser.username"
                 class="btn btn-sm btn-info dropdown-item"
               >
                 Reset Password
               </button>
               <button
                 (click)="openResetEmailModal(user)"
+                *ngIf="!user.roles.includes('Admin') || user.username == loggedInUser.username"
                 class="btn btn-sm btn-info dropdown-item"
               >
                 Reset Email

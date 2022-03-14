@@ -61,7 +61,7 @@
                               [(ngModel)]="ticket.project"
                               name="project"
                               id="project"
-                              (input)="resetProjectListSize(); projectInput()"
+                              (input)="projectInput()"
                               list="projectList"
                               type="search"
                               class="form-control"
@@ -86,19 +86,6 @@
                               >
                                 {{ project | titlecase }}
                               </div>
-                              <div
-                                class="dropdown-item"
-                                [hidden]="disableLoadMoreProjects"
-                              >
-                                <button
-                                  name="loadMoreProjects"
-                                  type="button"
-                                  class="btn btn-sm btn-light"
-                                  (click)="loadMoreProjects()"
-                                >
-                                  Load More Projects
-                                </button>
-                              </div>
                             </div>
                           </div>
                         </div>
@@ -109,7 +96,7 @@
                               [(ngModel)]="ticket.assignee"
                               name="assignee"
                               id="assignee"
-                              (input)="resetUserListSize(); userInput()"
+                              (input)="userInput()"
                               [disabled]="disableUsers"
                               list="userList"
                               type="search"
@@ -142,19 +129,6 @@
                                 style="cursor: pointer"
                               >
                                 {{ username | titlecase }}
-                              </div>
-                              <div
-                                class="dropdown-item"
-                                [hidden]="disableLoadMoreUsers"
-                              >
-                                <button
-                                  name="loadMoreUsers"
-                                  type="button"
-                                  class="btn btn-sm btn-light"
-                                  (click)="loadMoreUsers()"
-                                >
-                                  Load More Users
-                                </button>
                               </div>
                             </div>
                           </div>

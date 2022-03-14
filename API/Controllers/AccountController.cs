@@ -134,7 +134,7 @@ namespace API.Controllers
         }
 
         [HttpPost("confirmEmail")]
-        public async Task<ActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
+        public async Task<ActionResult<UserDto>> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
             if (!ModelState.IsValid) return BadRequest("Essential information missing.");
             var user = await _userManager.FindByEmailAsync(confirmEmailDto.Email);
@@ -145,7 +145,12 @@ namespace API.Controllers
                 var errors = result.Errors.Select(e => e.Description);
                 return BadRequest(errors);
             }
-            return Ok();
+            return new UserDto
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = await _tokenService.CreateToken(user)
+            };
         }
     }
 }

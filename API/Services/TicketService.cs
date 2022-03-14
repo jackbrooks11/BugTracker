@@ -10,7 +10,6 @@ using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace API.Services
 {
@@ -235,9 +234,9 @@ namespace API.Services
             {
                 query = ticketParams.OrderBy switch
                 {
-                    "title" => query.OrderByDescending(t => t.Title),
-                    "project" => query.OrderByDescending(t => t.Project.Title),
-                    "assignee" => query.OrderByDescending(t => t.Assignee.UserName),
+                    "title" => query.OrderByDescending(t => t.Title.ToLower()),
+                    "project" => query.OrderByDescending(t => t.Project.Title.ToLower()),
+                    "assignee" => query.OrderByDescending(t => t.Assignee.UserName.ToLower()),
                     "priority" => query.OrderByDescending(t => (t.Priority == "High" ? 3 :
                     t.Priority == "Medium" ? 2 :
                     1)),
@@ -250,9 +249,9 @@ namespace API.Services
             {
                 query = ticketParams.OrderBy switch
                 {
-                    "title" => query.OrderBy(t => t.Title),
-                    "project" => query.OrderBy(t => t.Project.Title),
-                    "assignee" => query.OrderBy(t => t.Assignee.UserName),
+                    "title" => query.OrderBy(t => t.Title.ToLower()),
+                    "project" => query.OrderBy(t => t.Project.Title.ToLower()),
+                    "assignee" => query.OrderBy(t => t.Assignee.UserName.ToLower()),
                     "priority" => query.OrderBy(t => (t.Priority == "High" ? 3 :
                     t.Priority == "Medium" ? 2 :
                     1)),

@@ -33,6 +33,7 @@ export class ResetPasswordModalComponent implements OnInit {
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(25),
+          Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,25}$/),
         ],
       ],
       confirmPassword: [

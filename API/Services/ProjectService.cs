@@ -82,8 +82,8 @@ namespace API.Services
             {
                 query = projectParams.OrderBy switch
                 {
-                    "title" => query.OrderByDescending(p => p.Title),
-                    "description" => query.OrderByDescending(p => p.Description),
+                    "title" => query.OrderByDescending(p => p.Title.ToLower()),
+                    "description" => query.OrderByDescending(p => p.Description.ToLower()),
                     _ => query.OrderByDescending(t => t.Created)
                 };
             }
@@ -91,8 +91,8 @@ namespace API.Services
             {
                 query = projectParams.OrderBy switch
                 {
-                    "title" => query.OrderBy(p => p.Title),
-                    "description" => query.OrderBy(p => p.Description),
+                    "title" => query.OrderBy(p => p.Title.ToLower()),
+                    "description" => query.OrderBy(p => p.Description.ToLower()),
                     _ => query.OrderBy(t => t.Created)
 
                 };

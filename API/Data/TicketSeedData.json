@@ -1,0 +1,169 @@
+[
+  {
+    "Title": "example ticket one",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Admin",
+    "Priority": "Low",
+    "Type": "Issue",
+    "State": "Open",
+    "Comments": [
+      {
+        "Message": "Hello there!",
+        "SubmittedBy": "Admin",
+        "Roles": "Admin"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket two",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Emily",
+    "Priority": "Medium",
+    "Type": "Feature Request",
+    "State": "In Progress",
+    "Comments": [
+      {
+        "Message": "Hi!",
+        "SubmittedBy": "Emily",
+        "Roles": "Admin"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket three",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Jack",
+    "Priority": "High",
+    "Type": "Bug",
+    "State": "In Progress",
+    "Comments": [
+      {
+        "Message": "Random comment",
+        "SubmittedBy": "Admin",
+        "Roles": "Admin"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket four",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Jack",
+    "Priority": "Low",
+    "Type": "Requirement",
+    "State": "Resolved",
+    "Comments": [
+      {
+        "Message": "Hi!",
+        "SubmittedBy": "Heidi",
+        "Roles": "Project Manager"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket five",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Emily",
+    "Priority": "Medium",
+    "Type": "Issue",
+    "State": "Closed",
+    "Comments": [
+      {
+        "Message": "Hi!",
+        "SubmittedBy": "Heidi",
+        "Roles": "Project Manager"
+      },
+      {
+        "Message": "Hello there!",
+        "SubmittedBy": "Tom",
+        "Roles": "Developer"
+      }
+    ],
+    "Changes": [
+      {
+        "Editor": "Admin",
+        "Property": "State",
+        "OldValue": "Open",
+        "NewValue": "Closed"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket six",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Admin",
+    "Priority": "Medium",
+    "Type": "Bug",
+    "State": "Closed",
+    "Changes": [
+      {
+        "Editor": "Admin",
+        "Property": "State",
+        "OldValue": "Open",
+        "NewValue": "Closed"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket seven",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Jack",
+    "Priority": "Low",
+    "Type": "Feature Request",
+    "State": "Resolved",
+    "Comments": [
+      {
+        "Message": "Hey!",
+        "SubmittedBy": "Ed",
+        "Roles": "Project Manager"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket eight",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Jack",
+    "Priority": "Low",
+    "Type": "Bug",
+    "State": "Open"
+  },
+  {
+    "Title": "example ticket nine",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Emily",
+    "Priority": "Medium",
+    "Type": "Requirement",
+    "State": "In Progress",
+    "Comments": [
+      {
+        "Message": "Hello!",
+        "SubmittedBy": "Admin",
+        "Roles": "Admin"
+      },
+      {
+        "Message": "Hi!",
+        "SubmittedBy": "Will",
+        "Roles": "Developer"
+      }
+    ]
+  },
+  {
+    "Title": "example ticket ten",
+    "Description": "This is where a description of the ticket would go.",
+    "Submitter": "Jack",
+    "Priority": "High",
+    "Type": "Bug",
+    "State": "In Progress",
+    "Comments": [
+      {
+        "Message": "Hey there!",
+        "SubmittedBy": "Amanda",
+        "Roles": "Project Manager"
+      },
+      {
+        "Message": "Hello!",
+        "SubmittedBy": "Melissa",
+        "Roles": "Developer"
+      }
+    ]
+  }
+]

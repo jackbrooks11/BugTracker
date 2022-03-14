@@ -13,6 +13,8 @@ import { ResetEmailModalComponent } from 'src/app/modals/reset-email-modal/reset
 import { SendConfirmationEmailDto } from 'src/app/_models/sendConfirmationEmailDto';
 import { UserModalComponent } from 'src/app/modals/user-modal/user-modal.component';
 import { RegisterDto } from 'src/app/_models/registerDto';
+import { LoggedInUser } from 'src/app/_models/loggedInUser';
+import { AccountService } from 'src/app/_services/account.service';
 
 @Component({
   selector: 'app-user-management',
@@ -25,14 +27,17 @@ export class UserManagementComponent implements OnInit {
   checkAll: boolean = false;
   bsModalRef: BsModalRef;
   pagination: Pagination;
-  userParams: UserParams;
-
+  userParams: UserParams = new UserParams();
+  loggedInUser: LoggedInUser;
   constructor(
     private adminService: AdminService,
+    private accountService: AccountService,
     private modalService: BsModalService,
     private toastr: ToastrService
   ) {
-    this.userParams = new UserParams();
+    this.accountService.currentUser$.subscribe((val) => {
+      this.loggedInUser = val;
+    });
   }
 
   ngOnInit(): void {

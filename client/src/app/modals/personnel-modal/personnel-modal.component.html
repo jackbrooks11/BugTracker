@@ -32,7 +32,7 @@
                                 id="assignedTo"
                                 list="userList"
                                 class="form-control"
-                                (input)="resetListSize(); filterUsernames()"
+                                (input)="filterUsernames()"
                               />
                               <div
                                 id="userList"
@@ -50,20 +50,6 @@
                                   style="cursor: pointer"
                                 >
                                   {{ username }}
-                                </div>
-                                <div
-                                  class="dropdown-item"
-                                  [hidden]="
-                                    disableLoadMoreUsers
-                                  "
-                                >
-                                  <button
-                                    class="btn btn-sm btn-light"
-                                    [ngModelOptions]="{ standalone: true }"
-                                    (click)="loadMoreUsers()"
-                                  >
-                                    Show More Users
-                                  </button>
                                 </div>
                               </div>
                             </div>

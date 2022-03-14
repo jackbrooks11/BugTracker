@@ -16,8 +16,6 @@ export class PersonnelModalComponent implements OnInit {
   searchMatch: string = '';
   usernames: string[] = [];
   displayUsernames: string[] = [];
-  usernameListSize: number = 10;
-  disableLoadMoreUsers: boolean = false;
   @Input() submitted = new EventEmitter();
   hide: boolean = true;
 
@@ -45,7 +43,6 @@ export class PersonnelModalComponent implements OnInit {
 
   loadUsers(projectTitle: string) {
     this.searchMatch = this.searchMatch.toLowerCase();
-    this.disableLoadMoreUsers = false;
     this.projectUsersService
       .getUsersNotInProject(projectTitle)
       .subscribe((response) => {
@@ -60,28 +57,13 @@ export class PersonnelModalComponent implements OnInit {
     this.assignUserForm.controls['username'].setValue('');
     var filteredUsernames = [];
     this.usernames.forEach(username => {
-      if (username.includes(this.searchMatch)) {
+      if (username.includes(this.searchMatch.toLowerCase())) {
         filteredUsernames.push(this.toTitleCase(username));
       }
     })
-    this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
-    if (this.displayUsernames.length < this.usernameListSize) {
-      this.disableLoadMoreUsers = true;
-    }
-    else {
-      this.disableLoadMoreUsers = false;
-    }
+    this.displayUsernames = filteredUsernames;
   }
-
-  loadMoreUsers() {
-    this.usernameListSize += 10;
-    this.filterUsernames();
-  }
-
-  resetListSize() {
-    this.usernameListSize = 10;
-  }
-
+  
   updateDeveloper(userName: string) {
     this.hide = true;
     this.searchMatch = userName;

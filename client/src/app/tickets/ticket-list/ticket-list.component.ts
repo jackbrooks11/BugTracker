@@ -28,7 +28,6 @@ export class TicketListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log("HI");
     this.loadTickets();
   }
 

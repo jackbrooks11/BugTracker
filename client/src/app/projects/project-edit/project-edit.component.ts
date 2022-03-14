@@ -24,7 +24,7 @@ export class ProjectEditComponent implements OnInit {
     private projectService: ProjectsService,
     private route: ActivatedRoute,
     private toastr: ToastrService,
-    private fb: FormBuilder,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -33,9 +33,25 @@ export class ProjectEditComponent implements OnInit {
 
   initializeForm() {
     this.editForm = this.fb.group({
-      title: [this.project.title, Validators.compose([Validators.pattern('[a-zA-Z]+[a-zA-Z ]*'), Validators.required])],
-      description: [this.project.description, Validators.required]
-    })
+      title: [
+        this.project.title,
+        Validators.compose([
+          Validators.pattern(/^(([a-z|A-Z]+(?: [a-z|A-Z]+)*)|)$/),
+          Validators.minLength(6),
+          Validators.maxLength(25),
+          Validators.required,
+        ]),
+      ],
+      description: [
+        this.project.description,
+        Validators.compose([
+          Validators.pattern(/^(([\S]+(?: [\S]+)*)|)$/),
+          Validators.minLength(10),
+          Validators.maxLength(100),
+          Validators.required,
+        ]),
+      ]
+    });
   }
 
   loadProject() {
@@ -63,8 +79,8 @@ export class ProjectEditComponent implements OnInit {
   }
 
   toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   }
 }

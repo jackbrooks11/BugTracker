@@ -21,18 +21,14 @@ export class TicketEditComponent implements OnInit {
   editForm: FormGroup;
   loggedInUser: LoggedInUser;
 
-  usernameListSize: number = 10;
   usernames: string[] = [];
   displayUsernames: string[] = [];
   hideUsers: boolean = true;
   disableUsers: boolean = false;
-  disableLoadMoreUsers: boolean = false;
 
-  projectListSize: number = 10;
   projects: Project[] = [];
   displayProjects: string[] = [];
   hideProjects: boolean = true;
-  disableLoadMoreProjects: boolean = true;
 
   ticket: Ticket;
 
@@ -65,8 +61,24 @@ export class TicketEditComponent implements OnInit {
 
   initializeForm() {
     this.editForm = this.fb.group({
-      title: [this.ticket.title, Validators.compose([Validators.pattern('[a-zA-Z]+[a-zA-Z ]*'), Validators.required])],
-      description: [this.ticket.description, Validators.required],
+      title: [
+        this.ticket.title,
+        Validators.compose([
+          Validators.pattern(/^(([a-z|A-Z]+(?: [a-z|A-Z]+)*)|)$/),
+          Validators.minLength(6),
+          Validators.maxLength(25),
+          Validators.required,
+        ]),
+      ],
+      description: [
+        this.ticket.description,
+        Validators.compose([
+          Validators.pattern(/^(([\S]+(?: [\S]+)*)|)$/),
+          Validators.minLength(10),
+          Validators.maxLength(100),
+          Validators.required,
+        ]),
+      ],
       project: [this.ticket.project],
       assignee: [this.ticket.assignee],
       priority: [this.ticket.priority],
@@ -101,21 +113,13 @@ export class TicketEditComponent implements OnInit {
   filterProjects() {
     var filteredProjects = [];
     this.projects.forEach((project) => {
-      if (project.title.toLowerCase().includes(this.ticket.project.toLowerCase())) {
+      if (
+        project.title.toLowerCase().includes(this.ticket.project.toLowerCase())
+      ) {
         filteredProjects.push(this.toTitleCase(project.title));
       }
     });
-    this.displayProjects = filteredProjects.slice(0, this.projectListSize);
-    if (this.displayProjects.length < this.projectListSize) {
-      this.disableLoadMoreProjects = true;
-    } else {
-      this.disableLoadMoreProjects = false;
-    }
-  }
-
-  loadMoreProjects() {
-    this.projectListSize += 10;
-    this.filterProjects();
+    this.displayProjects = filteredProjects;
   }
 
   /*Function called when project is clicked*/
@@ -125,10 +129,6 @@ export class TicketEditComponent implements OnInit {
     this.ticket.project = title;
     this.ticket.assignee = '';
     this.loadUsers(title);
-  }
-
-  resetProjectListSize() {
-    this.projectListSize = 10;
   }
 
   userInput() {
@@ -162,21 +162,7 @@ export class TicketEditComponent implements OnInit {
         lenFilteredUsernames += 1;
       }
     });
-    this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
-    if (this.displayUsernames.length < this.usernameListSize) {
-      this.disableLoadMoreUsers = true;
-    } else {
-      this.disableLoadMoreUsers = false;
-    }
-  }
-
-  resetUserListSize() {
-    this.usernameListSize = 10;
-  }
-
-  loadMoreUsers() {
-    this.usernameListSize += 10;
-    this.filterUsernames();
+    this.displayUsernames = filteredUsernames;
   }
 
   updateDeveloper(userName: string) {
@@ -228,8 +214,7 @@ export class TicketEditComponent implements OnInit {
     this.ticket.project = this.toTitleCase(this.ticket.project);
     if (![null, ''].includes(this.ticket.assignee)) {
       this.ticket.assignee = this.toTitleCase(this.ticket.assignee);
-    }
-    else {
+    } else {
       this.ticket.assignee = 'Unassigned';
     }
   }
@@ -241,16 +226,15 @@ export class TicketEditComponent implements OnInit {
     ticket.project = this.ticket.project.toLowerCase();
     if (this.ticket.assignee == 'Unassigned') {
       ticket.assignee = '';
-    }
-    else {
+    } else {
       ticket.assignee = this.ticket.assignee.toLowerCase();
     }
     return ticket;
   }
 
   toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   }
 }

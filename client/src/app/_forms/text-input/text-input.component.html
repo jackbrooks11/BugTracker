@@ -18,21 +18,30 @@
     [formControl]="ngControl.control"
   ></textarea>
   <div *ngIf="ngControl.control.errors?.required" class="invalid-feedback">
-    {{ label | titlecase }} required
+    {{ label | titlecase }} required.
   </div>
-  <div *ngIf="ngControl.control.errors?.pattern" class="invalid-feedback">
-    {{ label | titlecase }} can not have numbers/symbols, and can not start with a space.
+  <div *ngIf="label == 'title' && ngControl.control.errors?.pattern" class="invalid-feedback">
+    {{ label | titlecase }} can not have numbers/symbols, can only have one space between letters, and can not start or end with a space.
+  </div>
+  <div *ngIf="label == 'description' && ngControl.control.errors?.pattern" class="invalid-feedback">
+    {{ label | titlecase }} can only have one space between letters, and can not start or end with a space.
+  </div>
+  <div *ngIf="label == 'Username' && ngControl.control.errors?.pattern" class="invalid-feedback">
+    {{ label | titlecase }} can only have letters.
+  </div>
+  <div *ngIf="['Password', 'New Password'].includes(label) && ngControl.control.errors?.pattern" class="invalid-feedback">
+    {{ label | titlecase }} must contain at least one uppercase letter, one lowercase letter, and one number.
   </div>
   <div *ngIf="ngControl.control.errors?.email" class="invalid-feedback">
-    {{ label | titlecase }} entered is not valid
+    {{ label | titlecase }} entered is not valid.
   </div>
   <div *ngIf="ngControl.control.errors?.minlength" class="invalid-feedback">
-    {{ label }} must be at least
-    {{ ngControl.control.errors.minlength["requiredLength"] }} characters
+    {{ label | titlecase }} must be at least
+    {{ ngControl.control.errors.minlength["requiredLength"] }} characters.
   </div>
   <div *ngIf="ngControl.control.errors?.maxlength" class="invalid-feedback">
-    {{ label }} must be at most
-    {{ ngControl.control.errors.maxlength["requiredLength"] }} characters
+    {{ label | titlecase }} must be at most
+    {{ ngControl.control.errors.maxlength["requiredLength"] }} characters.
   </div>
   <div *ngIf="ngControl.control.errors?.isMatching" class="invalid-feedback">
     Passwords do not match

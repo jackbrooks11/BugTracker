@@ -58,9 +58,7 @@
                                 id="project"
                                 class="form-control"
                                 list="projectList"
-                                (input)="
-                                  resetProjectListSize(); filterProjects()
-                                "
+                                (input)="filterProjects()"
                               />
                               <div
                                 id="projectList"
@@ -74,23 +72,11 @@
                                 <div
                                   class="dropdown-item"
                                   *ngFor="let project of displayProjects"
-                                  [ngModelOptions]="{standalone: true}"
+                                  [ngModelOptions]="{ standalone: true }"
                                   (click)="updateProject(project)"
                                   style="cursor: pointer"
                                 >
                                   {{ project | titlecase }}
-                                </div>
-                                <div
-                                  class="dropdown-item"
-                                  [hidden]="disableLoadMoreProjects"
-                                >
-                                  <button
-                                    class="btn btn-sm btn-light"
-                                    type="button"
-                                    (click)="loadMoreProjects()"
-                                  >
-                                    Load More Projects
-                                  </button>
                                 </div>
                               </div>
                             </div>
@@ -110,7 +96,7 @@
                                 placeholder="Search"
                                 aria-label="Search"
                                 aria-describedby="search-addon"
-                                (input)="resetListSize(); filterUsernames()"
+                                (input)="filterUsernames()"
                               />
                               <div
                                 id="userList"
@@ -122,33 +108,21 @@
                                 *ngIf="!hideUsers"
                               >
                                 <div
-                                class="dropdown-item"
-                                (click)="updateDeveloper('Unassigned')"
-                                [ngModelOptions]="{standalone: true}"
-                                style="cursor: pointer"
+                                  class="dropdown-item"
+                                  (click)="updateDeveloper('Unassigned')"
+                                  [ngModelOptions]="{ standalone: true }"
+                                  style="cursor: pointer"
                                 >
-                                Unassigned
+                                  Unassigned
                                 </div>
                                 <div
                                   class="dropdown-item"
                                   *ngFor="let username of displayUsernames"
                                   (click)="updateDeveloper(username)"
-                                  [ngModelOptions]="{standalone: true}"
+                                  [ngModelOptions]="{ standalone: true }"
                                   style="cursor: pointer"
                                 >
                                   {{ username | titlecase }}
-                                </div>
-                                <div
-                                  class="dropdown-item"
-                                  [hidden]="disableLoadMoreUsers"
-                                >
-                                  <button
-                                    class="btn btn-sm btn-light"
-                                    type="button"
-                                    (click)="loadMoreUsers()"
-                                  >
-                                    Load More Users
-                                  </button>
                                 </div>
                               </div>
                             </div>

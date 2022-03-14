@@ -18,22 +18,23 @@ namespace API
             var host = CreateHostBuilder(args).Build();
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
-            try{
+            try
+            {
                 var context = services.GetRequiredService<DataContext>();
                 var userManager = services.GetRequiredService<UserManager<AppUser>>();
                 var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
                 await context.Database.MigrateAsync();
-                //await Seed.SeedTickets(context);
                 await Seed.SeedUsers(userManager, roleManager);
-                //await Seed.See
-
+                await Seed.SeedProjects(context);
+                await Seed.SeedProjectUsers(userManager, context);
+                await Seed.SeedTickets(userManager, context);
             }
             catch (Exception ex)
             {
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occurred during migration");
             }
-    
+
             await host.RunAsync();
         }
 

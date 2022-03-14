@@ -37,7 +37,13 @@ export class UserModalComponent implements OnInit {
 
   initializeForm() {
     this.createUserForm = this.fb.group({
-      username: ['', [Validators.required]],
+      username: ['',
+        Validators.compose([
+          Validators.pattern(/^[a-zA-Z]*$/),
+          Validators.maxLength(20),
+          Validators.required
+        ]),
+      ],
       email: ['', [Validators.required, Validators.email]],
       password: [
         '',
@@ -45,6 +51,7 @@ export class UserModalComponent implements OnInit {
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(25),
+          Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,25}$/),
         ],
       ],
       confirmPassword: [

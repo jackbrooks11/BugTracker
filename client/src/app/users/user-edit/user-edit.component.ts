@@ -53,7 +53,14 @@ export class UserEditComponent implements OnInit {
         about: [this.user.about],
         email: [this.user.email],
         password: ['', [Validators.minLength(6), Validators.maxLength(25)]],
-        newPassword: ['', [Validators.minLength(6), Validators.maxLength(25)]],
+        newPassword: [
+          '',
+          [
+            Validators.minLength(6),
+            Validators.maxLength(25),
+            Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,25}$/),
+          ],
+        ],
         confirmPassword: ['', [this.matchValues('newPassword')]],
       },
       { validators: this.passwordsFilledOutValidator }

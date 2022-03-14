@@ -21,19 +21,15 @@ export class TicketModalComponent implements OnInit {
   disableSubmit: boolean = true;
 
   usersSearchMatch: string = '';
-  usernameListSize: number = 10;
   usernames: string[] = [];
   displayUsernames: string[] = [];
   hideUsers: boolean = true;
   disableUsers: boolean = true;
-  disableLoadMoreUsers: boolean = false;
 
   projectsSearchMatch: string = '';
-  projectListSize: number = 10;
   projects: Project[] = [];
   displayProjects: string[] = [];
   hideProjects: boolean = true;
-  disableLoadMoreProjects: boolean = false;
 
   @Input() submitted = new EventEmitter();
 
@@ -56,8 +52,24 @@ export class TicketModalComponent implements OnInit {
 
   initializeForm() {
     this.createTicketForm = this.fb.group({
-      title: ['', Validators.compose([Validators.pattern('[a-zA-Z]+[a-zA-Z ]*'), Validators.required])],
-      description: ['', Validators.required],
+      title: [
+        '',
+        Validators.compose([
+          Validators.pattern(/^(([a-z|A-Z]+(?: [a-z|A-Z]+)*)|)$/),
+          Validators.minLength(6),
+          Validators.maxLength(25),
+          Validators.required,
+        ]),
+      ],
+      description: [
+        '',
+        Validators.compose([
+          Validators.pattern(/^(([\S]+(?: [\S]+)*)|)$/),
+          Validators.minLength(10),
+          Validators.maxLength(100),
+          Validators.required,
+        ]),
+      ],
       project: [''],
       assignee: [''],
       submitter: [this.loggedInUser.username],
@@ -69,7 +81,6 @@ export class TicketModalComponent implements OnInit {
   loadProjects() {
     this.hideProjects = false;
     this.projectsSearchMatch = this.projectsSearchMatch.toLowerCase();
-    this.disableLoadMoreProjects = false;
     if (this.loggedInUser.roles.includes('Admin')) {
       this.projectService.getProjects().subscribe((response) => {
         this.projects = response;
@@ -95,26 +106,18 @@ export class TicketModalComponent implements OnInit {
     this.createTicketForm.controls['project'].setValue('');
     var filteredProjects = [];
     this.projects.forEach((project) => {
-      if (project.title.toLowerCase().includes(this.projectsSearchMatch.toLowerCase())) {
-        filteredProjects.push(this.toTitleCase(this.toTitleCase(project.title)));
+      if (
+        project.title
+          .toLowerCase()
+          .includes(this.projectsSearchMatch.toLowerCase())
+      ) {
+        filteredProjects.push(
+          this.toTitleCase(this.toTitleCase(project.title))
+        );
       }
     });
-    this.displayProjects = filteredProjects.slice(0, this.projectListSize);
+    this.displayProjects = filteredProjects;
     this.displayProjects.sort();
-    if (this.displayProjects.length < this.projectListSize) {
-      this.disableLoadMoreProjects = true;
-    } else {
-      this.disableLoadMoreProjects = false;
-    }
-  }
-
-  loadMoreProjects() {
-    this.projectListSize += 10;
-    this.filterProjects();
-  }
-
-  resetProjectListSize() {
-    this.projectListSize = 10;
   }
 
   /*Function called when project is clicked*/
@@ -135,7 +138,6 @@ export class TicketModalComponent implements OnInit {
       this.projectUserService
         .getUsersForProject(projectTitle)
         .subscribe((users) => {
-          console.log(users);
           this.usernames = users;
           this.filterUsernames();
         });
@@ -151,26 +153,14 @@ export class TicketModalComponent implements OnInit {
     this.createTicketForm.controls['assignee'].setValue('');
     var filteredUsernames = [];
     this.usernames.forEach((username) => {
-      if (username.toLowerCase().includes(this.usersSearchMatch.toLowerCase())) {
+      if (
+        username.toLowerCase().includes(this.usersSearchMatch.toLowerCase())
+      ) {
         filteredUsernames.push(this.toTitleCase(username));
       }
     });
-    this.displayUsernames = filteredUsernames.slice(0, this.usernameListSize);
+    this.displayUsernames = filteredUsernames;
     this.displayUsernames.sort();
-    if (this.displayUsernames.length < this.usernameListSize) {
-      this.disableLoadMoreUsers = true;
-    } else {
-      this.disableLoadMoreUsers = false;
-    }
-  }
-
-  loadMoreUsers() {
-    this.usernameListSize += 10;
-    this.filterUsernames();
-  }
-
-  resetListSize() {
-    this.usernameListSize = 10;
   }
 
   updateDeveloper(userName: string) {
@@ -190,8 +180,8 @@ export class TicketModalComponent implements OnInit {
   }
 
   toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt){
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
     });
   }
 }

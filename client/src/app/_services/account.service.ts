@@ -12,14 +12,14 @@ import { RegisterDto } from '../_models/registerDto';
 import { ConfirmEmailDto } from '../_models/confirmEmailDto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccountService {
   baseUrl = environment.apiUrl;
   private currentUserSource = new ReplaySubject<LoggedInUser>(1);
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   login(model: any) {
     return this.http.post(this.baseUrl + 'account/login', model).pipe(
@@ -29,7 +29,7 @@ export class AccountService {
           this.setCurrentUser(loggedInUser);
         }
       })
-    )
+    );
   }
 
   loginAsDemo() {
@@ -40,7 +40,7 @@ export class AccountService {
           this.setCurrentUser(loggedInUser);
         }
       })
-    )
+    );
   }
   register(model: RegisterDto) {
     return this.http.post(this.baseUrl + 'account/register', model);
@@ -55,14 +55,22 @@ export class AccountService {
   }
 
   confirmEmail(model: ConfirmEmailDto) {
-    console.log(model);
-    return this.http.post(this.baseUrl + 'account/confirmEmail', model);
+    return this.http.post(this.baseUrl + 'account/confirmEmail', model).pipe(
+      map((response: LoggedInUser) => {
+        const loggedInUser = response;
+        if (loggedInUser) {
+          this.setCurrentUser(loggedInUser);
+        }
+      })
+    );
   }
 
   setCurrentUser(loggedInUser: LoggedInUser) {
     loggedInUser.roles = [];
     const roles = this.getDecodedToken(loggedInUser.token).role;
-    Array.isArray(roles) ? loggedInUser.roles = roles : loggedInUser.roles.push(roles);
+    Array.isArray(roles)
+      ? (loggedInUser.roles = roles)
+      : loggedInUser.roles.push(roles);
     localStorage.setItem('user', JSON.stringify(loggedInUser));
     this.currentUserSource.next(loggedInUser);
     document.body.style.background = 'rgba(0, 0, 0, 0)';
@@ -85,6 +93,4 @@ export class AccountService {
   getDecodedToken(token: any) {
     return JSON.parse(atob(token.split('.')[1]));
   }
-
-
 }

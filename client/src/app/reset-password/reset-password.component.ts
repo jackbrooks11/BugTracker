@@ -40,6 +40,7 @@ export class ResetPasswordComponent implements OnInit {
           Validators.required,
           Validators.minLength(6),
           Validators.maxLength(25),
+          Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,25}$/),
         ],
       ],
       confirmPassword: [
@@ -68,12 +69,12 @@ export class ResetPasswordComponent implements OnInit {
       token: this.route.snapshot.queryParams['token'],
     };
     if (resetPasswordDto.email == null || resetPasswordDto.token == null) {
-      this.toastr.error("Email or token missing");
+      this.toastr.error('Email or token missing');
     }
     this.accountService.resetPassword(resetPasswordDto).subscribe(
       (response) => {
         this.router.navigateByUrl('/');
-        this.toastr.success("Password succesfully reset");
+        this.toastr.success('Password succesfully reset');
       },
       (error) => {
         console.log(error);
