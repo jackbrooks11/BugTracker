@@ -25,7 +25,7 @@ namespace API.Extensions
             services.AddScoped<IAdminService, AdminService>();
             EmailConfiguration emailConfig = new EmailConfiguration();
             var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            if (env == "Development") 
+            if (env == "Development")
             {
                 emailConfig = config
                     .GetSection("EmailConfiguration")
@@ -35,7 +35,6 @@ namespace API.Extensions
             {
                 emailConfig.From = Environment.GetEnvironmentVariable("EmailFrom");
                 emailConfig.SmtpServer = Environment.GetEnvironmentVariable("SmtpServer");
-                emailConfig.Port = int.Parse(Environment.GetEnvironmentVariable("EmailPort"));
                 emailConfig.Username = Environment.GetEnvironmentVariable("EmailUsername");
                 emailConfig.Password = Environment.GetEnvironmentVariable("EmailPassword");
             }

@@ -50,14 +50,13 @@ export class StatusLineChartComponent implements OnInit {
     this.initializeLabels();
     this.ticketService.getTickets().subscribe((tickets) => {
       this.tickets = tickets;
-      console.log(this.tickets);
       this.generateData();
     });
   }
 
   initializeLabels() {
     var currentDate = Date.now();
-    for (let i = 30; i >= 0; i--) {
+    for (let i = 29; i >= -1; i--) {
       var oldDate = new Date(currentDate);
       oldDate.setDate(oldDate.getDate() - i);
       this.barChartLabels.push(oldDate.toDateString());
