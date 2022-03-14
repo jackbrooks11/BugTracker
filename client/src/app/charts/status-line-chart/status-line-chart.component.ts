@@ -56,7 +56,6 @@ export class StatusLineChartComponent implements OnInit {
 
   initializeLabels() {
     var currentDate = Date.now();
-    console.log('currentDate in UTC: ', currentDate);
     for (let i = 29; i >= 0; i--) {
       var oldDate = new Date(currentDate);
       oldDate.setDate(oldDate.getDate() - i);
@@ -78,9 +77,6 @@ export class StatusLineChartComponent implements OnInit {
         }
       }
       var createdDate = new Date(ticket.created);
-      createdDate.setMinutes(
-        createdDate.getMinutes() - createdDate.getTimezoneOffset()
-      );
       var dateIndex = this.barChartLabels.indexOf(createdDate.toString());
       if (dateIndex != -1) {
         this.barChartData[0]['data'][dateIndex] += 1;
