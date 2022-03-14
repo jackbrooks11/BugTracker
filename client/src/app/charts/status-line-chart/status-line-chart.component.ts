@@ -50,6 +50,7 @@ export class StatusLineChartComponent implements OnInit {
     this.initializeLabels();
     this.ticketService.getTickets().subscribe((tickets) => {
       this.tickets = tickets;
+      console.log(this.tickets);
       this.generateData();
     });
   }
