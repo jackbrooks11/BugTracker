@@ -81,6 +81,7 @@ export class StatusLineChartComponent implements OnInit {
         }
       }
       var createdDate = new Date(ticket.created);
+      console.log("Timezone offset: ", createdDate.getTimezoneOffset());
       console.log("createdDate in UTC: ", createdDate);
       console.log("createdDate in curent time zone: ", createdDate.toTimeString());
       var dateIndex = this.barChartLabels.indexOf(createdDate.toString());
