@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ɵɵsetComponentScope } from '@angular/core';
 import { Ticket } from 'src/app/_models/ticket';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
@@ -68,7 +68,8 @@ export class StatusLineChartComponent implements OnInit {
     for (var ticket of this.tickets) {
       for (var change of ticket.changes) {
         var changeDate = new Date(change.changed);
-        changeDate = this.adjustForTimezone(changeDate);
+        console.log(changeDate);
+        changeDate = new Date(changeDate.getUTCDate());
         console.log(changeDate);
         var dateIndex = this.barChartLabels.indexOf(changeDate.toDateString());
         if (change.property == 'State' && dateIndex != -1) {
@@ -86,10 +87,4 @@ export class StatusLineChartComponent implements OnInit {
       }
     }
   }
-
-  adjustForTimezone(date:Date):Date{
-    var timeOffsetInMS:number = date.getTimezoneOffset() * 60000;
-    date.setTime(date.getTime() + timeOffsetInMS);
-    return date
-}
 }
