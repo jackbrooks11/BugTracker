@@ -75,7 +75,7 @@
           </td>
           <td class="text-primary">{{ ticket.state }}</td>
           <td>{{ ticket.type }}</td>
-          <td>{{ ticket.created | date: "medium" }}</td>
+          <td>{{ ticket.created | date: "medium" : '-0700' }}</td>
         </tr>
       </tbody>
       <tbody *ngIf="tickets.length <= 0" style="text-align: center">

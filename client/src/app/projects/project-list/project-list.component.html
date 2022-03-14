@@ -128,7 +128,7 @@
             }}</a>
           </td>
           <td>{{ project.description }}</td>
-          <td>{{ project.created | date: "medium" }}</td>
+          <td>{{ project.created | date: "medium" : '-0700' }}</td>
         </tr>
       </tbody>
       <tbody *ngIf="projects.length <= 0" style="text-align: center">

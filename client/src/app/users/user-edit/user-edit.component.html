@@ -28,7 +28,7 @@
                     {{ user.userName | titlecase }}
                   </h4>
                   <div class="text-muted" *ngIf="user">
-                    <small>Last seen {{ user.lastActive | date }}</small>
+                    <small>Last seen {{ user.lastActive | date : '-0700' }}</small>
                   </div>
                 </div>
                 <div class="text-center text-sm-right">
@@ -37,7 +37,7 @@
                   </div>
                   <div class="text-muted">
                     <small *ngIf="user"
-                      >Joined {{ user.created | date }}</small
+                      >Joined {{ user.created | date : '-0700' }}</small
                     >
                   </div>
                 </div>
