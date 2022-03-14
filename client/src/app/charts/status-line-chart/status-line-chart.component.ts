@@ -77,7 +77,7 @@ export class StatusLineChartComponent implements OnInit {
         }
       }
       var createdDate = new Date(ticket.created);
-      var dateIndex = this.barChartLabels.indexOf(createdDate.toString());
+      var dateIndex = this.barChartLabels.indexOf(createdDate.toDateString());
       if (dateIndex != -1) {
         this.barChartData[0]['data'][dateIndex] += 1;
       }
