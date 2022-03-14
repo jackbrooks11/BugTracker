@@ -75,7 +75,7 @@
         <td *ngIf="!change.newValue && change.property == 'Assignee'">
           Unassigned
         </td>
-        <td>{{ change.changed | date: "short" : '-0700' }}</td>
+        <td>{{ change.changed | date: "short" }}</td>
       </tr>
     </tbody>
     <tbody *ngIf="ticketPropertyChanges && ticketPropertyChanges.length <= 0" style="text-align: center">
