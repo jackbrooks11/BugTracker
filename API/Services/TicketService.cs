@@ -201,10 +201,12 @@ namespace API.Services
             {
                 change.OldValue = existingTicketDto.Assignee;
                 change.NewValue = newTicketDto.Assignee;
-                if (change.OldValue == "" || change.OldValue == null) {
+                if (change.OldValue == "" || change.OldValue == null)
+                {
                     change.OldValue = "Unassigned";
                 }
-                 if (change.NewValue == "" || change.NewValue == null) {
+                if (change.NewValue == "" || change.NewValue == null)
+                {
                     change.NewValue = "Unassigned";
                 }
             }
@@ -227,8 +229,11 @@ namespace API.Services
             if (ticketParams.SearchMatch != null)
             {
                 query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
-                t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
-                t.Assignee.UserName.ToLower().Contains(ticketParams.SearchMatch.ToLower())));
+                t.Assignee.UserName.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Priority.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.State.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Type.ToLower().Contains(ticketParams.SearchMatch.ToLower())
+                ));
             }
             if (!ticketParams.Ascending)
             {
