@@ -85,7 +85,13 @@
             [checked]="checkAll ? true : null"
           />
         </td>
-        <td>{{ user.username | titlecase }}</td>
+        <td>
+          <a
+            href="#"
+            routerLink="/users/{{ user.username }}"
+            >{{ user.username | titlecase }}</a
+          >
+        </td>
         <td>{{ user.roles }}</td>
       </tr>
     </tbody>

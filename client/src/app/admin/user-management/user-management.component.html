@@ -100,7 +100,11 @@
             [checked]="checkAll && !user.roles.includes('Admin') ? true : null"
           />
         </td>
-        <td>{{ user.username | titlecase }}</td>
+        <td>
+          <a href="#" routerLink="/users/{{ user.username }}">{{
+            user.username | titlecase
+          }}</a>
+        </td>
         <td>{{ user.email | titlecase }}</td>
         <td *ngIf="user.emailConfirmed">Yes</td>
         <td *ngIf="!user.emailConfirmed">No</td>
@@ -119,14 +123,20 @@
               </button>
               <button
                 (click)="openResetPasswordModal(user)"
-                *ngIf="!user.roles.includes('Admin') || user.username == loggedInUser.username"
+                *ngIf="
+                  !user.roles.includes('Admin') ||
+                  user.username == loggedInUser.username
+                "
                 class="btn btn-sm btn-info dropdown-item"
               >
                 Reset Password
               </button>
               <button
                 (click)="openResetEmailModal(user)"
-                *ngIf="!user.roles.includes('Admin') || user.username == loggedInUser.username"
+                *ngIf="
+                  !user.roles.includes('Admin') ||
+                  user.username == loggedInUser.username
+                "
                 class="btn btn-sm btn-info dropdown-item"
               >
                 Reset Email

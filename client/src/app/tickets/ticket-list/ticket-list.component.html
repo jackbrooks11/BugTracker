@@ -90,7 +90,14 @@
               ticket.title | titlecase
             }}</a>
           </td>
-          <td>{{ ticket.project | titlecase }}</td>
+          <td>
+            <a
+              *ngIf="ticket.project"
+              href="#"
+              routerLink="/projects/{{ ticket.project.id }}"
+              >{{ ticket.project | titlecase }}</a
+            >
+          </td>
           <td>
             <a
               *ngIf="ticket.assignee"
@@ -112,7 +119,7 @@
           </td>
           <td class="text-primary">{{ ticket.state }}</td>
           <td>{{ ticket.type }}</td>
-          <td>{{ ticket.created | date: "short"}}</td>
+          <td>{{ ticket.created | date: "short" }}</td>
         </tr>
       </tbody>
       <tbody *ngIf="tickets.length <= 0" style="text-align: center">

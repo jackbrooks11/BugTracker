@@ -55,7 +55,14 @@
               ticket.title | titlecase
             }}</a>
           </td>
-          <td>{{ ticket.project | titlecase }}</td>
+          <td>
+            <a
+              *ngIf="ticket.project"
+              href="#"
+              routerLink="/projects/{{ ticket.project.id }}"
+              >{{ ticket.project | titlecase }}</a
+            >
+          </td>
           <td>
             <a
               style="color: #777"
