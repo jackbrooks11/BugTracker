@@ -91,12 +91,7 @@
             }}</a>
           </td>
           <td>
-            <a
-              *ngIf="ticket.project"
-              href="#"
-              routerLink="/projects/{{ ticket.project.id }}"
-              >{{ ticket.project | titlecase }}</a
-            >
+            {{ ticket.project | titlecase }}
           </td>
           <td>
             <a
