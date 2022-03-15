@@ -170,7 +170,7 @@ export class UserManagementComponent implements OnInit {
     this.adminService.resetPassword(resetPasswordDto).subscribe(
       () => {
         this.reloadUsers();
-        this.toastr.success('Password succesfully reset');
+        this.toastr.success('Password successfully reset');
       },
       (error) => {
         console.log(error);
@@ -186,7 +186,7 @@ export class UserManagementComponent implements OnInit {
     this.adminService.resetEmail(resetEmailDto).subscribe(
       () => {
         this.reloadUsers();
-        this.toastr.success('Email succesfully reset');
+        this.toastr.success('Email successfully reset');
       },
       (error) => {
         console.log(error);
@@ -206,7 +206,7 @@ export class UserManagementComponent implements OnInit {
     this.adminService.createUser(registerDto).subscribe(
       () => {
         this.reloadUsers();
-        this.toastr.success('User succesfully created');
+        this.toastr.success('User successfully created');
       },
       (error) => {
         console.log(error);
