@@ -105,14 +105,19 @@ namespace API.Controllers
         }
 
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        public async Task<ActionResult<UserDto>> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
         {
             if (!ModelState.IsValid) return BadRequest("Essential information missing.");
             var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
             if (user == null) return BadRequest("Invalid Request");
             var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.Password);
             if (!resetPassResult.Succeeded) return BadRequest("Invalid Request");
-            return Ok();
+            return new UserDto
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = await _tokenService.CreateToken(user)
+            };
         }
 
         [HttpPut]

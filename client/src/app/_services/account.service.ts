@@ -51,8 +51,14 @@ export class AccountService {
   }
 
   resetPassword(model: ResetPasswordDto) {
-    return this.http.post(this.baseUrl + 'account/resetPassword', model);
-  }
+    return this.http.post(this.baseUrl + 'account/resetPassword', model).pipe(
+      map((response: LoggedInUser) => {
+        const loggedInUser = response;
+        if (loggedInUser) {
+          this.setCurrentUser(loggedInUser);
+        }
+      })
+    );  }
 
   confirmEmail(model: ConfirmEmailDto) {
     return this.http.post(this.baseUrl + 'account/confirmEmail', model).pipe(
