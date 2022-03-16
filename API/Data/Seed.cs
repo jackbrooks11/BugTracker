@@ -73,8 +73,6 @@ namespace API.Data
                     ProjectUser projectUser = new ProjectUser();
                     projectUser.UserId = users[i].Id;
                     projectUser.ProjectId = project.Id;
-                    projectUser.User = users[i];
-                    projectUser.Project = project;
                     context.ProjectUsers.Add(projectUser);
                 }
             }
