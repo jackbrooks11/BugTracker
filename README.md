@@ -8,7 +8,7 @@ https://jacksbugtracker.herokuapp.com/
 
 ## Description
 
-The purpose of this project was to develop an easy-to-use issue tracker that could be used in both a collaborative and personal setting. It consists of three roles: Admin, Project Manager, and Developer, as these reflect the hierarchy of a typical software company. Once a project has been created, users assigned to it can create tickets for the project. Tickets are displayed to every user on the "All Tickets" page. Key ticket metrics are presented on the "Dashboard" page.
+The purpose of this project was to develop an easy-to-use, proof of concept issue tracker that could be used in both a collaborative and personal setting. It consists of three roles: Admin, Project Manager, and Developer, as these reflect the hierarchy of a typical software company. Once a project has been created, users assigned to it can create tickets for the project. Tickets are displayed to every user on the "All Tickets" page. Key ticket metrics are presented on the "Dashboard" page.
 
 ### Features
 
