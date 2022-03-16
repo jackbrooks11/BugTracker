@@ -59,7 +59,7 @@ namespace API.Services
         }
         public async Task<string> ValidateProject(Project newProject)
         {
-            if (await _context.Projects.AnyAsync(x => (x.Id != newProject.Id) && (x.Title == newProject.Title)))
+            if (await _context.Projects.AnyAsync(x => (x.Id != newProject.Id) && (x.Title.ToLower() == newProject.Title.ToLower())))
             {
                 return "Project title already taken.";
             }
