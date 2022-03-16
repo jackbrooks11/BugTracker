@@ -9,7 +9,7 @@
     "Comments": [
       {
         "Message": "Hello there!",
-        "SubmittedBy": "Admin",
+        "SubmittedBy": "admin",
         "Roles": "Admin"
       }
     ]
@@ -24,7 +24,7 @@
     "Comments": [
       {
         "Message": "Hi!",
-        "SubmittedBy": "Emily",
+        "SubmittedBy": "emily",
         "Roles": "Admin"
       }
     ]
@@ -39,7 +39,7 @@
     "Comments": [
       {
         "Message": "Random comment",
-        "SubmittedBy": "Admin",
+        "SubmittedBy": "admin",
         "Roles": "Admin"
       }
     ]
@@ -54,7 +54,7 @@
     "Comments": [
       {
         "Message": "Hi!",
-        "SubmittedBy": "Heidi",
+        "SubmittedBy": "heidi",
         "Roles": "Project Manager"
       }
     ]
@@ -69,12 +69,12 @@
     "Comments": [
       {
         "Message": "Hi!",
-        "SubmittedBy": "Heidi",
+        "SubmittedBy": "heidi",
         "Roles": "Project Manager"
       },
       {
         "Message": "Hello there!",
-        "SubmittedBy": "Tom",
+        "SubmittedBy": "tom",
         "Roles": "Developer"
       }
     ],
@@ -113,7 +113,7 @@
     "Comments": [
       {
         "Message": "Hey!",
-        "SubmittedBy": "Ed",
+        "SubmittedBy": "ed",
         "Roles": "Project Manager"
       }
     ]
@@ -136,12 +136,12 @@
     "Comments": [
       {
         "Message": "Hello!",
-        "SubmittedBy": "Admin",
+        "SubmittedBy": "admin",
         "Roles": "Admin"
       },
       {
         "Message": "Hi!",
-        "SubmittedBy": "Will",
+        "SubmittedBy": "will",
         "Roles": "Developer"
       }
     ]
@@ -156,12 +156,12 @@
     "Comments": [
       {
         "Message": "Hey there!",
-        "SubmittedBy": "Amanda",
+        "SubmittedBy": "amanda",
         "Roles": "Project Manager"
       },
       {
         "Message": "Hello!",
-        "SubmittedBy": "Melissa",
+        "SubmittedBy": "melissa",
         "Roles": "Developer"
       }
     ]
