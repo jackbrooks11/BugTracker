@@ -229,6 +229,7 @@ namespace API.Services
             if (ticketParams.SearchMatch != null)
             {
                 query = query.Where(t => (t.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
+                t.Project.Title.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
                 t.Assignee.UserName.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
                 t.Priority.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
                 t.State.ToLower().Contains(ticketParams.SearchMatch.ToLower()) ||
