@@ -1,6 +1,6 @@
 # BugTracker
 
-Every software company has a issue tracking system. This project is a simple, clean version of some of the most popular systems on the market.
+Every software company has an issue tracking system. This project is a simple, clean version of some of the most popular systems on the market.
 
 ## Demo
 
