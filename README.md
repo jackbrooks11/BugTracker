@@ -2,9 +2,6 @@
 
 Every software company has an issue tracking system. This project is a simple, clean version of some of the most popular systems on the market.
 
-## Demo
-
-https://jacksbugtracker.herokuapp.com/
 
 ## Description
 
