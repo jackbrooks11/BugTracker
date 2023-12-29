@@ -39,7 +39,7 @@ import { ProjectTicketsComponent } from './projects/project-tickets/project-tick
 import { PersonnelModalComponent } from './modals/personnel-modal/personnel-modal.component';
 import { ProjectEditComponent } from './projects/project-edit/project-edit.component';
 import { TicketCommentsComponent } from './tickets/ticket-comments/ticket-comments.component';
-import { ChartsModule } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { UserPhotoComponent } from './users/user-photo/user-photo.component';
 import { TypeChartComponent } from './charts/type-chart/type-chart.component';
 import { StatusChartComponent } from './charts/status-chart/status-chart.component';
@@ -116,7 +116,7 @@ import { UserModalComponent } from './modals/user-modal/user-modal.component';
     BrowserAnimationsModule,
     SharedModule,
     NgxSpinnerModule,
-    ChartsModule
+    NgChartsModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },

@@ -1,59 +1,48 @@
-import { Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import {
-  ActivatedRoute,
-  ActivatedRouteSnapshot,
-  CanActivate,
+  CanActivateFn
 } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, of } from 'rxjs';
-import { concatMap, map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { Ticket } from '../_models/ticket';
-import { LoggedInUser } from '../_models/loggedInUser';
 import { AccountService } from '../_services/account.service';
 import { ProjectUsersService } from '../_services/projectUsers.service';
 import { TicketsService } from '../_services/tickets.service';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class HasTicketGuard implements CanActivate {
-  loggedInUser: LoggedInUser;
 
-  constructor(
-    private accountService: AccountService,
-    private ticketService: TicketsService,
-    private projectUserService: ProjectUsersService,
-    private toastr: ToastrService
-  ) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe((loggedInUser) => {
-      this.loggedInUser = loggedInUser;
-    });
-  }
+export const hasTicketGuard: CanActivateFn = (route, state) => {
+  var loggedInUser;
+  const accountService = inject(AccountService);
+  const ticketService = inject(TicketsService);
+  const projectUserService = inject(ProjectUsersService);
+  const toastr = inject(ToastrService);
 
-  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
-    return this.ticketService
-      .getTicket(Number(route.paramMap.get('id')))
-      .pipe(
-        switchMap((ticket: Ticket) =>
-          this.projectUserService
-            .getUsersForProject(ticket.project)
-            .pipe(map((users) => [ticket, users]))
-        )
+  accountService.currentUser$.pipe(take(1)).subscribe((loggedInUser) => {
+    loggedInUser = loggedInUser;
+  });
+
+  return ticketService
+    .getTicket(Number(route.paramMap.get('id')))
+    .pipe(
+      switchMap((ticket: Ticket) =>
+        projectUserService
+          .getUsersForProject(ticket.project)
+          .pipe(map((users) => [ticket, users]))
       )
-      .pipe(
-        map((finalData) => {
-          if (
-            (this.loggedInUser?.roles.includes('Project Manager') &&
-              finalData[1].includes(this.loggedInUser.username)) ||
-            this.loggedInUser?.roles.includes('Admin') ||
-            (this.loggedInUser?.roles.includes('Developer') &&
-              finalData[0].assignee == this.loggedInUser.username)
-          ) {
-            return true;
-          }
-          this.toastr.error('You do not have permission to edit this ticket.');
-          return false;
-        })
-      );
+    )
+    .pipe(
+      map((finalData) => {
+        if (
+          (loggedInUser?.roles.includes('Project Manager') &&
+            finalData[1].includes(loggedInUser.username)) ||
+          loggedInUser?.roles.includes('Admin') ||
+          (loggedInUser?.roles.includes('Developer') &&
+            finalData[0].assignee == loggedInUser.username)
+        ) {
+          return true;
+        }
+        toastr.error('You do not have permission to edit this ticket.');
+        return false;
+      })
+    );
   }
-}

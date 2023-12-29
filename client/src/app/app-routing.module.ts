@@ -15,12 +15,12 @@ import { ProjectListComponent } from './projects/project-list/project-list.compo
 import { TicketDetailComponent } from './tickets/ticket-detail/ticket-detail.component';
 import { TicketEditComponent } from './tickets/ticket-edit/ticket-edit.component';
 import { TicketListComponent } from './tickets/ticket-list/ticket-list.component';
-import { AdminGuard } from './_guards/admin.guard';
-import { AuthGuard } from './_guards/auth.guard';
-import { HasTicketGuard } from './_guards/has-ticket.guard';
-import { PreventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { ConfirmEmailComponent } from './confirm-email/confirm-email.component';
+import { authGuard } from './_guards/auth.guard';
+import { preventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
+import { adminGuard } from './_guards/admin.guard';
+import { hasTicketGuard } from './_guards/has-ticket.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -29,13 +29,13 @@ const routes: Routes = [
   {
     path: '',
     runGuardsAndResolvers: 'always',
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     children: [
       { path: 'users/:username', component: UserDetailComponent },
       {
         path: 'user/edit',
         component: UserEditComponent,
-        canDeactivate: [PreventUnsavedChangesGuard],
+        canDeactivate: [preventUnsavedChangesGuard],
       },
       { path: 'user/tickets', component: UserTicketsComponent },
       { path: 'user/projects/:id', component: ProjectDetailComponent },
@@ -43,20 +43,20 @@ const routes: Routes = [
       {
         path: 'tickets/:id/edit',
         component: TicketEditComponent,
-        canActivate: [HasTicketGuard],
-        canDeactivate: [PreventUnsavedChangesGuard],
+        canActivate: [hasTicketGuard],
+        canDeactivate: [preventUnsavedChangesGuard],
       },
       { path: 'tickets/:id', component: TicketDetailComponent },
       { path: 'tickets', component: TicketListComponent },
       {
         path: 'admin',
         component: AdminPanelComponent,
-        canActivate: [AdminGuard],
+        canActivate: [adminGuard],
       },
       {
         path: 'projects/:id/edit',
         component: ProjectEditComponent,
-        canActivate: [AdminGuard],
+        canActivate: [adminGuard],
       },
       { path: 'projects/:id', component: ProjectDetailComponent },
       { path: 'projects', component: ProjectListComponent },

@@ -1,4 +1,4 @@
-import { Component, OnInit, ɵɵsetComponentScope } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Ticket } from 'src/app/_models/ticket';
 import { TicketsService } from 'src/app/_services/tickets.service';
 
